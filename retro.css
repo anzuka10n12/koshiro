@@ -1,0 +1,144 @@
+/* 阿部寛HP風レトロデザイン */
+
+/* ページ切り替え時のフェード（対応ブラウザのみ） */
+@view-transition { navigation: auto; }
+
+body {
+  margin: 0;
+  background: #ffffff;
+  color: #000000;
+  font-family: "Times New Roman", "MS PMincho", "Hiragino Mincho ProN", serif;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+a { color: #0000ee; text-decoration: underline; }
+a:visited { color: #551a8b; }
+a:hover { color: #ee0000; }
+
+.layout {
+  display: flex;
+  flex-wrap: wrap;
+  min-height: 100vh;
+}
+
+/* 左メニュー（旧フレーム menu 相当） */
+.menu {
+  flex: 1 1 200px;
+  max-width: 100%;
+  box-sizing: border-box;
+  background: #ededf8;
+  border-right: 1px solid #000000;
+  padding: 24px 12px;
+}
+
+.menu table { border-collapse: collapse; }
+.menu td { vertical-align: middle; }
+.menu a { display: inline-block; padding: 8px 0; }
+
+.dot {
+  padding: 6px 8px 6px 0;
+  font-size: 44px;
+  line-height: 1;
+}
+
+.c1 { color: #fbc4ae; }
+.c2 { color: #66df4b; }
+.c3 { color: #79e5e8; }
+.c4 { color: #3389d4; }
+.c5 { color: #333ced; }
+.c6 { color: #1c217a; }
+.c7 { color: #d420b3; }
+
+/* 右：名前の文字を敷き詰めた背景 */
+.tile {
+  flex: 999 1 560px;
+  min-width: 0;
+  box-sizing: border-box;
+  padding: 16px clamp(12px, 5vw, 64px) 40px;
+  background: #ffffff url(images/tile.svg) repeat;
+}
+
+h1 {
+  margin: 8px 0 24px;
+  text-align: center;
+  font-size: 30px;
+}
+
+.columns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px 40px;
+  align-items: flex-start;
+}
+
+/* プロフィール欄 */
+.profile {
+  flex: 2 1 260px;
+  min-width: 0;
+  text-align: center;
+}
+
+.profile img {
+  display: block;
+  width: 100%;
+  max-width: 220px;
+  height: auto;
+  margin: 0 auto;
+}
+
+.profile p { margin: 0; }
+.name { margin-top: 12px !important; font-weight: bold; }
+.small { margin-top: 2px !important; font-size: 14px; }
+.gap { margin-top: 10px !important; }
+.note { margin-top: 16px !important; font-size: 13px; text-align: left; }
+.note.tight { margin-top: 4px !important; }
+.sns { line-height: 2; }
+
+/* 最新情報欄 */
+.news {
+  flex: 3 1 340px;
+  min-width: 0;
+}
+
+.news-head {
+  margin: 0 0 12px;
+  text-align: center;
+  font-weight: bold;
+}
+
+.item {
+  border-top: 1px solid #000000;
+  padding: 10px 0;
+}
+
+.item.last { border-bottom: 1px solid #000000; }
+.item p { margin: 2px 0 0 4em; font-size: 14px; }
+.item .title { margin: 0; font-size: 16px; font-weight: bold; }
+.new { color: #e82626; }
+
+.copyright {
+  margin: 40px 0 0;
+  text-align: right;
+  font-size: 12px;
+}
+
+/* SNSアイコン（各社の公式カラー） */
+.sns-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-right: 12px;
+  white-space: nowrap;
+}
+
+.icon {
+  width: 16px;
+  height: 16px;
+  fill: currentColor;
+}
+
+.icon-youtube { color: #ff0000; }
+.icon-x { color: #000000; }
+.icon-instagram { color: #ff0069; }
+.icon-tiktok { color: #000000; }
