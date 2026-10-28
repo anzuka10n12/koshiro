@@ -250,6 +250,47 @@ a {
   font-size: 0.85rem;
 }
 
+/* 動画の箱（16:9） */
+.video-grid {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.video {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  border-radius: 1rem;
+  overflow: hidden;
+  background-color: var(--bg-alt);
+  border: 1px solid var(--line);
+}
+
+.video iframe,
+.video-placeholder {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.video-placeholder {
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 1rem;
+  background: radial-gradient(circle at 50% 40%, rgba(245, 177, 76, 0.12), transparent 60%);
+}
+
+.video-play {
+  width: 4rem;
+  height: 4rem;
+  padding: 1rem;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  fill: var(--muted);
+}
+
 /* スクロールで下からふわっと表示（対応ブラウザのみ・JavaScript不要） */
 @supports (animation-timeline: view()) {
   .reveal {
