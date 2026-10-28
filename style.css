@@ -291,6 +291,29 @@ a {
   fill: var(--muted);
 }
 
+/* チャンネルへのリンクボタン */
+.btn-channel {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 1.75rem;
+  padding: 0.8rem 1.6rem;
+  border-radius: 999px;
+  background-color: var(--accent);
+  color: #1a1206;
+  font-weight: 700;
+  font-size: 0.95rem;
+  transition: transform var(--transition);
+}
+
+.btn-channel:hover {
+  transform: translateY(-2px);
+}
+
+.btn-channel .icon {
+  fill: currentColor;
+}
+
 /* スクロールで下からふわっと表示（対応ブラウザのみ・JavaScript不要） */
 @supports (animation-timeline: view()) {
   .reveal {
