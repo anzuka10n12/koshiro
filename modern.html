@@ -62,8 +62,22 @@
           <p class="section-num">01</p>
           <h2 class="section-title">YouTube</h2>
           <p class="section-subtitle">歌唱・演奏動画を公開予定です</p>
-          <!-- TODO: チャンネルURLが決まったら <a href="..." class="btn" target="_blank" rel="noopener noreferrer"> に変更 -->
-          <p class="coming">Coming soon</p>
+          <!--
+            動画の貼り方：
+            1. 下の <div class="video-placeholder">〜</div> を、次の iframe に置き換える（VIDEO_ID は動画URLの v= の後ろの文字）
+               <iframe src="https://www.youtube-nocookie.com/embed/VIDEO_ID" title="動画タイトル" loading="lazy"
+                 allow="encrypted-media; picture-in-picture; fullscreen" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+            2. <head> の Content-Security-Policy に「; frame-src https://www.youtube-nocookie.com」を追記する
+            動画を増やすときは <div class="video"> ごとコピーして並べる
+          -->
+          <div class="video-grid">
+            <div class="video">
+              <div class="video-placeholder">
+                <svg class="video-play" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 5v14l11-7z"/></svg>
+                <p class="coming">Coming soon</p>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
