@@ -41,23 +41,14 @@
     <main id="top">
       <!-- ===== ヒーロー：写真を全面に敷き、名前を大きく重ねる ===== -->
       <section class="hero">
-        <img class="hero-photo" src="images/hero.jpg" alt="" width="899" height="1125" />
+        <!-- トップの絵：夕景を見つめる後ろ姿のイラスト
+             奥の景色（hero-bg.jpg）と手前の人物（hero-figure.webp・背景透明）を別々の層で重ねている。
+             指・マウスの動きで2枚が少し逆向きにずれ、スクロールすると夕日が人物の向こうへ沈んでいく -->
+        <img class="hero-bg" src="images/hero-bg.jpg" alt="" width="1536" height="1024" fetchpriority="high" />
+        <img class="hero-figure" src="images/hero-figure.webp" alt="夕日と海を見つめる、黒髪の男性の後ろ姿のイラスト" width="674" height="699" />
         <div class="hero-shade" aria-hidden="true"></div>
-        <!-- 音の波形のように動く描画（main.js が描く。指・マウス・スクロールに反応。JavaScriptが無い場合は写真だけ表示） -->
-        <canvas class="hero-wave" aria-hidden="true"></canvas>
         <div class="container hero-inner">
-          <div class="hero-top">
-            <p class="eyebrow">Singer / Songwriter</p>
-            <!-- 回転する円形バッジ（押すとYouTube欄へ移動） -->
-            <a class="badge" href="#youtube" aria-label="YouTubeの欄へ移動">
-              <svg class="badge-ring" viewBox="0 0 200 200" aria-hidden="true" focusable="false">
-                <defs><path id="badge-circle" d="M100 100m-78 0a78 78 0 1 1 156 0a78 78 0 1 1-156 0" /></defs>
-                <text><textPath href="#badge-circle" textLength="480">KOSHIRO ・ OFFICIAL SITE ・ KOSHIRO ・ OFFICIAL SITE ・</textPath></text>
-              </svg>
-              <svg class="badge-play" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 5v14l11-7z" /></svg>
-            </a>
-          </div>
-          <!-- 1文字ずつ順番に現れる（読み上げソフトには aria-label の「KOSHIRO」だけが伝わる） -->
+          <p class="eyebrow">Singer / Songwriter</p>
           <h1 class="hero-title" aria-label="KOSHIRO">
             <span aria-hidden="true">K</span><span aria-hidden="true">O</span><span aria-hidden="true">S</span><span aria-hidden="true">H</span><span aria-hidden="true">I</span><span aria-hidden="true">R</span><span aria-hidden="true">O</span>
           </h1>
