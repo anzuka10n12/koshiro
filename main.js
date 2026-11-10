@@ -215,9 +215,10 @@
   }
 
   /* =========
-     2. 今見ている欄のメニューを光らせる（CSSだけで対応できるブラウザでは何もしない）
+     2. 今見ている欄のメニューを光らせる
+        欄が画面の中央付近に来たときだけ光る。トップ（どの欄にも入っていない）では何も光らない。
      ========= */
-  if (!CSS.supports("scroll-target-group", "auto") && "IntersectionObserver" in window) {
+  if ("IntersectionObserver" in window) {
     var links = {};
     Array.prototype.forEach.call(document.querySelectorAll('.nav a[href^="#"]'), function (link) {
       links[link.getAttribute("href").slice(1)] = link;
@@ -226,11 +227,15 @@
       function (entries) {
         entries.forEach(function (entry) {
           var link = links[entry.target.id];
-          if (!link || !entry.isIntersecting) return;
-          Object.keys(links).forEach(function (id) {
-            links[id].removeAttribute("aria-current");
-          });
-          link.setAttribute("aria-current", "true");
+          if (!link) return;
+          if (entry.isIntersecting) {
+            Object.keys(links).forEach(function (id) {
+              links[id].removeAttribute("aria-current");
+            });
+            link.setAttribute("aria-current", "true");
+          } else {
+            link.removeAttribute("aria-current");
+          }
         });
       },
       { rootMargin: "-45% 0px -50% 0px" }
