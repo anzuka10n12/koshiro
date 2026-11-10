@@ -161,21 +161,6 @@ a {
   transform: scaleX(1);
 }
 
-/* 今見ている欄のメニューを光らせる（対応ブラウザはCSSだけで、それ以外は main.js が担当） */
-@supports (scroll-target-group: auto) {
-  .nav {
-    scroll-target-group: auto;
-  }
-
-  .nav a:target-current {
-    color: var(--accent);
-  }
-
-  .nav a:target-current::after {
-    transform: scaleX(1);
-  }
-}
-
 /* スクロール進捗バー */
 .progress {
   position: absolute;
