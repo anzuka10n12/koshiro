@@ -41,28 +41,56 @@
     <main id="top">
       <!-- ===== ヒーロー：写真を全面に敷き、名前を大きく重ねる ===== -->
       <section class="hero">
-        <img class="hero-photo" src="images/hero.jpg" alt="" width="899" height="1125" />
-        <div class="hero-shade" aria-hidden="true"></div>
-        <!-- 音の波形のように動く描画（main.js が描く。指・マウス・スクロールに反応。JavaScriptが無い場合は写真だけ表示） -->
-        <canvas class="hero-wave" aria-hidden="true"></canvas>
+        <div class="hero-glow" aria-hidden="true"></div>
         <div class="container hero-inner">
-          <div class="hero-top">
-            <p class="eyebrow">Singer / Songwriter</p>
-            <!-- 回転する円形バッジ（押すとYouTube欄へ移動） -->
-            <a class="badge" href="#youtube" aria-label="YouTubeの欄へ移動">
-              <svg class="badge-ring" viewBox="0 0 200 200" aria-hidden="true" focusable="false">
-                <defs><path id="badge-circle" d="M100 100m-78 0a78 78 0 1 1 156 0a78 78 0 1 1-156 0" /></defs>
-                <text><textPath href="#badge-circle" textLength="480">KOSHIRO ・ OFFICIAL SITE ・ KOSHIRO ・ OFFICIAL SITE ・</textPath></text>
+          <!-- トップの絵：レコードジャケット（絵はこの中の SVG。画像ファイルは使っていない）
+               指・マウスの動きに合わせてジャケットが傾き、後ろでレコード盤が回る -->
+          <div class="stage">
+            <div class="cover">
+              <div class="vinyl" aria-hidden="true"></div>
+              <div class="jacket">
+              <svg class="cover-art" viewBox="0 0 600 600" role="img" aria-label="航士朗（Singer / Songwriter）のレコードジャケット風イラスト。夕日と山並みと、音の波でできた海">
+                <rect class="ink-paper" width="600" height="600" />
+                <circle class="ink-sun" cx="340" cy="290" r="150" />
+                <!-- 版ずれ風の輪郭線 -->
+                <circle class="ink-ring" cx="348" cy="283" r="150" />
+                <!-- 雲（紙の色で夕日を切り欠く帯と、紺の細い帯） -->
+                <path class="ink-paper" d="M70 214h206a9 9 0 0 1 0 18H70a9 9 0 0 1 0-18z" />
+                <path class="ink-navy" d="M410 168h132a5 5 0 0 1 0 10H410a5 5 0 0 1 0-10z" />
+                <path class="ink-navy" d="M36 268h96a4 4 0 0 1 0 8H36a4 4 0 0 1 0-8z" />
+                <!-- 山並み -->
+                <path class="ink-hill" d="M0 400V350C52 326 104 310 158 330c44 16 72 44 124 50 52 6 100 2 140-16 52-24 104-48 178-24v60z" />
+                <path class="ink-navy" d="M0 400v-24c48-16 92-6 140 6 40 10 80 15 124 15h336v3z" />
+                <!-- 海 -->
+                <rect class="ink-navy" y="396" width="600" height="204" />
+                <g class="ink-glints">
+                    <path d="M280 412h120" />
+                    <path d="M298 427h84" />
+                    <path d="M274 446h132" />
+                    <path d="M307 470h66" />
+                    <path d="M288 498h104" />
+                    <path d="M311 530h58" />
+                    <path d="M297 566h86" />
+                </g>
+                <g class="ink-waves">
+                    <path d="M-200 418q25 -3 50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0" stroke-width="1.6" opacity="0.55" />
+                    <path d="M-200 436q25 -4 50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0" stroke-width="1.8" opacity="0.6" />
+                    <path d="M-200 458q25 -5 50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0" stroke-width="2.0" opacity="0.65" />
+                    <path d="M-200 484q25 -6 50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0" stroke-width="2.3" opacity="0.7" />
+                    <path d="M-200 514q25 -8 50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0" stroke-width="2.6" opacity="0.75" />
+                    <path d="M-200 548q25 -10 50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0" stroke-width="3.0" opacity="0.8" />
+                    <path d="M-200 584q25 -12 50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0" stroke-width="3.4" opacity="0.85" />
+                </g>
+                <text class="t-name" x="36" y="74">航士朗</text>
+                <text class="t-role" x="37" y="112">Singer / Songwriter</text>
               </svg>
-              <svg class="badge-play" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 5v14l11-7z" /></svg>
-            </a>
+              </div>
+            </div>
           </div>
-          <!-- 1文字ずつ順番に現れる（読み上げソフトには aria-label の「KOSHIRO」だけが伝わる） -->
           <h1 class="hero-title" aria-label="KOSHIRO">
             <span aria-hidden="true">K</span><span aria-hidden="true">O</span><span aria-hidden="true">S</span><span aria-hidden="true">H</span><span aria-hidden="true">I</span><span aria-hidden="true">R</span><span aria-hidden="true">O</span>
           </h1>
           <div class="hero-meta">
-            <p class="hero-name">航士朗</p>
             <a class="scroll-cue" href="#statement">Scroll</a>
           </div>
         </div>

@@ -184,7 +184,7 @@ a {
 }
 
 /* =========
-   ヒーロー
+   ヒーロー（トップ）：レコードジャケット
    ========= */
 
 .hero {
@@ -192,78 +192,28 @@ a {
   min-height: 100vh;
   min-height: 100svh;
   display: flex;
-  align-items: flex-end;
   overflow: hidden;
 }
 
-.hero-photo {
+/* ジャケットの色が周りの闇ににじむ光 */
+.hero-glow {
   position: absolute;
   inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: 65% 30%;
-  animation: slow-zoom 18s ease-out both;
-}
-
-/* スクロールすると写真がゆっくり沈む（パララックス） */
-@supports (animation-timeline: scroll()) {
-  .hero-photo {
-    animation: slow-zoom 18s ease-out both, photo-drift linear both;
-    animation-timeline: auto, scroll(root);
-    animation-range: normal, 0 100vh;
-  }
-}
-
-@keyframes slow-zoom {
-  from { scale: 1.14; }
-  to { scale: 1; }
-}
-
-@keyframes photo-drift {
-  to { translate: 0 12%; }
-}
-
-/* 文字を読みやすくするための暗いグラデーション */
-.hero-shade {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, rgba(11, 11, 16, 0.4) 0%, rgba(11, 11, 16, 0.5) 45%, var(--bg) 100%),
-    linear-gradient(90deg, rgba(11, 11, 16, 0.7) 0%, rgba(11, 11, 16, 0) 70%);
-}
-
-/* マウスの位置に追従するやわらかい光（main.js が --mx / --my を更新。JavaScriptなしでも中央付近に固定で表示） */
-.hero-shade::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(34rem circle at var(--mx, 70%) var(--my, 35%), rgba(245, 177, 76, 0.2), transparent 65%);
-  mix-blend-mode: screen;
-}
-
-/* 音の波形の描画（main.js） */
-.hero-wave {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  animation: wave-in 2.4s 0.3s ease-out both;
-}
-
-@keyframes wave-in {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  background:
+    radial-gradient(52rem circle at 62% 36%, rgba(240, 138, 60, 0.2), transparent 62%),
+    radial-gradient(40rem circle at 12% 88%, rgba(91, 100, 133, 0.2), transparent 60%);
 }
 
 .hero-inner {
   position: relative;
   width: 100%;
-  padding-top: 6rem;
-  padding-bottom: clamp(2rem, 6vh, 4rem);
+  display: flex;
+  flex-direction: column;
+  padding-top: 5rem;
+  padding-bottom: clamp(1.5rem, 5vh, 3.5rem);
 }
 
-/* スクロールすると名前が上へ抜けていく */
+/* スクロールすると全体が上へ抜けていく */
 @supports (animation-timeline: scroll()) {
   .hero-inner {
     animation: hero-out linear both;
@@ -279,65 +229,165 @@ a {
   }
 }
 
-.hero-top {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 1rem;
-}
-
-.eyebrow {
-  margin: 0;
-  color: var(--accent);
-  font-family: var(--font-serif);
-  font-style: italic;
-  font-size: clamp(1.4rem, 3.4vw, 2.1rem);
-  line-height: 1.1;
-  animation: fade-up 0.9s 0.1s cubic-bezier(0.2, 0.8, 0.2, 1) both;
-}
-
-/* 回転バッジ */
-.badge {
-  position: relative;
-  flex-shrink: 0;
+/* ジャケットを置く場所（残りの高さいっぱいを使い、その中央に置く） */
+.stage {
+  --size: min(68vw, 44vh);
+  flex: 1;
   display: grid;
   place-items: center;
-  width: clamp(5.5rem, 14vw, 8.5rem);
+  padding: 1.5rem 0 2rem;
+}
+
+.cover {
+  position: relative;
+  width: var(--size);
   aspect-ratio: 1;
-  border-radius: 50%;
-  transition: scale var(--transition);
+  /* レコード盤が右にのぞく分だけ左へ寄せて、全体として中央に見せる */
+  translate: -15% 0;
+  perspective: 1100px;
+  animation: cover-in 1.3s 0.1s cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
 
-.badge:hover {
-  scale: 1.08;
+@keyframes cover-in {
+  from {
+    opacity: 0;
+    transform: translateY(40px) scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
 
-.badge-ring {
+/* レコード盤：溝・光沢・中央ラベルをグラデーションだけで描く */
+.vinyl {
   position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  animation: spin 22s linear infinite;
-}
-
-.badge-ring text {
-  fill: var(--text);
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-size: 15.5px;
-  letter-spacing: 0.06em;
-}
-
-.badge-play {
-  width: 34%;
-  padding: 7%;
+  inset: 3%;
   border-radius: 50%;
-  background-color: var(--accent);
-  fill: #1a1206;
+  translate: 42% 0;
+  background:
+    radial-gradient(circle, #0b0b10 0 1.6%, var(--accent) 1.9% 15%, #08080b 15.4% 17%, transparent 17.4%),
+    conic-gradient(from 25deg, rgba(255, 255, 255, 0) 0 7%, rgba(255, 255, 255, 0.16) 12%, rgba(255, 255, 255, 0) 18% 50%, rgba(255, 255, 255, 0.12) 61%, rgba(255, 255, 255, 0) 68% 100%),
+    repeating-radial-gradient(circle, #1a1a20 0 1.5px, #0c0c10 1.5px 3px);
+  box-shadow: 0 24px 50px -18px rgba(0, 0, 0, 0.9), inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+  animation: spin 7s linear infinite, vinyl-out 1.5s 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
 }
 
 @keyframes spin {
   to { rotate: 360deg; }
+}
+
+/* 読み込み時、ジャケットの中からレコード盤がすっと出てくる */
+@keyframes vinyl-out {
+  from { translate: 0 0; }
+}
+
+/* ジャケット本体。main.js が指・マウスの位置に合わせて --rx / --ry / --gx を更新する。
+   操作していない間（と JavaScript が無いとき）は、ゆっくり左右に揺れる */
+.jacket {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: 3px;
+  background-color: #efe6d3;
+  box-shadow: 0 36px 70px -24px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(0, 0, 0, 0.25);
+  transform: rotateX(var(--rx, 3deg)) rotateY(var(--ry, -10deg));
+  transition: transform 0.25s ease-out;
+  animation: sway 9s ease-in-out infinite alternate;
+}
+
+.cover.is-live .jacket {
+  animation: none;
+}
+
+@keyframes sway {
+  from { transform: rotateX(4deg) rotateY(-13deg); }
+  to { transform: rotateX(-2deg) rotateY(9deg); }
+}
+
+/* 紙のざらつき（粒子を黒に反転して重ねる） */
+.jacket::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background-image: url("images/grain.svg");
+  filter: invert(1);
+  mix-blend-mode: multiply;
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+/* 表面の照り返しと、左端の背の影 */
+.jacket::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background:
+    linear-gradient(105deg, rgba(255, 255, 255, 0) 20%, rgba(255, 255, 255, 0.24) var(--gx, 42%), rgba(255, 255, 255, 0) 72%),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.22), rgba(0, 0, 0, 0) 3.5%);
+  pointer-events: none;
+}
+
+.cover-art {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* 絵の色（紙・橙・紺・灰青の4色刷り） */
+.ink-paper { fill: #efe6d3; }
+.ink-sun { fill: #f08a3c; }
+.ink-ring { fill: none; stroke: #1d2340; stroke-width: 1.5; }
+.ink-navy { fill: #1d2340; }
+.ink-hill { fill: #6a7396; }
+
+.ink-waves path {
+  fill: none;
+  stroke: #efe6d3;
+  stroke-linecap: round;
+  animation: wave-drift 9s linear infinite;
+}
+
+.ink-waves path:nth-child(2n) { animation-duration: 12s; animation-direction: reverse; }
+.ink-waves path:nth-child(3n) { animation-duration: 15s; }
+.ink-waves path:nth-child(5n) { animation-duration: 7s; animation-direction: reverse; }
+
+/* 波1つ分（100）だけ横にずらして繰り返すので、継ぎ目なく流れ続ける */
+@keyframes wave-drift {
+  to { transform: translateX(-100px); }
+}
+
+.ink-glints path {
+  fill: none;
+  stroke: #f08a3c;
+  stroke-width: 5;
+  stroke-linecap: round;
+  animation: glint 2.6s ease-in-out infinite alternate;
+}
+
+.ink-glints path:nth-child(2n) { animation-delay: -1.1s; }
+.ink-glints path:nth-child(3n) { animation-delay: -1.9s; }
+
+@keyframes glint {
+  from { opacity: 0.45; }
+  to { opacity: 1; }
+}
+
+.t-role {
+  fill: #1d2340;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 28px;
+}
+
+.t-name {
+  fill: #1d2340;
+  font-family: system-ui, -apple-system, "Hiragino Sans", "Yu Gothic", sans-serif;
+  font-weight: 700;
+  font-size: 34px;
+  letter-spacing: 0.3em;
 }
 
 .hero-title {
@@ -380,18 +430,10 @@ a {
 .hero-meta {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  padding-top: 1rem;
+  justify-content: flex-end;
   border-top: 1px solid var(--line);
+  padding-top: 0.5rem;
   animation: fade-up 0.9s 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both;
-}
-
-.hero-name {
-  margin: 0;
-  font-size: clamp(1.1rem, 3vw, 1.5rem);
-  font-weight: 700;
-  letter-spacing: 0.3em;
 }
 
 .scroll-cue {
@@ -910,21 +952,10 @@ a {
    レスポンシブ
    ========= */
 
-/* PCでは縦長写真を右側に寄せて、ぼやけ過ぎないようにする */
+/* PCではジャケットを少し大きくする */
 @media (min-width: 900px) {
-  .hero-photo {
-    left: auto;
-    right: 0;
-    width: 58%;
-    object-position: 50% 30%;
-    -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 40%);
-    mask-image: linear-gradient(90deg, transparent 0%, #000 40%);
-  }
-
-  /* 回転バッジが顔に重ならないよう左側に寄せる */
-  .hero-top {
-    justify-content: flex-start;
-    gap: 2.5rem;
+  .stage {
+    --size: min(50vh, 36vw);
   }
 }
 
