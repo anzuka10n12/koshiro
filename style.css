@@ -197,39 +197,60 @@ a {
   background-color: #1b2038;
 }
 
-/* トップの絵。少し大きめに敷いて、指・マウスの動きやスクロールでずらしても端が見えないようにする */
-.hero-art {
+/* 奥の景色。少し大きめに敷いて、ずらしても端が見えないようにする */
+.hero-bg {
   position: absolute;
-  inset: -4%;
-  width: 108%;
-  height: 108%;
+  inset: -5%;
+  width: 110%;
+  height: 110%;
   max-width: none;
   object-fit: cover;
-  object-position: 50% 42%;
-  translate: calc(var(--px, 0) * -10px) calc(var(--py, 0) * -6px);
+  object-position: 50% 50%;
+  translate: calc(var(--px, 0) * -12px) calc(var(--py, 0) * -6px);
   transition: translate 0.5s ease-out;
-  animation: art-in 2.4s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  animation: bg-in 2.4s cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
 
 /* 読み込み時：少し寄った状態から、ゆっくり引いていく */
-@keyframes art-in {
+@keyframes bg-in {
   from {
     opacity: 0;
     scale: 1.1;
   }
 }
 
-/* スクロールすると絵がゆっくり沈む（パララックス） */
+/* スクロールすると景色だけが下へ流れ、夕日が人物の向こうへ沈んでいく */
 @supports (animation-timeline: scroll()) {
-  .hero-art {
-    animation: art-in 2.4s cubic-bezier(0.2, 0.8, 0.2, 1) both, art-drift linear both;
+  .hero-bg {
+    animation: bg-in 2.4s cubic-bezier(0.2, 0.8, 0.2, 1) both, bg-sink linear both;
     animation-timeline: auto, scroll(root);
     animation-range: normal, 0 100vh;
   }
 }
 
-@keyframes art-drift {
-  to { transform: translateY(9%); }
+@keyframes bg-sink {
+  to { transform: translateY(14%); }
+}
+
+/* 手前の人物。高さ基準で大きさを決め、頭が夕日に重なる位置に立たせる */
+.hero-figure {
+  position: absolute;
+  bottom: -1%;
+  left: 50%;
+  height: 66%;
+  width: auto;
+  max-width: none;
+  aspect-ratio: 674 / 699;
+  translate: calc(-50% + var(--px, 0) * 16px) calc(var(--py, 0) * 5px);
+  transition: translate 0.5s ease-out;
+  animation: figure-in 1.6s 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+@keyframes figure-in {
+  from {
+    opacity: 0;
+    transform: translateY(48px);
+  }
 }
 
 /* 文字を読みやすくするため、下端を背景色へなじませる */
@@ -843,6 +864,13 @@ a {
 /* =========
    レスポンシブ
    ========= */
+
+/* スマホを横向きにしたとき：大見出しが人物の頭に重ならないよう小さくする */
+@media (orientation: landscape) and (max-height: 480px) {
+  .hero-title {
+    font-size: min(calc((100vw - 2.5rem) / 7.7), 4rem);
+  }
+}
 
 @media (max-width: 640px) {
   .logo {

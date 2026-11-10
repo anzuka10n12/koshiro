@@ -42,11 +42,10 @@
       <!-- ===== ヒーロー：写真を全面に敷き、名前を大きく重ねる ===== -->
       <section class="hero">
         <!-- トップの絵：夕景を見つめる後ろ姿のイラスト
-             横長の画面（PC・横向き）では hero-wide.jpg、縦長の画面（スマホ）では hero-tall.jpg を表示する -->
-        <picture>
-          <source media="(min-aspect-ratio: 1/1)" srcset="images/hero-wide.jpg" width="1536" height="1024" />
-          <img class="hero-art" src="images/hero-tall.jpg" alt="夕日と海を見つめる、黒髪の男性の後ろ姿のイラスト" width="1024" height="1536" fetchpriority="high" />
-        </picture>
+             奥の景色（hero-bg.jpg）と手前の人物（hero-figure.webp・背景透明）を別々の層で重ねている。
+             指・マウスの動きで2枚が少し逆向きにずれ、スクロールすると夕日が人物の向こうへ沈んでいく -->
+        <img class="hero-bg" src="images/hero-bg.jpg" alt="" width="1536" height="1024" fetchpriority="high" />
+        <img class="hero-figure" src="images/hero-figure.webp" alt="夕日と海を見つめる、黒髪の男性の後ろ姿のイラスト" width="674" height="699" />
         <div class="hero-shade" aria-hidden="true"></div>
         <div class="container hero-inner">
           <p class="eyebrow">Singer / Songwriter</p>
