@@ -53,9 +53,9 @@
       if (reduceMotion) draw(startedAt);
     }
 
-    /* 帯の中心線：PCでは右上がりに写真の前を横切り、スマホでは顔の下をゆるく横切る */
+    /* 帯の中心線：PCでは右上がりに写真の前を横切り、スマホでは顔にかからないよう肩のあたりを横切る */
     function centerY(u) {
-      return wide ? h * (0.7 - 0.3 * u) : h * (0.65 - 0.05 * Math.sin(u * Math.PI));
+      return wide ? h * (0.7 - 0.3 * u) : h * (0.7 - 0.04 * Math.sin(u * Math.PI));
     }
 
     function draw(now) {
@@ -77,7 +77,7 @@
         return time - r.born < 3.6;
       });
 
-      var spread = h * (wide ? 0.3 : 0.2);
+      var spread = h * (wide ? 0.3 : 0.17);
       var amp = h * 0.055;
       var points = Math.ceil(w / step) + 1;
       var reach = wide ? 220 : 130;
