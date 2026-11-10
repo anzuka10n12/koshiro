@@ -1,13 +1,25 @@
 # 航士朗 ホームページ
 
-GitHub Pages で無料公開している静的サイト（HTML/CSSのみ・JavaScriptなし）。
+GitHub Pages で無料公開している静的サイト。レトロ版は HTML/CSS のみ（JavaScriptなし）、今風版は補助用の `main.js` を1つだけ使う。
 
 | ファイル | 内容 |
 |---|---|
 | `index.html` / `retro.css` | トップ（阿部寛HP風レトロ版） |
 | `modern.html` / `style.css` | 今風デザイン版 |
+| `main.js` | 今風版の補助スクリプト（マウス追従の光・古いブラウザ向けの代替表示）。無くても全部読める |
+| `fonts/` | 今風版の見出し用フォント（Syne / Instrument Serif、OFLライセンス。ライセンス文を同梱） |
 | `images/` | 写真・背景画像 |
 | `.nojekyll` | GitHub Pages の Jekyll 変換を無効化 |
+
+## セキュリティ方針（今風版でJavaScriptを使う条件）
+
+- CSP（`modern.html` の `<meta>` と `vercel.json`）で **自サイト内のファイルだけ** を許可：`script-src 'self'` / `style-src 'self'` / `font-src 'self'` / `img-src 'self'`
+  → 外部スクリプト・インラインスクリプト・`eval` はブラウザが実行を拒否する（XSS・改ざんされた外部CDN経由の攻撃を防ぐ）
+- `main.js` は通信しない・Cookie等に保存しない・入力を受け取らない・`innerHTML` を使わない
+- フォーム・ログイン・データベースを持たない（攻撃される対象を作らない）
+- レトロ版（`index.html`）は引き続き JavaScript 完全禁止
+- スクリプトやフォントを追加するときは **必ずリポジトリ内に置く**（CDNのURLを書かない）
+- GitHubアカウントは二段階認証を有効にする（サイト改ざんの最大の入口はアカウント乗っ取り）
 
 ## 公開URL
 
