@@ -194,120 +194,51 @@ a {
   display: flex;
   align-items: flex-end;
   overflow: hidden;
-  background-color: #151933;
+  background-color: #1b2038;
 }
 
-/* 奥の景色。少し大きめに敷いて、視差で動かしても端が見えないようにする */
-.hero-scenery {
+/* トップの絵。少し大きめに敷いて、指・マウスの動きやスクロールでずらしても端が見えないようにする */
+.hero-art {
   position: absolute;
-  inset: -3%;
-  width: 106%;
-  height: 106%;
-  translate: calc(var(--px, 0) * -12px) calc(var(--py, 0) * -6px);
-  transition: translate 0.4s ease-out;
-  animation: scene-in 1.6s ease-out both;
-}
-
-@keyframes scene-in {
-  from { opacity: 0; }
-}
-
-/* 手前の人物。高さ基準で大きさを決め、頭が夕日に重なる位置に立たせる */
-.hero-figure {
-  position: absolute;
-  bottom: -2%;
-  left: 50%;
-  height: 62%;
-  width: auto;
+  inset: -4%;
+  width: 108%;
+  height: 108%;
   max-width: none;
-  margin-left: calc(62vh * -0.3846); /* 高さ×(400/520)÷2 だけ左へ寄せて中央に置く */
-  margin-left: calc(62svh * -0.3846);
-  translate: calc(var(--px, 0) * 16px) calc(var(--py, 0) * 5px);
-  transition: translate 0.4s ease-out;
-  animation: figure-in 1.4s 0.2s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  object-fit: cover;
+  object-position: 50% 42%;
+  translate: calc(var(--px, 0) * -10px) calc(var(--py, 0) * -6px);
+  transition: translate 0.5s ease-out;
+  animation: art-in 2.4s cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
 
-@keyframes figure-in {
+/* 読み込み時：少し寄った状態から、ゆっくり引いていく */
+@keyframes art-in {
   from {
     opacity: 0;
-    transform: translateY(40px);
+    scale: 1.1;
   }
+}
+
+/* スクロールすると絵がゆっくり沈む（パララックス） */
+@supports (animation-timeline: scroll()) {
+  .hero-art {
+    animation: art-in 2.4s cubic-bezier(0.2, 0.8, 0.2, 1) both, art-drift linear both;
+    animation-timeline: auto, scroll(root);
+    animation-range: normal, 0 100vh;
+  }
+}
+
+@keyframes art-drift {
+  to { transform: translateY(9%); }
 }
 
 /* 文字を読みやすくするため、下端を背景色へなじませる */
 .hero-shade {
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(11, 11, 16, 0) 52%, rgba(11, 11, 16, 0.6) 84%, var(--bg) 100%);
+  background: linear-gradient(180deg, rgba(11, 11, 16, 0.25) 0%, rgba(11, 11, 16, 0) 18%, rgba(11, 11, 16, 0) 60%, rgba(11, 11, 16, 0.55) 86%, var(--bg) 100%);
   pointer-events: none;
 }
-
-/* 絵の色 */
-.ink-sun { fill: #f6a04d; }
-.ink-ring { fill: none; stroke: #efe6d3; stroke-width: 1.5; opacity: 0.7; }
-.ink-cream { fill: #efe6d3; opacity: 0.85; }
-.ink-cloud { fill: #1d2340; }
-.ink-hill { fill: #3c4268; }
-.ink-navy { fill: #1d2340; }
-.ink-sea { fill: #151933; }
-.ink-stars circle { fill: #efe6d3; opacity: 0.7; }
-
-/* スクロールすると夕日が沈む（対応ブラウザのみ） */
-@supports (animation-timeline: scroll()) {
-  .sun {
-    animation: sunset linear both;
-    animation-timeline: scroll(root);
-    animation-range: 0 90vh;
-  }
-}
-
-@keyframes sunset {
-  to { transform: translateY(190px); }
-}
-
-.ink-waves path {
-  fill: none;
-  stroke: #efe6d3;
-  stroke-linecap: round;
-  animation: wave-drift 9s linear infinite;
-}
-
-.ink-waves path:nth-child(2n) { animation-duration: 12s; animation-direction: reverse; }
-.ink-waves path:nth-child(3n) { animation-duration: 15s; }
-.ink-waves path:nth-child(5n) { animation-duration: 7s; animation-direction: reverse; }
-
-/* 波1つ分（100）だけ横にずらして繰り返すので、継ぎ目なく流れ続ける */
-@keyframes wave-drift {
-  to { transform: translateX(-100px); }
-}
-
-.ink-glints path {
-  fill: none;
-  stroke: #f6a04d;
-  stroke-width: 4;
-  stroke-linecap: round;
-  animation: glint 2.6s ease-in-out infinite alternate;
-}
-
-.ink-glints path:nth-child(2n) { animation-delay: -1.1s; }
-.ink-glints path:nth-child(3n) { animation-delay: -1.9s; }
-
-@keyframes glint {
-  from { opacity: 0.3; }
-  to { opacity: 0.8; }
-}
-
-/* 人物の色 */
-.fig-top { fill: #4b5574; }
-.fig-fold { fill: none; stroke: #3b4462; stroke-width: 5; stroke-linecap: round; }
-.fig-collar { fill: none; stroke: #39415d; stroke-width: 11; stroke-linecap: round; }
-.fig-skin { fill: #c98f6b; }
-.fig-shade { fill: #9a6650; }
-.fig-hair { fill: #15131a; }
-.fig-nape { fill: #2c2732; }
-.fig-strand { fill: none; stroke: #25212d; stroke-width: 2.5; stroke-linecap: round; }
-.fig-rim { fill: none; stroke: #f6a04d; stroke-width: 3; stroke-linecap: round; opacity: 0.85; }
-.fig-rim-thin { stroke-width: 2.5; }
 
 .hero-inner {
   position: relative;
@@ -912,13 +843,6 @@ a {
 /* =========
    レスポンシブ
    ========= */
-
-/* スマホを横向きにしたときは、大見出しに頭が隠れないよう人物を右へ寄せる */
-@media (orientation: landscape) and (max-height: 480px) {
-  .hero-figure {
-    left: 80%;
-  }
-}
 
 @media (max-width: 640px) {
   .logo {

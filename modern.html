@@ -41,76 +41,12 @@
     <main id="top">
       <!-- ===== ヒーロー：写真を全面に敷き、名前を大きく重ねる ===== -->
       <section class="hero">
-        <!-- トップの絵：夕景を見つめる後ろ姿（画像ファイルではなく、この SVG で描いている）
-             奥の景色と手前の人物を別々の層にしてあり、指・マウスの動きで少しずれて奥行きが出る -->
-        <svg class="hero-scenery" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
-          <defs>
-            <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0" stop-color="#0d0f1c" />
-              <stop offset="0.5" stop-color="#262240" />
-              <stop offset="0.82" stop-color="#7d4447" />
-              <stop offset="1" stop-color="#d4743f" />
-            </linearGradient>
-          </defs>
-          <rect width="1600" height="566" fill="url(#sky)" />
-          <g class="ink-stars"><circle cx="210" cy="90" r="2" /><circle cx="380" cy="190" r="1.5" /><circle cx="520" cy="70" r="1.8" /><circle cx="640" cy="150" r="1.3" /><circle cx="730" cy="60" r="1.6" /><circle cx="905" cy="110" r="1.4" /><circle cx="1010" cy="60" r="2" /><circle cx="1130" cy="170" r="1.5" /><circle cx="1290" cy="90" r="1.8" /><circle cx="1420" cy="200" r="1.4" /><circle cx="1500" cy="60" r="1.6" /><circle cx="90" cy="240" r="1.4" /><circle cx="860" cy="210" r="1.2" /><circle cx="1220" cy="260" r="1.3" /><circle cx="450" cy="280" r="1.3" /></g>
-          <g class="sun">
-            <circle class="ink-sun" cx="800" cy="452" r="158" />
-            <circle class="ink-ring" cx="809" cy="445" r="158" />
-          </g>
-          <!-- 雲（細い帯） -->
-          <path class="ink-cream" d="M352 372h214a8 8 0 0 1 0 16H352a8 8 0 0 1 0-16z" />
-          <path class="ink-cloud" d="M1010 318h188a6 6 0 0 1 0 12h-188a6 6 0 0 1 0-12z" />
-          <path class="ink-cloud" d="M196 452h120a5 5 0 0 1 0 10H196a5 5 0 0 1 0-10z" />
-          <path class="ink-cream" d="M1180 430h150a5 5 0 0 1 0 10h-150a5 5 0 0 1 0-10z" />
-          <!-- 山並み -->
-          <path class="ink-hill" d="M0 566V470c80-34 150-44 230-14 70 26 110 70 190 84 70 12 130 14 200 14h360c70 0 130-8 190-40 80-42 150-76 250-58 70 12 120 34 180 30v80z" />
-          <path class="ink-navy" d="M0 566v-40c70-22 130-10 200 8 60 16 120 24 190 26h820c70-2 130-12 190-32 70-22 130-26 200-8v46z" />
-          <!-- 海 -->
-          <rect class="ink-sea" y="560" width="1600" height="440" />
-          <g class="ink-glints">
-            <path d="M635 574h330" />
-            <path d="M675 590h250" />
-            <path d="M645 610h310" />
-            <path d="M695 634h210" />
-            <path d="M665 664h270" />
-            <path d="M715 700h170" />
-            <path d="M685 742h230" />
-            <path d="M730 792h140" />
-            <path d="M705 850h190" />
-          </g>
-          <g class="ink-waves">
-            <path d="M-200 582q25 -3 50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0" stroke-width="1.6" opacity="0.45" />
-            <path d="M-200 606q25 -4 50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0" stroke-width="1.8" opacity="0.5" />
-            <path d="M-200 636q25 -5 50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0" stroke-width="2.0" opacity="0.55" />
-            <path d="M-200 674q25 -6 50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0" stroke-width="2.3" opacity="0.6" />
-            <path d="M-200 720q25 -8 50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0" stroke-width="2.6" opacity="0.65" />
-            <path d="M-200 776q25 -10 50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0" stroke-width="3.0" opacity="0.7" />
-            <path d="M-200 842q25 -12 50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0" stroke-width="3.4" opacity="0.75" />
-            <path d="M-200 918q25 -14 50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0" stroke-width="3.8" opacity="0.8" />
-          </g>
-        </svg>
-        <svg class="hero-figure" viewBox="0 0 400 520" role="img" aria-label="夕日と海を見つめる、黒髪の男性の後ろ姿のイラスト">
-          <!-- 肩・背中（灰青のトップス） -->
-          <path class="fig-top" d="M10 520C14 432 26 356 76 322c34-22 62-30 84-46h80c22 16 50 24 84 46 50 34 62 110 66 198z" />
-          <path class="fig-fold" d="M96 520c2-52 8-96 22-132M304 520c-2-52-8-96-22-132M168 520c0-30 2-58 6-84" />
-          <!-- 肩に当たる夕日の光 -->
-          <path class="fig-rim" d="M30 392c10-34 24-56 48-71 32-21 60-29 82-45M370 392c-10-34-24-56-48-71-32-21-60-29-82-45" />
-          <!-- 首 -->
-          <path class="fig-skin" d="M166 196h68v82c-14 16-54 16-68 0z" />
-          <path class="fig-shade" d="M166 226c20 14 48 14 68 0v-30h-68z" />
-          <!-- えり -->
-          <path class="fig-collar" d="M158 274c14 22 70 22 84 0" />
-          <!-- 耳（上半分は髪に隠れる） -->
-          <ellipse class="fig-skin" cx="129" cy="182" rx="9" ry="16" />
-          <ellipse class="fig-skin" cx="271" cy="182" rx="9" ry="16" />
-          <!-- 後頭部の短い髪（えり足に向かって細くなる） -->
-          <path class="fig-nape" d="M134 168c0 30 14 52 34 62 12 6 22 14 32 14s20-8 32-14c20-10 34-32 34-62z" />
-          <!-- 上にかぶさる重めの髪（毛先はやわらかく不ぞろい） -->
-          <path class="fig-hair" d="M116 132C112 76 150 44 200 44s88 32 84 88c2 20-2 36-10 46-10 6-18-2-28 4s-18-4-28 2c-8 4-12-2-18 0-6-2-10 4-18 0-10-6-18 4-28-2s-18 2-28-4c-8-10-12-26-10-46z" />
-          <path class="fig-strand" d="M152 72c-16 22-22 48-18 82M200 56c-4 30-4 80 0 124M248 72c16 22 22 48 18 82" />
-          <path class="fig-rim fig-rim-thin" d="M134 86C148 61 171 47 200 47s52 14 66 39" />
-        </svg>
+        <!-- トップの絵：夕景を見つめる後ろ姿のイラスト
+             横長の画面（PC・横向き）では hero-wide.jpg、縦長の画面（スマホ）では hero-tall.jpg を表示する -->
+        <picture>
+          <source media="(min-aspect-ratio: 1/1)" srcset="images/hero-wide.jpg" width="1536" height="1024" />
+          <img class="hero-art" src="images/hero-tall.jpg" alt="夕日と海を見つめる、黒髪の男性の後ろ姿のイラスト" width="1024" height="1536" fetchpriority="high" />
+        </picture>
         <div class="hero-shade" aria-hidden="true"></div>
         <div class="container hero-inner">
           <p class="eyebrow">Singer / Songwriter</p>

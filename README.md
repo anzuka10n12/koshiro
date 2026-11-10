@@ -8,6 +8,7 @@ GitHub Pages で無料公開している静的サイト。レトロ版は HTML/C
 | `modern.html` / `style.css` | 今風デザイン版 |
 | `main.js` | 今風版の補助スクリプト（トップの絵に指・マウスで奥行きをつける、メニューの現在地表示、古いブラウザ向けの代替表示）。無くても全部読める |
 | `fonts/` | 今風版の見出し用フォント（Syne / Instrument Serif、OFLライセンス。ライセンス文を同梱） |
+| `images/hero-wide.jpg` / `images/hero-tall.jpg` | 今風版のトップの絵（横長画面用／縦長画面用）。差し替えるときは同じファイル名・同じ縦横比（3:2／2:3）で上書きする |
 | `images/` | 写真・背景画像 |
 | `.nojekyll` | GitHub Pages の Jekyll 変換を無効化 |
 
