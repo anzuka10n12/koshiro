@@ -188,6 +188,16 @@ a {
    ========= */
 
 .hero {
+  background:
+    radial-gradient(circle at 62% 47%, rgba(255, 205, 140, 0.9) 0, rgba(245, 160, 76, 0.75) 9%, rgba(245, 150, 70, 0.16) 10%, transparent 34%),
+    linear-gradient(180deg, #0b0b10 0%, #17131d 34%, #2a1c1e 52%, #100f15 52.2%, #0b0b10 100%);
+}
+
+.hero.has-scene {
+  background: none;
+}
+
+.hero {
   position: relative;
   min-height: 100vh;
   min-height: 100svh;
@@ -196,68 +206,33 @@ a {
   overflow: hidden;
 }
 
-.hero-photo {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: 65% 30%;
-  animation: slow-zoom 18s ease-out both;
-}
-
-/* スクロールすると写真がゆっくり沈む（パララックス） */
-@supports (animation-timeline: scroll()) {
-  .hero-photo {
-    animation: slow-zoom 18s ease-out both, photo-drift linear both;
-    animation-timeline: auto, scroll(root);
-    animation-range: normal, 0 100vh;
-  }
-}
-
-@keyframes slow-zoom {
-  from { scale: 1.14; }
-  to { scale: 1; }
-}
-
-@keyframes photo-drift {
-  to { translate: 0 12%; }
-}
-
-/* 文字を読みやすくするための暗いグラデーション */
+/* 文字を読みやすくするため、下端を背景色へなじませる */
 .hero-shade {
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(11, 11, 16, 0.4) 0%, rgba(11, 11, 16, 0.5) 45%, var(--bg) 100%),
-    linear-gradient(90deg, rgba(11, 11, 16, 0.7) 0%, rgba(11, 11, 16, 0) 70%);
+  z-index: 1;
+  background: linear-gradient(180deg, rgba(11, 11, 16, 0) 55%, rgba(11, 11, 16, 0.55) 82%, var(--bg) 100%);
+  pointer-events: none;
 }
 
-/* マウスの位置に追従するやわらかい光（main.js が --mx / --my を更新。JavaScriptなしでも中央付近に固定で表示） */
-.hero-shade::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(34rem circle at var(--mx, 70%) var(--my, 35%), rgba(245, 177, 76, 0.2), transparent 65%);
-  mix-blend-mode: screen;
-}
-
-/* 音の波形の描画（main.js） */
-.hero-wave {
+/* 音の波でできた夕景（main.js が描く） */
+.hero-scene {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   pointer-events: none;
-  animation: wave-in 2.4s 0.3s ease-out both;
+  animation: scene-in 2.2s 0.1s ease-out both;
 }
 
-@keyframes wave-in {
+@keyframes scene-in {
   from { opacity: 0; }
   to { opacity: 1; }
 }
 
 .hero-inner {
   position: relative;
+  z-index: 2;
   width: 100%;
   padding-top: 6rem;
   padding-bottom: clamp(2rem, 6vh, 4rem);
@@ -910,18 +885,8 @@ a {
    レスポンシブ
    ========= */
 
-/* PCでは縦長写真を右側に寄せて、ぼやけ過ぎないようにする */
 @media (min-width: 900px) {
-  .hero-photo {
-    left: auto;
-    right: 0;
-    width: 58%;
-    object-position: 50% 30%;
-    -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 40%);
-    mask-image: linear-gradient(90deg, transparent 0%, #000 40%);
-  }
-
-  /* 回転バッジが顔に重ならないよう左側に寄せる */
+  /* 回転バッジは肩書きの横に置く */
   .hero-top {
     justify-content: flex-start;
     gap: 2.5rem;
