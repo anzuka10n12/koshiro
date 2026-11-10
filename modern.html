@@ -3,8 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- セキュリティ：自サイトの画像・CSS以外は一切読み込まない（JavaScriptなし） -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src 'self'; style-src 'self'; base-uri 'none'; form-action 'none'" />
+    <!-- セキュリティ：自サイト内の画像・CSS・フォント・main.js 以外は一切読み込まない（外部スクリプト・インラインスクリプト・通信はすべて禁止） -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src 'self'; style-src 'self'; font-src 'self'; script-src 'self'; base-uri 'none'; form-action 'none'" />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
     <title>航士朗のホームページ</title>
     <meta name="description" content="シンガーソングライター 航士朗（KOSHIRO）のオフィシャルサイト。" />
@@ -20,18 +20,22 @@
     <link rel="icon" href="images/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="images/apple-touch-icon.png" />
     <link rel="stylesheet" href="style.css" />
+    <script src="main.js" defer></script>
   </head>
   <body>
     <header class="site-header">
       <div class="container header-inner">
         <a href="#top" class="logo">KOSHIRO</a>
-        <nav class="nav">
+        <nav class="nav" aria-label="メニュー">
           <a href="#youtube">YouTube</a>
+          <a href="#news">News</a>
           <a href="#about">About</a>
           <a href="#contact">SNS</a>
-          <a href="index.html">Retro</a>
+          <a href="index.html" class="nav-retro">Retro</a>
         </nav>
       </div>
+      <!-- スクロール量に合わせて伸びる進捗バー（対応ブラウザのみ・JavaScript不要） -->
+      <div class="progress" aria-hidden="true"></div>
     </header>
 
     <main id="top">
@@ -40,11 +44,25 @@
         <img class="hero-photo" src="images/hero.jpg" alt="" width="899" height="1125" />
         <div class="hero-shade" aria-hidden="true"></div>
         <div class="container hero-inner">
-          <p class="eyebrow">Singer / Songwriter</p>
-          <h1 class="hero-title">KOSHIRO</h1>
-          <p class="hero-name">航士朗</p>
-          <!-- TODO: キャッチコピーを差し替え -->
-          <p class="hero-text">日々の景色を音にして届ける</p>
+          <div class="hero-top">
+            <p class="eyebrow">Singer / Songwriter</p>
+            <!-- 回転する円形バッジ（押すとYouTube欄へ移動） -->
+            <a class="badge" href="#youtube" aria-label="YouTubeの欄へ移動">
+              <svg class="badge-ring" viewBox="0 0 200 200" aria-hidden="true" focusable="false">
+                <defs><path id="badge-circle" d="M100 100m-78 0a78 78 0 1 1 156 0a78 78 0 1 1-156 0" /></defs>
+                <text><textPath href="#badge-circle" textLength="480">KOSHIRO ・ SINGER / SONGWRITER ・ OFFICIAL SITE ・</textPath></text>
+              </svg>
+              <svg class="badge-play" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 5v14l11-7z" /></svg>
+            </a>
+          </div>
+          <!-- 1文字ずつ順番に現れる（読み上げソフトには aria-label の「KOSHIRO」だけが伝わる） -->
+          <h1 class="hero-title" aria-label="KOSHIRO">
+            <span aria-hidden="true">K</span><span aria-hidden="true">O</span><span aria-hidden="true">S</span><span aria-hidden="true">H</span><span aria-hidden="true">I</span><span aria-hidden="true">R</span><span aria-hidden="true">O</span>
+          </h1>
+          <div class="hero-meta">
+            <p class="hero-name">航士朗</p>
+            <a class="scroll-cue" href="#statement">Scroll</a>
+          </div>
         </div>
       </section>
 
@@ -56,11 +74,21 @@
         </div>
       </div>
 
+      <!-- ===== キャッチコピー：スクロールに合わせて1行ずつ明るくなる ===== -->
+      <section id="statement" class="statement">
+        <div class="container">
+          <!-- TODO: キャッチコピーを差し替え（行ごとに <span> で区切る） -->
+          <p class="statement-text"><span>日々の景色を</span><span>音にして</span><span>届ける</span></p>
+        </div>
+      </section>
+
       <!-- ===== YouTube ===== -->
       <section id="youtube" class="section">
         <div class="container reveal">
-          <p class="section-num">01</p>
-          <h2 class="section-title">YouTube</h2>
+          <div class="section-head">
+            <p class="section-num">01</p>
+            <h2 class="section-title">YouTube</h2>
+          </div>
           <p class="section-subtitle">歌唱・演奏動画を公開予定です</p>
           <!--
             動画の貼り方：
@@ -76,6 +104,8 @@
                 <svg class="video-play" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 5v14l11-7z"/></svg>
                 <p class="coming">Coming soon</p>
               </div>
+              <!-- 飾りのイコライザー（動画を貼ったらこの div ごと消す） -->
+              <div class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
             </div>
           </div>
           <!-- TODO: 今はYouTubeのトップページ。チャンネルができたらチャンネルURLに差し替える -->
@@ -83,13 +113,33 @@
         </div>
       </section>
 
-      <!-- ===== About ===== -->
-      <section id="about" class="section section-alt">
-        <div class="container about reveal">
-          <img class="about-photo" src="images/photo.jpg" alt="航士朗の写真" width="300" height="375" />
-          <div>
+      <!-- ===== News：お知らせは新しいものを上に追加（<li>ごとコピー） ===== -->
+      <section id="news" class="section section-alt">
+        <div class="container reveal">
+          <div class="section-head">
             <p class="section-num">02</p>
-            <h2 class="section-title">About</h2>
+            <h2 class="section-title">News</h2>
+          </div>
+          <ul class="news-list">
+            <li>
+              <time datetime="2026-10-28">2026.10.28</time>
+              <p>ホームページを開設しました <span class="new">New</span></p>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ===== About ===== -->
+      <section id="about" class="section">
+        <div class="container about reveal">
+          <div class="about-figure">
+            <img class="about-photo" src="images/photo.jpg" alt="航士朗の写真" width="300" height="375" loading="lazy" />
+          </div>
+          <div>
+            <div class="section-head">
+              <p class="section-num">03</p>
+              <h2 class="section-title">About</h2>
+            </div>
             <dl class="profile">
               <dt>Name</dt><dd>航士朗（KOSHIRO）</dd>
               <dt>Birthday</dt><dd>8月26日</dd>
@@ -106,10 +156,12 @@
       </section>
 
       <!-- ===== SNS ===== -->
-      <section id="contact" class="section">
+      <section id="contact" class="section section-alt">
         <div class="container reveal">
-          <p class="section-num">03</p>
-          <h2 class="section-title">SNS</h2>
+          <div class="section-head">
+            <p class="section-num">04</p>
+            <h2 class="section-title">SNS</h2>
+          </div>
           <p class="section-subtitle">準備中</p>
           <!-- TODO: 今は各SNSのトップページ。アカウントができたら個別URLに差し替える -->
           <!-- アイコンは Simple Icons（CC0）の公式ロゴ形状 -->
@@ -124,7 +176,14 @@
     </main>
 
     <footer class="site-footer">
-      <small>© KOSHIRO. All Rights Reserved.</small>
+      <p class="footer-giant" aria-hidden="true">KOSHIRO</p>
+      <div class="container footer-inner">
+        <nav class="footer-nav" aria-label="フッター">
+          <a href="#top">Back to top</a>
+          <a href="index.html">レトロ版を見る</a>
+        </nav>
+        <small>© KOSHIRO. All Rights Reserved.</small>
+      </div>
     </footer>
   </body>
 </html>
