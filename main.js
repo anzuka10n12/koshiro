@@ -1,5 +1,5 @@
 /*
-  今風版（modern.html）専用のスクリプト。無くてもページは全部読める（その場合もジャケットは表示され、自動でゆっくり揺れる）。
+  今風版（modern.html）専用のスクリプト。無くてもページは全部読める（その場合もトップの絵は表示される）。
 
   セキュリティ方針：
   - このファイル1つだけを自サイトから読み込む（CSP: script-src 'self'。外部スクリプト・インラインスクリプトは禁止のまま）
@@ -14,35 +14,25 @@
   var hero = document.querySelector(".hero");
 
   /* =========
-     1. トップのレコードジャケットを、指・マウスの位置に合わせて傾ける
-        （操作していない間は CSS 側のゆっくりした揺れに戻る）
+     1. トップの絵に奥行きをつける
+        指・マウスの位置に合わせて、奥の景色と手前の人物を少しだけ逆向きにずらす（視差）
      ========= */
-  var cover = hero && hero.querySelector(".cover");
-  if (cover && !reduceMotion) {
+  if (hero && !reduceMotion) {
     var waiting = false;
-    var idle = 0;
     hero.addEventListener("pointermove", function (event) {
       if (waiting) return;
       waiting = true;
       requestAnimationFrame(function () {
         var box = hero.getBoundingClientRect();
-        var nx = (event.clientX - box.left) / box.width - 0.5; /* -0.5（左）〜 0.5（右） */
-        var ny = (event.clientY - box.top) / box.height - 0.5;
-        cover.classList.add("is-live");
-        cover.style.setProperty("--ry", (nx * 30).toFixed(2) + "deg");
-        cover.style.setProperty("--rx", (-ny * 20).toFixed(2) + "deg");
-        cover.style.setProperty("--gx", (45 + nx * 70).toFixed(1) + "%");
+        /* -1（左・上）〜 1（右・下） */
+        hero.style.setProperty("--px", (((event.clientX - box.left) / box.width - 0.5) * 2).toFixed(3));
+        hero.style.setProperty("--py", (((event.clientY - box.top) / box.height - 0.5) * 2).toFixed(3));
         waiting = false;
       });
-      /* 指を離して少し経ったら、自動の揺れに戻す */
-      clearTimeout(idle);
-      idle = setTimeout(function () {
-        cover.classList.remove("is-live");
-      }, 2500);
     });
     hero.addEventListener("pointerleave", function () {
-      clearTimeout(idle);
-      cover.classList.remove("is-live");
+      hero.style.setProperty("--px", "0");
+      hero.style.setProperty("--py", "0");
     });
   }
 

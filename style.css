@@ -184,7 +184,7 @@ a {
 }
 
 /* =========
-   ヒーロー（トップ）：レコードジャケット
+   ヒーロー（トップ）：夕景を見つめる後ろ姿
    ========= */
 
 .hero {
@@ -192,156 +192,78 @@ a {
   min-height: 100vh;
   min-height: 100svh;
   display: flex;
+  align-items: flex-end;
   overflow: hidden;
+  background-color: #151933;
 }
 
-/* ジャケットの色が周りの闇ににじむ光 */
-.hero-glow {
+/* 奥の景色。少し大きめに敷いて、視差で動かしても端が見えないようにする */
+.hero-scenery {
   position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(52rem circle at 62% 36%, rgba(240, 138, 60, 0.2), transparent 62%),
-    radial-gradient(40rem circle at 12% 88%, rgba(91, 100, 133, 0.2), transparent 60%);
+  inset: -3%;
+  width: 106%;
+  height: 106%;
+  translate: calc(var(--px, 0) * -12px) calc(var(--py, 0) * -6px);
+  transition: translate 0.4s ease-out;
+  animation: scene-in 1.6s ease-out both;
 }
 
-.hero-inner {
-  position: relative;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  padding-top: 5rem;
-  padding-bottom: clamp(1.5rem, 5vh, 3.5rem);
+@keyframes scene-in {
+  from { opacity: 0; }
 }
 
-/* スクロールすると全体が上へ抜けていく */
-@supports (animation-timeline: scroll()) {
-  .hero-inner {
-    animation: hero-out linear both;
-    animation-timeline: scroll(root);
-    animation-range: 10vh 85vh;
-  }
+/* 手前の人物。高さ基準で大きさを決め、頭が夕日に重なる位置に立たせる */
+.hero-figure {
+  position: absolute;
+  bottom: -2%;
+  left: 50%;
+  height: 62%;
+  width: auto;
+  max-width: none;
+  margin-left: calc(62vh * -0.3846); /* 高さ×(400/520)÷2 だけ左へ寄せて中央に置く */
+  margin-left: calc(62svh * -0.3846);
+  translate: calc(var(--px, 0) * 16px) calc(var(--py, 0) * 5px);
+  transition: translate 0.4s ease-out;
+  animation: figure-in 1.4s 0.2s cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
 
-@keyframes hero-out {
-  to {
-    opacity: 0;
-    transform: translateY(-72px);
-  }
-}
-
-/* ジャケットを置く場所（残りの高さいっぱいを使い、その中央に置く） */
-.stage {
-  --size: min(68vw, 44vh);
-  flex: 1;
-  display: grid;
-  place-items: center;
-  padding: 1.5rem 0 2rem;
-}
-
-.cover {
-  position: relative;
-  width: var(--size);
-  aspect-ratio: 1;
-  /* レコード盤が右にのぞく分だけ左へ寄せて、全体として中央に見せる */
-  translate: -15% 0;
-  perspective: 1100px;
-  animation: cover-in 1.3s 0.1s cubic-bezier(0.2, 0.8, 0.2, 1) both;
-}
-
-@keyframes cover-in {
+@keyframes figure-in {
   from {
     opacity: 0;
-    transform: translateY(40px) scale(0.92);
-  }
-  to {
-    opacity: 1;
-    transform: none;
+    transform: translateY(40px);
   }
 }
 
-/* レコード盤：溝・光沢・中央ラベルをグラデーションだけで描く */
-.vinyl {
-  position: absolute;
-  inset: 3%;
-  border-radius: 50%;
-  translate: 42% 0;
-  background:
-    radial-gradient(circle, #0b0b10 0 1.6%, var(--accent) 1.9% 15%, #08080b 15.4% 17%, transparent 17.4%),
-    conic-gradient(from 25deg, rgba(255, 255, 255, 0) 0 7%, rgba(255, 255, 255, 0.16) 12%, rgba(255, 255, 255, 0) 18% 50%, rgba(255, 255, 255, 0.12) 61%, rgba(255, 255, 255, 0) 68% 100%),
-    repeating-radial-gradient(circle, #1a1a20 0 1.5px, #0c0c10 1.5px 3px);
-  box-shadow: 0 24px 50px -18px rgba(0, 0, 0, 0.9), inset 0 0 0 1px rgba(255, 255, 255, 0.06);
-  animation: spin 7s linear infinite, vinyl-out 1.5s 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
-}
-
-@keyframes spin {
-  to { rotate: 360deg; }
-}
-
-/* 読み込み時、ジャケットの中からレコード盤がすっと出てくる */
-@keyframes vinyl-out {
-  from { translate: 0 0; }
-}
-
-/* ジャケット本体。main.js が指・マウスの位置に合わせて --rx / --ry / --gx を更新する。
-   操作していない間（と JavaScript が無いとき）は、ゆっくり左右に揺れる */
-.jacket {
+/* 文字を読みやすくするため、下端を背景色へなじませる */
+.hero-shade {
   position: absolute;
   inset: 0;
-  overflow: hidden;
-  border-radius: 3px;
-  background-color: #efe6d3;
-  box-shadow: 0 36px 70px -24px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(0, 0, 0, 0.25);
-  transform: rotateX(var(--rx, 3deg)) rotateY(var(--ry, -10deg));
-  transition: transform 0.25s ease-out;
-  animation: sway 9s ease-in-out infinite alternate;
-}
-
-.cover.is-live .jacket {
-  animation: none;
-}
-
-@keyframes sway {
-  from { transform: rotateX(4deg) rotateY(-13deg); }
-  to { transform: rotateX(-2deg) rotateY(9deg); }
-}
-
-/* 紙のざらつき（粒子を黒に反転して重ねる） */
-.jacket::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  background-image: url("images/grain.svg");
-  filter: invert(1);
-  mix-blend-mode: multiply;
-  opacity: 0.3;
+  background: linear-gradient(180deg, rgba(11, 11, 16, 0) 52%, rgba(11, 11, 16, 0.6) 84%, var(--bg) 100%);
   pointer-events: none;
 }
 
-/* 表面の照り返しと、左端の背の影 */
-.jacket::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  background:
-    linear-gradient(105deg, rgba(255, 255, 255, 0) 20%, rgba(255, 255, 255, 0.24) var(--gx, 42%), rgba(255, 255, 255, 0) 72%),
-    linear-gradient(90deg, rgba(0, 0, 0, 0.22), rgba(0, 0, 0, 0) 3.5%);
-  pointer-events: none;
-}
-
-.cover-art {
-  display: block;
-  width: 100%;
-  height: 100%;
-}
-
-/* 絵の色（紙・橙・紺・灰青の4色刷り） */
-.ink-paper { fill: #efe6d3; }
-.ink-sun { fill: #f08a3c; }
-.ink-ring { fill: none; stroke: #1d2340; stroke-width: 1.5; }
+/* 絵の色 */
+.ink-sun { fill: #f6a04d; }
+.ink-ring { fill: none; stroke: #efe6d3; stroke-width: 1.5; opacity: 0.7; }
+.ink-cream { fill: #efe6d3; opacity: 0.85; }
+.ink-cloud { fill: #1d2340; }
+.ink-hill { fill: #3c4268; }
 .ink-navy { fill: #1d2340; }
-.ink-hill { fill: #6a7396; }
+.ink-sea { fill: #151933; }
+.ink-stars circle { fill: #efe6d3; opacity: 0.7; }
+
+/* スクロールすると夕日が沈む（対応ブラウザのみ） */
+@supports (animation-timeline: scroll()) {
+  .sun {
+    animation: sunset linear both;
+    animation-timeline: scroll(root);
+    animation-range: 0 90vh;
+  }
+}
+
+@keyframes sunset {
+  to { transform: translateY(190px); }
+}
 
 .ink-waves path {
   fill: none;
@@ -361,8 +283,8 @@ a {
 
 .ink-glints path {
   fill: none;
-  stroke: #f08a3c;
-  stroke-width: 5;
+  stroke: #f6a04d;
+  stroke-width: 4;
   stroke-linecap: round;
   animation: glint 2.6s ease-in-out infinite alternate;
 }
@@ -371,23 +293,54 @@ a {
 .ink-glints path:nth-child(3n) { animation-delay: -1.9s; }
 
 @keyframes glint {
-  from { opacity: 0.45; }
-  to { opacity: 1; }
+  from { opacity: 0.3; }
+  to { opacity: 0.8; }
 }
 
-.t-role {
-  fill: #1d2340;
+/* 人物の色 */
+.fig-top { fill: #4b5574; }
+.fig-fold { fill: none; stroke: #3b4462; stroke-width: 5; stroke-linecap: round; }
+.fig-collar { fill: none; stroke: #39415d; stroke-width: 11; stroke-linecap: round; }
+.fig-skin { fill: #c98f6b; }
+.fig-shade { fill: #9a6650; }
+.fig-hair { fill: #15131a; }
+.fig-nape { fill: #2c2732; }
+.fig-strand { fill: none; stroke: #25212d; stroke-width: 2.5; stroke-linecap: round; }
+.fig-rim { fill: none; stroke: #f6a04d; stroke-width: 3; stroke-linecap: round; opacity: 0.85; }
+.fig-rim-thin { stroke-width: 2.5; }
+
+.hero-inner {
+  position: relative;
+  width: 100%;
+  padding-top: 6rem;
+  padding-bottom: clamp(1.5rem, 5vh, 3.5rem);
+}
+
+/* スクロールすると名前が上へ抜けていく */
+@supports (animation-timeline: scroll()) {
+  .hero-inner {
+    animation: hero-out linear both;
+    animation-timeline: scroll(root);
+    animation-range: 10vh 85vh;
+  }
+}
+
+@keyframes hero-out {
+  to {
+    opacity: 0;
+    transform: translateY(-72px);
+  }
+}
+
+.eyebrow {
+  margin: 0;
+  color: var(--accent);
   font-family: var(--font-serif);
   font-style: italic;
-  font-size: 28px;
-}
-
-.t-name {
-  fill: #1d2340;
-  font-family: system-ui, -apple-system, "Hiragino Sans", "Yu Gothic", sans-serif;
-  font-weight: 700;
-  font-size: 34px;
-  letter-spacing: 0.3em;
+  font-size: clamp(1.4rem, 3.4vw, 2.1rem);
+  line-height: 1.1;
+  text-shadow: 0 1px 12px rgba(11, 11, 16, 0.6);
+  animation: fade-up 0.9s 0.1s cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
 
 .hero-title {
@@ -430,10 +383,18 @@ a {
 .hero-meta {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
-  border-top: 1px solid var(--line);
+  justify-content: space-between;
+  gap: 1rem;
   padding-top: 0.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.25);
   animation: fade-up 0.9s 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.hero-name {
+  margin: 0;
+  font-size: clamp(1.1rem, 3vw, 1.5rem);
+  font-weight: 700;
+  letter-spacing: 0.3em;
 }
 
 .scroll-cue {
@@ -952,10 +913,10 @@ a {
    レスポンシブ
    ========= */
 
-/* PCではジャケットを少し大きくする */
-@media (min-width: 900px) {
-  .stage {
-    --size: min(50vh, 36vw);
+/* スマホを横向きにしたときは、大見出しに頭が隠れないよう人物を右へ寄せる */
+@media (orientation: landscape) and (max-height: 480px) {
+  .hero-figure {
+    left: 80%;
   }
 }
 
