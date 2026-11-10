@@ -437,39 +437,6 @@ a {
 }
 
 /* =========
-   流れる帯
-   ========= */
-
-.marquee {
-  overflow: hidden;
-  border-block: 1px solid var(--line);
-  padding: 0.9rem 0;
-  white-space: nowrap;
-}
-
-.marquee-track {
-  display: inline-flex;
-  gap: 3rem;
-  padding-right: 3rem;
-  animation: marquee 28s linear infinite;
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-size: clamp(1.25rem, 3vw, 2rem);
-  letter-spacing: 0.04em;
-  color: transparent;
-  -webkit-text-stroke: 1px var(--muted);
-}
-
-.marquee-track span:nth-child(3n + 2) {
-  color: var(--accent);
-  -webkit-text-stroke: 0;
-}
-
-@keyframes marquee {
-  to { transform: translateX(-50%); }
-}
-
-/* =========
    キャッチコピー
    ========= */
 
@@ -544,20 +511,9 @@ a {
 
 .section-head {
   display: flex;
-  align-items: baseline;
-  gap: 1rem;
   padding-bottom: 1rem;
   margin-bottom: 1.5rem;
   border-bottom: 1px solid var(--line);
-}
-
-.section-num {
-  margin: 0;
-  color: var(--accent);
-  font-family: var(--font-serif);
-  font-style: italic;
-  font-size: clamp(1.5rem, 4vw, 2.25rem);
-  line-height: 1;
 }
 
 .section-title {
