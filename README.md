@@ -6,8 +6,9 @@ GitHub Pages で無料公開している静的サイト。レトロ版は HTML/C
 |---|---|
 | `index.html` / `retro.css` | トップ（阿部寛HP風レトロ版） |
 | `modern.html` / `style.css` | 今風デザイン版 |
-| `main.js` | 今風版のスクリプト（トップの「音の波形」の描画・マウス追従の光・古いブラウザ向けの代替表示）。無くても全部読める（トップは写真だけになる） |
+| `main.js` | 今風版の補助スクリプト（トップの絵に指・マウスで奥行きをつける、メニューの現在地表示、古いブラウザ向けの代替表示）。無くても全部読める |
 | `fonts/` | 今風版の見出し用フォント（Syne / Instrument Serif、OFLライセンス。ライセンス文を同梱） |
+| `images/hero-bg.jpg` / `images/hero-figure.webp` | 今風版のトップの絵。奥の景色と、手前の人物（背景透明）の2層。差し替えるときは同じファイル名で上書きする |
 | `images/` | 写真・背景画像 |
 | `.nojekyll` | GitHub Pages の Jekyll 変換を無効化 |
 

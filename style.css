@@ -184,7 +184,7 @@ a {
 }
 
 /* =========
-   ヒーロー
+   ヒーロー（トップ）：夕景を見つめる後ろ姿
    ========= */
 
 .hero {
@@ -194,73 +194,78 @@ a {
   display: flex;
   align-items: flex-end;
   overflow: hidden;
+  background-color: #1b2038;
 }
 
-.hero-photo {
+/* 奥の景色。少し大きめに敷いて、ずらしても端が見えないようにする */
+.hero-bg {
   position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
+  inset: -5%;
+  width: 110%;
+  height: 110%;
+  max-width: none;
   object-fit: cover;
-  object-position: 65% 30%;
-  animation: slow-zoom 18s ease-out both;
+  object-position: 50% 50%;
+  translate: calc(var(--px, 0) * -12px) calc(var(--py, 0) * -6px);
+  transition: translate 0.5s ease-out;
+  animation: bg-in 2.4s cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
 
-/* スクロールすると写真がゆっくり沈む（パララックス） */
+/* 読み込み時：少し寄った状態から、ゆっくり引いていく */
+@keyframes bg-in {
+  from {
+    opacity: 0;
+    scale: 1.1;
+  }
+}
+
+/* スクロールすると景色だけが下へ流れ、夕日が人物の向こうへ沈んでいく */
 @supports (animation-timeline: scroll()) {
-  .hero-photo {
-    animation: slow-zoom 18s ease-out both, photo-drift linear both;
+  .hero-bg {
+    animation: bg-in 2.4s cubic-bezier(0.2, 0.8, 0.2, 1) both, bg-sink linear both;
     animation-timeline: auto, scroll(root);
     animation-range: normal, 0 100vh;
   }
 }
 
-@keyframes slow-zoom {
-  from { scale: 1.14; }
-  to { scale: 1; }
+@keyframes bg-sink {
+  to { transform: translateY(14%); }
 }
 
-@keyframes photo-drift {
-  to { translate: 0 12%; }
+/* 手前の人物。高さ基準で大きさを決め、頭が夕日に重なる位置に立たせる */
+.hero-figure {
+  position: absolute;
+  bottom: -1%;
+  left: 50%;
+  height: 66%;
+  width: auto;
+  max-width: none;
+  aspect-ratio: 674 / 699;
+  translate: calc(-50% + var(--px, 0) * 16px) calc(var(--py, 0) * 5px);
+  transition: translate 0.5s ease-out;
+  animation: figure-in 1.6s 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
 
-/* 文字を読みやすくするための暗いグラデーション */
+@keyframes figure-in {
+  from {
+    opacity: 0;
+    transform: translateY(48px);
+  }
+}
+
+/* 文字を読みやすくするため、下端を背景色へなじませる */
 .hero-shade {
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(11, 11, 16, 0.4) 0%, rgba(11, 11, 16, 0.5) 45%, var(--bg) 100%),
-    linear-gradient(90deg, rgba(11, 11, 16, 0.7) 0%, rgba(11, 11, 16, 0) 70%);
-}
-
-/* マウスの位置に追従するやわらかい光（main.js が --mx / --my を更新。JavaScriptなしでも中央付近に固定で表示） */
-.hero-shade::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(34rem circle at var(--mx, 70%) var(--my, 35%), rgba(245, 177, 76, 0.2), transparent 65%);
-  mix-blend-mode: screen;
-}
-
-/* 音の波形の描画（main.js） */
-.hero-wave {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
+  background: linear-gradient(180deg, rgba(11, 11, 16, 0.25) 0%, rgba(11, 11, 16, 0) 18%, rgba(11, 11, 16, 0) 60%, rgba(11, 11, 16, 0.55) 86%, var(--bg) 100%);
   pointer-events: none;
-  animation: wave-in 2.4s 0.3s ease-out both;
-}
-
-@keyframes wave-in {
-  from { opacity: 0; }
-  to { opacity: 1; }
 }
 
 .hero-inner {
   position: relative;
   width: 100%;
   padding-top: 6rem;
-  padding-bottom: clamp(2rem, 6vh, 4rem);
+  padding-bottom: clamp(1.5rem, 5vh, 3.5rem);
 }
 
 /* スクロールすると名前が上へ抜けていく */
@@ -279,13 +284,6 @@ a {
   }
 }
 
-.hero-top {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 1rem;
-}
-
 .eyebrow {
   margin: 0;
   color: var(--accent);
@@ -293,51 +291,8 @@ a {
   font-style: italic;
   font-size: clamp(1.4rem, 3.4vw, 2.1rem);
   line-height: 1.1;
+  text-shadow: 0 1px 12px rgba(11, 11, 16, 0.6);
   animation: fade-up 0.9s 0.1s cubic-bezier(0.2, 0.8, 0.2, 1) both;
-}
-
-/* 回転バッジ */
-.badge {
-  position: relative;
-  flex-shrink: 0;
-  display: grid;
-  place-items: center;
-  width: clamp(5.5rem, 14vw, 8.5rem);
-  aspect-ratio: 1;
-  border-radius: 50%;
-  transition: scale var(--transition);
-}
-
-.badge:hover {
-  scale: 1.08;
-}
-
-.badge-ring {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  animation: spin 22s linear infinite;
-}
-
-.badge-ring text {
-  fill: var(--text);
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-size: 15.5px;
-  letter-spacing: 0.06em;
-}
-
-.badge-play {
-  width: 34%;
-  padding: 7%;
-  border-radius: 50%;
-  background-color: var(--accent);
-  fill: #1a1206;
-}
-
-@keyframes spin {
-  to { rotate: 360deg; }
 }
 
 .hero-title {
@@ -382,8 +337,8 @@ a {
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  padding-top: 1rem;
-  border-top: 1px solid var(--line);
+  padding-top: 0.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.25);
   animation: fade-up 0.9s 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
 
@@ -910,21 +865,10 @@ a {
    レスポンシブ
    ========= */
 
-/* PCでは縦長写真を右側に寄せて、ぼやけ過ぎないようにする */
-@media (min-width: 900px) {
-  .hero-photo {
-    left: auto;
-    right: 0;
-    width: 58%;
-    object-position: 50% 30%;
-    -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 40%);
-    mask-image: linear-gradient(90deg, transparent 0%, #000 40%);
-  }
-
-  /* 回転バッジが顔に重ならないよう左側に寄せる */
-  .hero-top {
-    justify-content: flex-start;
-    gap: 2.5rem;
+/* スマホを横向きにしたとき：大見出しが人物の頭に重ならないよう小さくする */
+@media (orientation: landscape) and (max-height: 480px) {
+  .hero-title {
+    font-size: min(calc((100vw - 2.5rem) / 7.7), 4rem);
   }
 }
 
