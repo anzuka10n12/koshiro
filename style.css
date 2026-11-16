@@ -18,7 +18,7 @@
   font-display: swap;
 }
 
-/* 見出し用の明朝体。かな全部と、見出し・歌詞で使う漢字だけを抜き出して軽くしてある（約110KB）。
+/* 見出し用の明朝体。かな全部と、見出し・歌詞で使う漢字だけを抜き出して軽くしてある（約80KB）。
    入っていない漢字は端末の明朝体で表示される（README「見出しの明朝体」参照） */
 @font-face {
   font-family: "Shippori Mincho";
@@ -941,6 +941,18 @@ a {
   margin: 0 0 1.5rem;
 }
 
+/* デュエット曲で「誰が歌うか」を示す小さな見出し */
+.lyrics-part {
+  display: block;
+  margin-bottom: 0.15rem;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 0.95rem;
+  letter-spacing: 0.02em;
+  color: var(--glow);
+}
+
 /* =========
    YouTube
    ========= */
@@ -1248,6 +1260,47 @@ a {
 
 /* PCなど広い画面：上のメニューを大きくして、押しやすく読みやすくする（画面が広いほど少しずつ大きくなる） */
 @media (min-width: 900px) {
+  .stage {
+    display: grid;
+    grid-template-columns: minmax(0, 400px) minmax(0, 1fr);
+    gap: 4rem;
+    margin: 2.5rem 0 3rem;
+  }
+
+  /* 左の列：ジャケットの下にプレーヤーを縦に並べる */
+  .stage .release {
+    display: block;
+    margin: 0;
+  }
+
+  .stage .player {
+    margin-top: 1.75rem;
+  }
+
+  .stage .player-title {
+    margin-bottom: 1.25rem;
+    font-size: clamp(1.75rem, 2.4vw, 2.25rem);
+  }
+
+  /* 右の列：左の列と同じ高さに収め、歌詞は枠の中でスクロールする
+     （歌詞の長さで左の列やページ全体の高さが変わらないよう、高さの計算から外している） */
+  .lyrics-col {
+    position: relative;
+  }
+
+  .lyrics-col .track-lyrics {
+    position: absolute;
+    inset: 0;
+    margin: 0;
+  }
+
+  .lyrics-col .lyrics-full {
+    position: absolute;
+    inset: calc(44px + 1rem) 0 0;
+    max-height: none;
+    margin: 0;
+  }
+
   html {
     scroll-padding-top: 80px;
   }
