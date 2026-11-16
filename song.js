@@ -525,6 +525,10 @@
       stop();
       return;
     }
+    /* 音源ファイルの曲が鳴っていたら止める（2曲が重ならないように） */
+    Array.prototype.forEach.call(document.querySelectorAll("audio"), function (el) {
+      el.pause();
+    });
     playing = true;
     pump();
     window.clearInterval(timer);
@@ -548,4 +552,10 @@
     else play();
   });
   resetButton.addEventListener("click", stop);
+  /* 逆に、音源ファイルの曲を再生したら、こちらを一時停止する */
+  Array.prototype.forEach.call(document.querySelectorAll("audio"), function (el) {
+    el.addEventListener("play", function () {
+      if (playing) pause();
+    });
+  });
 })();
