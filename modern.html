@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- セキュリティ：自サイト内の画像・CSS・フォント・main.js 以外は一切読み込まない（外部スクリプト・インラインスクリプト・通信はすべて禁止） -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src 'self'; style-src 'self'; font-src 'self'; script-src 'self'; base-uri 'none'; form-action 'none'" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src 'self'; media-src 'self'; style-src 'self'; font-src 'self'; script-src 'self'; base-uri 'none'; form-action 'none'" />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
     <title>航士朗のホームページ</title>
     <meta name="description" content="シンガーソングライター 航士朗（KOSHIRO）のオフィシャルサイト。" />
@@ -29,7 +29,6 @@
         <a href="#top" class="logo">KOSHIRO</a>
         <nav class="nav" aria-label="メニュー">
           <a href="#music">Music</a>
-          <a href="#youtube">YouTube</a>
           <a href="#news">News</a>
           <a href="#about">About</a>
           <a href="#contact">SNS</a>
@@ -73,41 +72,115 @@
         </div>
       </section>
 
-      <!-- ===== Music：プログラムだけで演奏するイメージ曲（song.js）。音声ファイルは無い =====
-           歌詞を変えるときは、ここの <li> と、song.js の MELODY（発音）の両方を直す -->
+      <!-- ===== Music：曲リスト =====
+           曲を増やすときは <li class="track">〜</li> を丸ごとコピーして並べ、音源は audio/ フォルダに置く（外部サイトの音源URLは書かない）。
+           2曲目はプログラムだけで演奏する版（song.js）。歌詞を変えるときは、<ol class="lyrics"> と song.js の MELODY の両方を直す -->
       <section id="music" class="section section-alt">
         <div class="container">
           <div class="section-head">
-            <h2 class="section-title">Music<span class="section-ja">音楽</span></h2>
+            <h2 class="section-title">Music<span class="section-ja">曲リスト</span></h2>
           </div>
-          <div class="song">
-            <div class="song-main">
-              <h3 class="song-title">夕陽の帰り道</h3>
-              <p class="song-note">このサイトのために、プログラムだけで作ったイメージ曲です。音声ファイルは使わず、伴奏も歌声も、お使いの端末がその場で計算して鳴らします。歌声は機械の合成音で、航士朗本人の歌ではありません。</p>
-              <div class="song-controls" hidden>
-                <button class="song-play" type="button" aria-pressed="false"><svg class="song-icon song-icon-play" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 5v14l11-7z"/></svg><svg class="song-icon song-icon-pause" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg><span class="song-play-label">再生する</span></button>
-                <button class="song-reset" type="button" hidden>最初に戻す</button>
-                <p class="song-time">0:00 / 1:08</p>
+          <ol class="tracks">
+            <li class="track">
+              <div class="track-head">
+                <span class="track-no" aria-hidden="true">1</span>
+                <h3 class="song-title">夕陽の帰り道</h3>
+                <span class="track-length">3:37</span>
               </div>
-              <div class="song-bar" aria-hidden="true"></div>
-              <p class="song-tip">曲を流したままトップの海を弾くと、同じ調なので合奏になります。</p>
+              <!-- TODO: 制作方法の説明。本人の歌・演奏に差し替えたら、この1行も書き換える -->
+              <p class="song-note">歌と演奏は、音楽生成AI（Suno）で制作しています。</p>
+              <audio class="track-audio" controls preload="none" src="audio/yuuhi-no-kaerimichi.m4a">お使いのブラウザでは再生できません。</audio>
+              <details class="track-lyrics">
+                <summary>歌詞を見る</summary>
+                <div class="lyrics-full">
+                  <p>日々の景色が　音になる<br />夕陽に染まる　帰り道<br />ポケットの中　からっぽでも<br />鼻歌ひとつ　あればいい</p>
+                  <p>急がなくて　いいよって<br />波が　そう言ってる<br />なくしたものは　風にあずけて</p>
+                  <p>歌うよ　きょうの空を<br />ぜんぶ　茜に溶かして<br />沈む光も　あしたの色<br />手ぶらのままで　帰ろう</p>
+                  <p>うまく言えない　ことばかり<br />胸の奥で　鳴っている<br />だれかの窓に　灯りがともる<br />それだけで　ほら　あたたかい</p>
+                  <p>急がなくて　いいよって<br />波が　そう言ってる<br />抱えたものは　海にあずけて</p>
+                  <p>歌うよ　きょうの空を<br />ぜんぶ　茜に溶かして<br />沈む光も　あしたの色<br />手ぶらのままで　帰ろう</p>
+                  <p>持ちきれないものは　置いていこう<br />海は　なんにも　聞かないから</p>
+                  <p>歌うよ　きょうの空を<br />届け　君の街まで<br />沈む光も　あしたの色<br />ここから　始まる歌</p>
+                  <p>ららら　ららら<br />おかえり　ただいま</p>
+                </div>
+              </details>
+            </li>
+            <li class="track">
+              <div class="track-head">
+                <span class="track-no" aria-hidden="true">2</span>
+                <h3 class="song-title">夕陽の帰り道（コード演奏版）</h3>
+                <span class="track-length">1:08</span>
+              </div>
+              <div class="song">
+                <div class="song-main">
+                                <p class="song-note">同じ曲の、プログラムだけで演奏した短い版です。音声ファイルは使わず、伴奏も歌声も、お使いの端末がその場で計算して鳴らします。歌声は機械の合成音で、航士朗本人の歌ではありません。</p>
+                  <div class="song-controls" hidden>
+                    <button class="song-play" type="button" aria-pressed="false"><svg class="song-icon song-icon-play" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 5v14l11-7z"/></svg><svg class="song-icon song-icon-pause" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg><span class="song-play-label">再生する</span></button>
+                    <button class="song-reset" type="button" hidden>最初に戻す</button>
+                    <p class="song-time">0:00 / 1:08</p>
+                  </div>
+                  <div class="song-bar" aria-hidden="true"></div>
+                  <p class="song-tip">曲を流したままトップの海を弾くと、同じ調なので合奏になります。</p>
+                </div>
+                <ol class="lyrics" aria-label="歌詞">
+                  <li>日々の景色が　音になる</li>
+                  <li>夕陽に染まる　帰り道</li>
+                  <li>波のリズムに　歩いてく</li>
+                  <li>言葉は海へ　溶けていく</li>
+                  <li>歌うよ　今日の空を</li>
+                  <li>届け　君の街まで</li>
+                  <li>沈む光も　明日の色</li>
+                  <li>ここから　始まる歌</li>
+                </ol>
+              </div>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- ===== News：お知らせは新しいものを上に追加（<li>ごとコピー） ===== -->
+      <section id="news" class="section">
+        <div class="container">
+          <div class="section-head">
+            <h2 class="section-title">News<span class="section-ja">お知らせ</span></h2>
+          </div>
+          <ul class="news-list">
+            <li>
+              <time datetime="2026-10-28">2026.10.28</time>
+              <p>ホームページを開設しました <span class="new">New</span></p>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ===== About ===== -->
+      <section id="about" class="section section-alt">
+        <div class="container about">
+          <div class="about-figure">
+            <img class="about-photo" src="images/photo.jpg" alt="航士朗の写真" width="300" height="375" loading="lazy" />
+          </div>
+          <div>
+            <div class="section-head">
+              <h2 class="section-title">About<span class="section-ja">プロフィール</span></h2>
             </div>
-            <ol class="lyrics" aria-label="歌詞">
-              <li>日々の景色が　音になる</li>
-              <li>夕陽に染まる　帰り道</li>
-              <li>波のリズムに　歩いてく</li>
-              <li>言葉は海へ　溶けていく</li>
-              <li>歌うよ　今日の空を</li>
-              <li>届け　君の街まで</li>
-              <li>沈む光も　明日の色</li>
-              <li>ここから　始まる歌</li>
-            </ol>
+            <dl class="profile">
+              <dt>Name</dt><dd>航士朗（KOSHIRO）</dd>
+              <dt>Birthday</dt><dd>8月26日</dd>
+              <dt>Blood type</dt><dd>A型</dd>
+            </dl>
+            <!-- TODO: 仮のプロフィール文。出身地・活動歴・影響を受けたアーティスト等が決まったら追記 -->
+            <p class="about-text">
+              シンガーソングライター。<br />
+              日々の景色や気持ちを歌にして届けるため、音楽活動を行っている。<br />
+              現在はYouTubeでの発信に向けて準備中。
+            </p>
           </div>
         </div>
       </section>
 
-      <!-- ===== YouTube ===== -->
-      <section id="youtube" class="section">
+      <!-- ===== YouTube：チャンネルができるまで非表示 =====
+           見せるときは、下の <section> の hidden を消し、メニュー（<nav class="nav">）に <a href="#youtube">YouTube</a> を足す -->
+      <section id="youtube" class="section" hidden>
         <div class="container">
           <div class="section-head">
             <h2 class="section-title">YouTube<span class="section-ja">動画</span></h2>
@@ -134,48 +207,8 @@
         </div>
       </section>
 
-      <!-- ===== News：お知らせは新しいものを上に追加（<li>ごとコピー） ===== -->
-      <section id="news" class="section section-alt">
-        <div class="container">
-          <div class="section-head">
-            <h2 class="section-title">News<span class="section-ja">お知らせ</span></h2>
-          </div>
-          <ul class="news-list">
-            <li>
-              <time datetime="2026-10-28">2026.10.28</time>
-              <p>ホームページを開設しました <span class="new">New</span></p>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <!-- ===== About ===== -->
-      <section id="about" class="section">
-        <div class="container about">
-          <div class="about-figure">
-            <img class="about-photo" src="images/photo.jpg" alt="航士朗の写真" width="300" height="375" loading="lazy" />
-          </div>
-          <div>
-            <div class="section-head">
-              <h2 class="section-title">About<span class="section-ja">プロフィール</span></h2>
-            </div>
-            <dl class="profile">
-              <dt>Name</dt><dd>航士朗（KOSHIRO）</dd>
-              <dt>Birthday</dt><dd>8月26日</dd>
-              <dt>Blood type</dt><dd>A型</dd>
-            </dl>
-            <!-- TODO: 仮のプロフィール文。出身地・活動歴・影響を受けたアーティスト等が決まったら追記 -->
-            <p class="about-text">
-              シンガーソングライター。<br />
-              日々の景色や気持ちを歌にして届けるため、音楽活動を行っている。<br />
-              現在はYouTubeでの発信に向けて準備中。
-            </p>
-          </div>
-        </div>
-      </section>
-
       <!-- ===== SNS ===== -->
-      <section id="contact" class="section section-alt">
+      <section id="contact" class="section">
         <div class="container">
           <div class="section-head">
             <h2 class="section-title">SNS<span class="section-ja">リンク</span></h2>
