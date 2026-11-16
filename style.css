@@ -593,7 +593,7 @@ a {
 }
 
 /* =========
-   Music：プログラムだけで演奏するイメージ曲
+   Music：曲リスト
    ========= */
 
 /* 曲リスト */
@@ -680,13 +680,6 @@ a {
   margin: 0 0 1.5rem;
 }
 
-.song {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: 2.5rem 4rem;
-  align-items: start;
-}
-
 .song-title {
   margin: 0 0 1rem;
   font-family: var(--font-mincho);
@@ -701,134 +694,6 @@ a {
   max-width: 34em;
   color: var(--haze);
   font-size: 0.95rem;
-}
-
-.song-controls {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.75rem 1rem;
-}
-
-.song-play {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.6rem;
-  min-height: 56px;
-  padding: 0 1.9rem 0 1.5rem;
-  border: 0;
-  border-radius: 999px;
-  background-color: var(--glow);
-  color: var(--deep);
-  font: inherit;
-  font-weight: 700;
-  font-size: 1.05rem;
-  white-space: nowrap;
-  cursor: pointer;
-  transition: background-color 0.25s var(--ease);
-}
-
-.song-play:hover {
-  background-color: var(--paper);
-}
-
-.song-icon {
-  width: 1.4rem;
-  height: 1.4rem;
-  fill: currentColor;
-}
-
-.song-icon-pause,
-.song-play[aria-pressed="true"] .song-icon-play {
-  display: none;
-}
-
-.song-play[aria-pressed="true"] .song-icon-pause {
-  display: block;
-}
-
-.song-reset {
-  min-height: 48px;
-  padding: 0 1.2rem;
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  background: none;
-  color: var(--paper);
-  font: inherit;
-  font-size: 0.9rem;
-  white-space: nowrap;
-  cursor: pointer;
-  transition: border-color 0.25s var(--ease);
-}
-
-.song-reset:hover {
-  border-color: var(--glow);
-}
-
-.song-time {
-  margin: 0 0 0 auto;
-  font-family: var(--font-serif);
-  font-style: italic;
-  font-size: 1.25rem;
-  color: var(--glow);
-  font-variant-numeric: tabular-nums;
-}
-
-/* 曲の進み具合（song.js が --song を 0〜1 で更新する） */
-.song-bar {
-  position: relative;
-  height: 3px;
-  margin: 1.25rem 0;
-  background-color: var(--line);
-}
-
-.song-bar::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-color: var(--sun);
-  transform: scaleX(var(--song, 0));
-  transform-origin: 0 50%;
-}
-
-.song-tip {
-  margin: 0;
-  color: var(--haze);
-  font-size: 0.85rem;
-}
-
-/* 歌詞：いま歌っている行だけが灯る */
-.lyrics {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  font-family: var(--font-mincho);
-  font-weight: 700;
-  font-size: clamp(1.15rem, 4.4vw, 1.5rem);
-  line-height: 1.5;
-  letter-spacing: 0.06em;
-}
-
-.lyrics li {
-  padding: 0.45rem 0;
-  transition: color 0.4s ease-out;
-}
-
-/* Aメロとサビのあいだを空ける */
-.lyrics li:nth-child(5) {
-  margin-top: 1.5rem;
-}
-
-.song.is-playing .lyrics li {
-  color: var(--dim);
-}
-
-.song.is-playing .lyrics li.is-now {
-  color: var(--glow);
-}
-
-.lyrics li.is-now {
-  color: var(--glow);
 }
 
 /* =========
@@ -1203,10 +1068,6 @@ a {
   .sound-hint {
     font-size: 0.85rem;
     letter-spacing: 0.04em;
-  }
-
-  .song {
-    grid-template-columns: 1fr;
   }
 
   .news-list li {
