@@ -23,6 +23,8 @@
   var errorText = box.querySelector(".player-error");
   var rows = document.querySelectorAll(".tracklist-row");
   var lyrics = document.querySelectorAll(".lyrics-full");
+  var jacket = document.querySelector(".jacket img");
+  var lyricsName = document.querySelector(".track-lyrics-name");
   if (!audio || !ui || !playButton || !playLabel || !seek || !canvas || !nowText || !totalText || !titleText || !rows.length) return;
   var g = canvas.getContext && canvas.getContext("2d");
   if (!g || !audio.play) return;
@@ -115,6 +117,13 @@
     peaks = (row.getAttribute("data-peaks") || "").split(",").map(Number);
     var name = row.querySelector(".tracklist-title");
     titleText.textContent = name ? name.textContent : "";
+    /* ジャケットと歌詞の見出しも、選んだ曲のものに替える */
+    var art = row.getAttribute("data-art");
+    if (jacket && art) {
+      jacket.setAttribute("src", art);
+      jacket.setAttribute("alt", row.getAttribute("data-art-alt") || "");
+    }
+    if (lyricsName) lyricsName.textContent = "（" + titleText.textContent + "）";
     for (var i = 0; i < rows.length; i++) {
       if (i === index) rows[i].setAttribute("aria-current", "true");
       else rows[i].removeAttribute("aria-current");
@@ -128,7 +137,6 @@
     }
     /* スマホのロック画面などに曲名とジャケットを出す */
     if ("mediaSession" in navigator && window.MediaMetadata) {
-      var art = row.getAttribute("data-art");
       navigator.mediaSession.metadata = new window.MediaMetadata({
         title: titleText.textContent,
         artist: "航士朗",
