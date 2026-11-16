@@ -1,12 +1,13 @@
 # 航士朗 ホームページ
 
-GitHub Pages で無料公開している静的サイト。レトロ版は HTML/CSS のみ（JavaScriptなし）、今風版は補助用の `main.js` を1つだけ使う。
+GitHub Pages で無料公開している静的サイト。レトロ版は HTML/CSS のみ（JavaScriptなし）、今風版は自サイト内の `main.js` と `player.js` だけを使う。
 
 | ファイル | 内容 |
 |---|---|
 | `index.html` / `retro.css` | トップ（阿部寛HP風レトロ版） |
 | `modern.html` / `style.css` | 今風デザイン版 |
 | `main.js` | 今風版の補助スクリプト（トップの「弾ける海」＝触れると波紋が広がり、「音を出す」を押したあとは音も鳴る／絵の奥行き／メニューの現在地表示／古いブラウザ向けの代替表示）。無くても全部読める |
+| `player.js` | 今風版の曲リスト用プレーヤー（再生ボタン・波形・曲の切り替え）。動かない環境ではブラウザ標準の再生バーが出る |
 | `audio/` | 今風版の曲リストで流す音源（`yuuhi-no-kaerimichi.m4a`）。曲を足すときはここに置き、`modern.html` の曲リストに `<li class="track">` を足す |
 | `fonts/` | 今風版の見出し用フォント（Syne / Instrument Serif / しっぽり明朝、いずれもOFLライセンス。ライセンス文を同梱） |
 | `images/hero-bg.jpg` / `images/hero-figure.webp` | 今風版のトップの絵。奥の景色と、手前の人物（背景透明）の2層。差し替えるときは同じファイル名で上書きする |
@@ -17,12 +18,20 @@ GitHub Pages で無料公開している静的サイト。レトロ版は HTML/C
 
 - CSP（`modern.html` の `<meta>` と `vercel.json`）で **自サイト内のファイルだけ** を許可：`script-src 'self'` / `style-src 'self'` / `font-src 'self'` / `img-src 'self'` / `media-src 'self'`（音源）
   → 外部スクリプト・インラインスクリプト・`eval` はブラウザが実行を拒否する（XSS・改ざんされた外部CDN経由の攻撃を防ぐ）
-- `main.js` は通信しない・Cookie等に保存しない・入力を受け取らない・`innerHTML` を使わない
+- `main.js`・`player.js` は通信しない・Cookie等に保存しない・入力を受け取らない・`innerHTML` を使わない
 - 音は音声ファイルを読み込まず `main.js` がその場で計算して鳴らす（マイク・外部通信は使わない）。「音を出す」ボタンを押すまで鳴らない
 - フォーム・ログイン・データベースを持たない（攻撃される対象を作らない）
 - レトロ版（`index.html`）は引き続き JavaScript 完全禁止
 - スクリプトやフォントを追加するときは **必ずリポジトリ内に置く**（CDNのURLを書かない）
 - GitHubアカウントは二段階認証を有効にする（サイト改ざんの最大の入口はアカウント乗っ取り）
+
+## 曲を追加するとき
+
+1. 音源を `audio/` に置く（iPhoneでも確実に鳴る AAC の `.m4a` か `.mp3` にする）
+2. ジャケット（正方形・800×800px 程度の JPEG）を `images/` に置く
+3. `modern.html` の `<ol class="tracklist">` の `<li>` を丸ごとコピーし、`data-src`・`data-seconds`・`data-art`・曲名・長さを書き換える
+4. 波形（`data-peaks`）は、音源の音量を180個の数字（0〜100、カンマ区切り）にしたもの。作り方が分からなければ `50` を180個並べても動く（平らな波形になる）
+5. 歌詞は `<div class="lyrics-full" data-track="1">`（番号は0始まり）を足す
 
 ## 見出しの明朝体（しっぽり明朝）について
 
