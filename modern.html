@@ -21,6 +21,7 @@
     <link rel="apple-touch-icon" href="images/apple-touch-icon.png" />
     <link rel="stylesheet" href="style.css" />
     <script src="main.js" defer></script>
+    <script src="player.js" defer></script>
   </head>
   <body>
     <header class="site-header">
@@ -72,39 +73,64 @@
       </section>
 
       <!-- ===== Music：曲リスト =====
-           曲を増やすときは <li class="track">〜</li> を丸ごとコピーして並べ、音源は audio/ フォルダに置く（外部サイトの音源URLは書かない） -->
+           曲を増やすとき：
+           1. 音源を audio/、ジャケットを images/ に置く（外部サイトのURLは書かない）
+           2. <ol class="tracklist"> の <li> を丸ごとコピーし、data-src（音源）・data-seconds（秒数）・data-art（ジャケット）・曲名・長さを書き換える
+              data-peaks（波形）の作り方は README「曲を追加するとき」を参照
+           3. 歌詞は <div class="lyrics-full" data-track="番号（0始まり）"> を足す -->
       <section id="music" class="section section-alt">
         <div class="container">
           <div class="section-head">
             <h2 class="section-title">Music<span class="section-ja">曲リスト</span></h2>
           </div>
-          <ol class="tracks">
-            <li class="track">
-              <div class="track-head">
-                <span class="track-no" aria-hidden="true">1</span>
-                <h3 class="song-title">夕陽の帰り道</h3>
-                <span class="track-length">3:37</span>
-              </div>
-              <audio class="track-audio" controls preload="none" src="audio/yuuhi-no-kaerimichi.m4a">お使いのブラウザでは再生できません。</audio>
-              <details class="track-lyrics">
-                <summary>歌詞を見る</summary>
-                <div class="lyrics-full">
-                  <p>日々の景色が　音になる<br />夕陽に染まる　帰り道<br />ポケットの中　からっぽでも<br />鼻歌ひとつ　あればいい</p>
-                  <p>急がなくて　いいよって<br />波が　そう言ってる<br />なくしたものは　風にあずけて</p>
-                  <p>歌うよ　きょうの空を<br />ぜんぶ　茜に溶かして<br />沈む光も　あしたの色<br />手ぶらのままで　帰ろう</p>
-                  <p>うまく言えない　ことばかり<br />胸の奥で　鳴っている<br />だれかの窓に　灯りがともる<br />それだけで　ほら　あたたかい</p>
-                  <p>急がなくて　いいよって<br />波が　そう言ってる<br />抱えたものは　海にあずけて</p>
-                  <p>歌うよ　きょうの空を<br />ぜんぶ　茜に溶かして<br />沈む光も　あしたの色<br />手ぶらのままで　帰ろう</p>
-                  <p>持ちきれないものは　置いていこう<br />海は　なんにも　聞かないから</p>
-                  <p>歌うよ　きょうの空を<br />届け　君の街まで<br />沈む光も　あしたの色<br />ここから　始まる歌</p>
-                  <p>ららら　ららら<br />おかえり　ただいま</p>
+
+          <div class="release">
+            <figure class="jacket">
+              <img src="images/jacket-yuuhi.jpg" alt="ジャケット：夜の海に沈んでいく、大きな夕日の絵" width="800" height="800" loading="lazy" />
+            </figure>
+            <div class="player">
+              <p class="player-artist">航士朗</p>
+              <h3 class="player-title">夕陽の帰り道</h3>
+              <!-- player.js が動けば下の専用画面に切り替わる。動かない環境ではこの標準の再生バーを使う -->
+              <audio class="player-audio" controls preload="none" src="audio/yuuhi-no-kaerimichi.m4a">お使いのブラウザでは再生できません。</audio>
+              <div class="player-ui" hidden>
+                <button class="player-play" type="button" aria-pressed="false"><svg class="player-icon player-icon-play" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 5v14l11-7z"/></svg><svg class="player-icon player-icon-pause" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg><span class="player-play-label visually-hidden">再生</span></button>
+                <div class="player-line">
+                  <div class="player-wave-wrap">
+                    <input class="player-seek" type="range" min="0" max="1000" step="1" value="0" aria-label="再生位置" />
+                    <canvas class="player-wave" aria-hidden="true"></canvas>
+                  </div>
+                  <p class="player-times" aria-hidden="true"><span class="player-now">0:00</span><span class="player-total">3:37</span></p>
                 </div>
-              </details>
-            </li>
-          </ol>
               </div>
+              <p class="player-error" hidden>音源を再生できませんでした。通信環境を確かめて、もう一度お試しください。</p>
+            </div>
+          </div>
+
+          <ol class="tracklist">
+            <li>
+              <button class="tracklist-row" type="button" aria-current="true" data-src="audio/yuuhi-no-kaerimichi.m4a" data-seconds="217" data-art="images/jacket-yuuhi.jpg" data-peaks="9,41,46,51,55,71,34,31,27,45,79,48,59,71,43,67,67,70,69,68,58,76,72,57,62,64,58,63,75,67,73,76,57,72,59,71,92,87,86,92,60,82,80,80,76,78,86,80,76,87,83,79,82,66,47,78,69,74,69,78,78,77,72,80,88,61,77,78,81,77,52,69,73,92,61,76,70,80,70,64,72,75,76,67,71,89,90,87,87,84,72,84,88,84,86,80,97,84,86,85,86,79,86,90,91,88,72,68,68,76,79,81,88,99,100,81,76,87,88,75,74,87,93,100,93,92,94,91,93,97,100,99,63,55,78,41,47,69,70,70,98,79,83,73,76,84,86,89,96,94,99,97,100,97,91,96,82,93,93,96,99,98,97,100,99,85,91,86,84,79,92,88,90,87,76,72,20,20,8,8">
+                <span class="tracklist-no"><span class="tracklist-num">1</span><span class="tracklist-bars" aria-hidden="true"><i></i><i></i><i></i></span></span>
+                <span class="tracklist-title">夕陽の帰り道</span>
+                <span class="tracklist-length">3:37</span>
+              </button>
             </li>
           </ol>
+
+          <details class="track-lyrics">
+            <summary>歌詞を見る</summary>
+            <div class="lyrics-full" data-track="0">
+              <p>日々の景色が　音になる<br />夕陽に染まる　帰り道<br />ポケットの中　からっぽでも<br />鼻歌ひとつ　あればいい</p>
+              <p>急がなくて　いいよって<br />波が　そう言ってる<br />なくしたものは　風にあずけて</p>
+              <p>歌うよ　きょうの空を<br />ぜんぶ　茜に溶かして<br />沈む光も　あしたの色<br />手ぶらのままで　帰ろう</p>
+              <p>うまく言えない　ことばかり<br />胸の奥で　鳴っている<br />だれかの窓に　灯りがともる<br />それだけで　ほら　あたたかい</p>
+              <p>急がなくて　いいよって<br />波が　そう言ってる<br />抱えたものは　海にあずけて</p>
+              <p>歌うよ　きょうの空を<br />ぜんぶ　茜に溶かして<br />沈む光も　あしたの色<br />手ぶらのままで　帰ろう</p>
+              <p>持ちきれないものは　置いていこう<br />海は　なんにも　聞かないから</p>
+              <p>歌うよ　きょうの空を<br />届け　君の街まで<br />沈む光も　あしたの色<br />ここから　始まる歌</p>
+              <p>ららら　ららら<br />おかえり　ただいま</p>
+            </div>
+          </details>
         </div>
       </section>
 
