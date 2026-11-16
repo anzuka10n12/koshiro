@@ -616,7 +616,7 @@ a {
   display: flex;
   align-items: baseline;
   gap: 1rem;
-  margin-bottom: 0.75rem;
+  margin-bottom: 1.25rem;
 }
 
 .track-head .song-title {
