@@ -853,24 +853,56 @@ a {
   display: inline-flex;
 }
 
+/* 歌詞：プレーヤーと曲の一覧のあいだに置く。長い歌詞でも一覧が遠くならないよう、枠の中でスクロールする */
 .track-lyrics {
-  margin-top: 1.25rem;
+  margin: 0 0 2.5rem;
 }
 
 .track-lyrics summary {
   display: inline-flex;
   align-items: center;
+  gap: 0.6rem;
   min-height: 44px;
+  padding: 0 1.2rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
   color: var(--paper);
   font-size: 0.9rem;
-  text-decoration: underline;
-  text-decoration-color: var(--glow);
-  text-underline-offset: 0.35em;
+  list-style: none;
   cursor: pointer;
+  transition: border-color 0.25s var(--ease);
+}
+
+.track-lyrics summary::-webkit-details-marker {
+  display: none;
+}
+
+/* 開閉を示す小さな矢印 */
+.track-lyrics summary::after {
+  content: "";
+  width: 0.45em;
+  height: 0.45em;
+  border-right: 1.5px solid var(--glow);
+  border-bottom: 1.5px solid var(--glow);
+  rotate: 45deg;
+  translate: 0 -0.15em;
+  transition: rotate 0.25s var(--ease), translate 0.25s var(--ease);
+}
+
+.track-lyrics[open] summary::after {
+  rotate: -135deg;
+  translate: 0 0.1em;
+}
+
+.track-lyrics summary:hover {
+  border-color: var(--glow);
+}
+
+.track-lyrics-label {
+  font-weight: 700;
 }
 
 .track-lyrics-name {
-  margin-left: 0.25em;
   color: var(--haze);
 }
 
@@ -879,17 +911,34 @@ a {
 }
 
 .lyrics-full {
-  padding-top: 0.5rem;
+  max-height: min(60vh, 34rem);
+  margin-top: 1rem;
+  padding: 1.75rem clamp(1.25rem, 4vw, 2.5rem) 0.5rem;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background-color: rgba(24, 34, 53, 0.6);
+  scrollbar-color: var(--sun) transparent;
   font-family: var(--font-mincho);
   font-weight: 700;
   font-size: clamp(1.05rem, 4vw, 1.25rem);
   line-height: 2;
   letter-spacing: 0.06em;
+  /* 下端を薄くして、続きがあることを示す */
+  -webkit-mask-image: linear-gradient(#000 calc(100% - 3rem), transparent);
+  mask-image: linear-gradient(#000 calc(100% - 3rem), transparent);
+}
+
+/* 最後の行がぼかしに隠れないよう、末尾に余白を取る */
+.lyrics-full::after {
+  content: "";
+  display: block;
+  height: 2rem;
 }
 
 .lyrics-full p {
   margin: 0 0 1.5rem;
-  break-inside: avoid;
 }
 
 /* =========
@@ -1199,12 +1248,6 @@ a {
 
 /* PCなど広い画面：上のメニューを大きくして、押しやすく読みやすくする（画面が広いほど少しずつ大きくなる） */
 @media (min-width: 900px) {
-  .lyrics-full {
-    columns: 2;
-    column-gap: 4rem;
-    max-width: 52rem;
-  }
-
   html {
     scroll-padding-top: 80px;
   }
