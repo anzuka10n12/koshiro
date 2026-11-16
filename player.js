@@ -130,6 +130,7 @@
     }
     for (var k = 0; k < lyrics.length; k++) {
       lyrics[k].hidden = lyrics[k].getAttribute("data-track") !== String(index);
+      lyrics[k].scrollTop = 0;
     }
     if (changed) {
       pendingSeek = -1;
