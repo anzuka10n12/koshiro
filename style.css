@@ -603,52 +603,254 @@ a {
   list-style: none;
 }
 
-.track {
-  padding: 2.25rem 0;
-  border-bottom: 1px solid var(--line);
+/* 画面には出さず、読み上げソフトにだけ伝える文字 */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 
-.track:first-child {
-  padding-top: 0.75rem;
+/* ---- いま選ばれている曲：ジャケットとプレーヤー ---- */
+
+.release {
+  display: grid;
+  grid-template-columns: minmax(0, 340px) minmax(0, 1fr);
+  gap: clamp(1.75rem, 5vw, 4rem);
+  align-items: end;
+  margin: 2.5rem 0 3rem;
 }
 
-.track-head {
-  display: flex;
-  align-items: baseline;
-  gap: 1rem;
-  margin-bottom: 1.25rem;
-}
-
-.track-head .song-title {
+.jacket {
   margin: 0;
 }
 
-.track-no,
-.track-length {
+.jacket img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: 4px;
+  box-shadow: 0 30px 60px -30px rgba(0, 0, 0, 0.9);
+}
+
+.player-artist {
+  margin: 0 0 0.5rem;
+  font-family: var(--font-mincho);
+  font-weight: 700;
+  font-size: 1rem;
+  letter-spacing: 0.3em;
+  color: var(--glow);
+}
+
+.player-title {
+  margin: 0 0 1.75rem;
+  font-family: var(--font-mincho);
+  font-weight: 700;
+  font-size: clamp(2rem, 7vw, 3.75rem);
+  line-height: 1.25;
+  letter-spacing: 0.08em;
+}
+
+/* 標準の再生バー（player.js が動かないときだけ見える） */
+.player-audio {
+  display: block;
+  width: 100%;
+  height: 48px;
+  color-scheme: dark;
+}
+
+.player.is-ready .player-audio {
+  display: none;
+}
+
+.player-ui {
+  display: flex;
+  align-items: center;
+  gap: clamp(1rem, 3vw, 1.75rem);
+}
+
+.player-play {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: clamp(60px, 9vw, 76px);
+  height: clamp(60px, 9vw, 76px);
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background-color: var(--glow);
+  color: var(--deep);
+  cursor: pointer;
+  transition: background-color 0.25s var(--ease), scale 0.25s var(--ease);
+}
+
+.player-play:hover {
+  background-color: var(--paper);
+}
+
+.player-play:active {
+  scale: 0.94;
+}
+
+.player-icon {
+  width: 46%;
+  height: 46%;
+  fill: currentColor;
+}
+
+/* 再生マークは三角形の重心が左に寄って見えるので、少し右へ */
+.player-icon-play {
+  translate: 6% 0;
+}
+
+.player-icon-pause,
+.player-play[aria-pressed="true"] .player-icon-play {
+  display: none;
+}
+
+.player-play[aria-pressed="true"] .player-icon-pause {
+  display: block;
+}
+
+.player-line {
+  flex: 1;
+  min-width: 0;
+}
+
+/* 波形。上に透明なスライダーを重ねてあり、なぞる・押す・矢印キーで位置を変えられる */
+.player-wave-wrap {
+  position: relative;
+  height: clamp(52px, 8vw, 72px);
+}
+
+.player-wave {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 2px;
+}
+
+.player-seek {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.player-seek:focus-visible + .player-wave {
+  outline: 2px solid var(--glow);
+  outline-offset: 4px;
+}
+
+.player-times {
+  display: flex;
+  justify-content: space-between;
+  margin: 0.5rem 0 0;
   font-family: var(--font-serif);
   font-style: italic;
-  font-size: 1.5rem;
+  font-size: 1.15rem;
   line-height: 1;
-  color: var(--glow);
+  color: var(--haze);
   font-variant-numeric: tabular-nums;
 }
 
-.track-length {
-  margin-left: auto;
-  font-size: 1.25rem;
+.player-now {
+  color: var(--glow);
 }
 
-.track .song-note {
-  margin-bottom: 1.25rem;
+.player-error {
+  margin: 1rem 0 0;
+  color: var(--glow);
+  font-size: 0.9rem;
 }
 
-/* 音源の再生バー（ブラウザ標準のもの） */
-.track-audio {
-  display: block;
+/* ---- 曲の一覧 ---- */
+
+.tracklist {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--line);
+}
+
+.tracklist-row {
+  display: grid;
+  grid-template-columns: 2.5rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.5rem 1rem;
   width: 100%;
-  max-width: 640px;
-  height: 48px;
-  color-scheme: dark;
+  min-height: 68px;
+  padding: 0.75rem 0.75rem;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  background: none;
+  color: var(--paper);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.25s var(--ease);
+}
+
+.tracklist-row:hover {
+  background-color: rgba(244, 236, 221, 0.05);
+}
+
+.tracklist-no,
+.tracklist-length {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 1.25rem;
+  line-height: 1;
+  color: var(--haze);
+  font-variant-numeric: tabular-nums;
+}
+
+.tracklist-title {
+  font-family: var(--font-mincho);
+  font-weight: 700;
+  font-size: clamp(1.1rem, 4vw, 1.35rem);
+  letter-spacing: 0.08em;
+}
+
+/* 選ばれている曲は色を変え、鳴っているあいだは番号の代わりに3本の棒が動く */
+.tracklist-row[aria-current="true"] .tracklist-title,
+.tracklist-row[aria-current="true"] .tracklist-no {
+  color: var(--glow);
+}
+
+.tracklist-bars {
+  display: none;
+  align-items: flex-end;
+  gap: 3px;
+  height: 16px;
+}
+
+.tracklist-bars i {
+  width: 3px;
+  height: 100%;
+  border-radius: 2px;
+  background-color: var(--sun);
+  transform-origin: 50% 100%;
+  animation: bars 0.9s ease-in-out infinite alternate;
+}
+
+.tracklist-bars i:nth-child(2) { animation-duration: 0.6s; animation-delay: -0.3s; }
+.tracklist-bars i:nth-child(3) { animation-duration: 1.2s; animation-delay: -0.6s; }
+
+.tracklist-row.is-playing .tracklist-num {
+  display: none;
+}
+
+.tracklist-row.is-playing .tracklist-bars {
+  display: inline-flex;
 }
 
 .track-lyrics {
@@ -678,22 +880,7 @@ a {
 
 .lyrics-full p {
   margin: 0 0 1.5rem;
-}
-
-.song-title {
-  margin: 0 0 1rem;
-  font-family: var(--font-mincho);
-  font-weight: 700;
-  font-size: clamp(1.4rem, 5vw, 2.25rem);
-  line-height: 1.3;
-  letter-spacing: 0.1em;
-}
-
-.song-note {
-  margin: 0 0 1.75rem;
-  max-width: 34em;
-  color: var(--haze);
-  font-size: 0.95rem;
+  break-inside: avoid;
 }
 
 /* =========
@@ -1003,6 +1190,12 @@ a {
 
 /* PCなど広い画面：上のメニューを大きくして、押しやすく読みやすくする（画面が広いほど少しずつ大きくなる） */
 @media (min-width: 900px) {
+  .lyrics-full {
+    columns: 2;
+    column-gap: 4rem;
+    max-width: 52rem;
+  }
+
   html {
     scroll-padding-top: 80px;
   }
@@ -1038,6 +1231,15 @@ a {
 }
 
 @media (max-width: 640px) {
+  .release {
+    grid-template-columns: 1fr;
+    margin-top: 1.75rem;
+  }
+
+  .tracklist-row {
+    padding-inline: 0.25rem;
+  }
+
   .header-inner {
     gap: 0.75rem;
   }
