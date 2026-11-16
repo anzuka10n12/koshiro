@@ -941,18 +941,6 @@ a {
   margin: 0 0 1.5rem;
 }
 
-/* デュエット曲で「誰が歌うか」を示す小さな見出し */
-.lyrics-part {
-  display: block;
-  margin-bottom: 0.15rem;
-  font-family: var(--font-serif);
-  font-style: italic;
-  font-weight: 400;
-  font-size: 0.95rem;
-  letter-spacing: 0.02em;
-  color: var(--glow);
-}
-
 /* =========
    YouTube
    ========= */
