@@ -1,13 +1,12 @@
 # 航士朗 ホームページ
 
-GitHub Pages で無料公開している静的サイト。レトロ版は HTML/CSS のみ（JavaScriptなし）、今風版は自サイト内の `main.js` と `song.js` だけを使う。
+GitHub Pages で無料公開している静的サイト。レトロ版は HTML/CSS のみ（JavaScriptなし）、今風版は補助用の `main.js` を1つだけ使う。
 
 | ファイル | 内容 |
 |---|---|
 | `index.html` / `retro.css` | トップ（阿部寛HP風レトロ版） |
 | `modern.html` / `style.css` | 今風デザイン版 |
 | `main.js` | 今風版の補助スクリプト（トップの「弾ける海」＝触れると波紋が広がり、「音を出す」を押したあとは音も鳴る／絵の奥行き／メニューの現在地表示／古いブラウザ向けの代替表示）。無くても全部読める |
-| `song.js` | 今風版のイメージ曲「夕陽の帰り道」。音声ファイルを使わず、伴奏も歌声（合成音）もこのファイルの計算だけで鳴らす。曲を直すときは冒頭の `PROGRESSION`（和音）と `MELODY`（歌のメロディーと発音）を書き換える |
 | `audio/` | 今風版の曲リストで流す音源（`yuuhi-no-kaerimichi.m4a`）。曲を足すときはここに置き、`modern.html` の曲リストに `<li class="track">` を足す |
 | `fonts/` | 今風版の見出し用フォント（Syne / Instrument Serif / しっぽり明朝、いずれもOFLライセンス。ライセンス文を同梱） |
 | `images/hero-bg.jpg` / `images/hero-figure.webp` | 今風版のトップの絵。奥の景色と、手前の人物（背景透明）の2層。差し替えるときは同じファイル名で上書きする |
@@ -18,7 +17,7 @@ GitHub Pages で無料公開している静的サイト。レトロ版は HTML/C
 
 - CSP（`modern.html` の `<meta>` と `vercel.json`）で **自サイト内のファイルだけ** を許可：`script-src 'self'` / `style-src 'self'` / `font-src 'self'` / `img-src 'self'` / `media-src 'self'`（音源）
   → 外部スクリプト・インラインスクリプト・`eval` はブラウザが実行を拒否する（XSS・改ざんされた外部CDN経由の攻撃を防ぐ）
-- `main.js`・`song.js` は通信しない・Cookie等に保存しない・入力を受け取らない・`innerHTML` を使わない
+- `main.js` は通信しない・Cookie等に保存しない・入力を受け取らない・`innerHTML` を使わない
 - 音は音声ファイルを読み込まず `main.js` がその場で計算して鳴らす（マイク・外部通信は使わない）。「音を出す」ボタンを押すまで鳴らない
 - フォーム・ログイン・データベースを持たない（攻撃される対象を作らない）
 - レトロ版（`index.html`）は引き続き JavaScript 完全禁止
