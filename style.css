@@ -18,21 +18,33 @@
   font-display: swap;
 }
 
+/* 見出し用の明朝体。かな全部と、見出しで使う漢字だけを抜き出して軽くしてある（約36KB）。
+   入っていない漢字は端末の明朝体で表示される（README「見出しの明朝体」参照） */
+@font-face {
+  font-family: "Shippori Mincho";
+  src: url("fonts/shippori-mincho-700-subset.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
 /* =========
-   ベース
+   ベース：色はすべてトップの絵から採っている
    ========= */
 
 :root {
-  --bg: #0b0b10;
-  --bg-alt: #13131b;
-  --text: #f3f3f6;
-  --muted: #a3a3b4;
-  --dim: rgba(243, 243, 246, 0.16);
-  --accent: #f5b14c;
-  --line: rgba(255, 255, 255, 0.12);
-  --transition: 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+  --night: #182235; /* 絵の下端の海の色。ページの地色 */
+  --deep: #111a2b; /* 一段暗い夜 */
+  --paper: #f4ecdd; /* 文字 */
+  --haze: #a4abc4; /* 控えめな文字 */
+  --dim: rgba(244, 236, 221, 0.16);
+  --sun: #fc8b2f; /* 夕日 */
+  --glow: #ffb866; /* 夕日の明るいところ */
+  --line: rgba(244, 236, 221, 0.14);
+  --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
   --font-display: "Syne", "Helvetica Neue", Arial, system-ui, sans-serif;
   --font-serif: "Instrument Serif", "Times New Roman", serif;
+  --font-mincho: "Shippori Mincho", "Hiragino Mincho ProN", "Yu Mincho", "YuMincho", "Noto Serif JP", serif;
   color-scheme: dark;
 }
 
@@ -47,22 +59,26 @@
   box-sizing: border-box;
 }
 
+[hidden] {
+  display: none !important;
+}
+
 html {
   scroll-behavior: smooth;
   scroll-padding-top: 60px;
-  scrollbar-color: var(--accent) var(--bg);
+  scrollbar-color: var(--sun) var(--night);
 }
 
 body {
   margin: 0;
   font-family: system-ui, -apple-system, "Hiragino Sans", "Yu Gothic", sans-serif;
-  color: var(--text);
-  background-color: var(--bg);
-  line-height: 1.7;
+  color: var(--paper);
+  background-color: var(--night);
+  line-height: 1.8;
   overflow-x: clip;
 }
 
-/* フィルムの粒子を画面全体に薄く重ねる（動かさない：スマホの電池と描画負荷を抑えるため） */
+/* 絵の紙の質感をページ全体に薄く重ねる（動かさない：スマホの電池と描画負荷を抑えるため） */
 body::after {
   content: "";
   position: fixed;
@@ -74,8 +90,8 @@ body::after {
 }
 
 ::selection {
-  background-color: var(--accent);
-  color: #1a1206;
+  background-color: var(--sun);
+  color: var(--deep);
 }
 
 a {
@@ -84,7 +100,7 @@ a {
 }
 
 :focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--glow);
   outline-offset: 4px;
   border-radius: 4px;
 }
@@ -105,7 +121,7 @@ a {
   z-index: 20;
   -webkit-backdrop-filter: blur(14px);
   backdrop-filter: blur(14px);
-  background-color: rgba(11, 11, 16, 0.55);
+  background-color: rgba(24, 34, 53, 0.5);
   border-bottom: 1px solid var(--line);
 }
 
@@ -134,26 +150,28 @@ a {
 
 .nav a {
   position: relative;
-  padding: 0.4rem 0;
-  color: var(--muted);
-  transition: color var(--transition);
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--haze);
+  transition: color 0.25s var(--ease);
 }
 
 /* 下線が左から伸びる */
 .nav a::after {
   content: "";
   position: absolute;
-  inset: auto 0 0;
+  inset: auto 0 8px;
   height: 1px;
-  background-color: var(--accent);
+  background-color: var(--glow);
   transform: scaleX(0);
   transform-origin: 0 50%;
-  transition: transform var(--transition);
+  transition: transform 0.25s var(--ease);
 }
 
 .nav a:hover,
 .nav a[aria-current="true"] {
-  color: var(--accent);
+  color: var(--glow);
 }
 
 .nav a:hover::after,
@@ -166,7 +184,7 @@ a {
   position: absolute;
   inset: auto 0 -1px;
   height: 2px;
-  background-color: var(--accent);
+  background-color: var(--sun);
   transform: scaleX(var(--progress, 0));
   transform-origin: 0 50%;
 }
@@ -184,7 +202,7 @@ a {
 }
 
 /* =========
-   ヒーロー（トップ）：夕景を見つめる後ろ姿
+   ヒーロー（トップ）：夕景を見つめる後ろ姿。海と空は弾ける
    ========= */
 
 .hero {
@@ -194,7 +212,11 @@ a {
   display: flex;
   align-items: flex-end;
   overflow: hidden;
-  background-color: #1b2038;
+  background-color: #1b253e;
+  /* 触れて音を鳴らす場所なので、長押しの選択やハイライトを出さない */
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 /* 奥の景色。少し大きめに敷いて、ずらしても端が見えないようにする */
@@ -208,7 +230,7 @@ a {
   object-position: 50% 50%;
   translate: calc(var(--px, 0) * -12px) calc(var(--py, 0) * -6px);
   transition: translate 0.5s ease-out;
-  animation: bg-in 2.4s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  animation: bg-in 2.4s var(--ease) both;
 }
 
 /* 読み込み時：少し寄った状態から、ゆっくり引いていく */
@@ -222,7 +244,7 @@ a {
 /* スクロールすると景色だけが下へ流れ、夕日が人物の向こうへ沈んでいく */
 @supports (animation-timeline: scroll()) {
   .hero-bg {
-    animation: bg-in 2.4s cubic-bezier(0.2, 0.8, 0.2, 1) both, bg-sink linear both;
+    animation: bg-in 2.4s var(--ease) both, bg-sink linear both;
     animation-timeline: auto, scroll(root);
     animation-range: normal, 0 100vh;
   }
@@ -230,6 +252,16 @@ a {
 
 @keyframes bg-sink {
   to { transform: translateY(14%); }
+}
+
+/* 波紋・きらめき・星を描く層（main.js が描く）。景色と人物のあいだに挟む */
+.hero-sea {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  mix-blend-mode: screen;
 }
 
 /* 手前の人物。高さ基準で大きさを決め、頭が夕日に重なる位置に立たせる */
@@ -243,7 +275,8 @@ a {
   aspect-ratio: 674 / 699;
   translate: calc(-50% + var(--px, 0) * 16px) calc(var(--py, 0) * 5px);
   transition: translate 0.5s ease-out;
-  animation: figure-in 1.6s 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  animation: figure-in 1.6s 0.3s var(--ease) both;
+  pointer-events: none;
 }
 
 @keyframes figure-in {
@@ -253,11 +286,11 @@ a {
   }
 }
 
-/* 文字を読みやすくするため、下端を背景色へなじませる */
+/* 文字を読みやすくするため、下端をページの地色へなじませる */
 .hero-shade {
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(11, 11, 16, 0.25) 0%, rgba(11, 11, 16, 0) 18%, rgba(11, 11, 16, 0) 60%, rgba(11, 11, 16, 0.55) 86%, var(--bg) 100%);
+  background: linear-gradient(180deg, rgba(17, 26, 43, 0.3) 0%, rgba(17, 26, 43, 0) 18%, rgba(24, 34, 53, 0) 58%, rgba(24, 34, 53, 0.6) 86%, var(--night) 100%);
   pointer-events: none;
 }
 
@@ -265,7 +298,9 @@ a {
   position: relative;
   width: 100%;
   padding-top: 6rem;
-  padding-bottom: clamp(1.5rem, 5vh, 3.5rem);
+  padding-bottom: clamp(1.25rem, 4vh, 3rem);
+  /* 文字のすき間からも海に触れられるように、ボタン以外は指を素通しにする */
+  pointer-events: none;
 }
 
 /* スクロールすると名前が上へ抜けていく */
@@ -284,19 +319,8 @@ a {
   }
 }
 
-.eyebrow {
-  margin: 0;
-  color: var(--accent);
-  font-family: var(--font-serif);
-  font-style: italic;
-  font-size: clamp(1.4rem, 3.4vw, 2.1rem);
-  line-height: 1.1;
-  text-shadow: 0 1px 12px rgba(11, 11, 16, 0.6);
-  animation: fade-up 0.9s 0.1s cubic-bezier(0.2, 0.8, 0.2, 1) both;
-}
-
 .hero-title {
-  margin: 0.75rem 0 1rem;
+  margin: 0 0 0.9rem;
   font-family: var(--font-display);
   font-weight: 800;
   /* 7文字が必ず横幅に収まるよう画面幅から逆算（この書体は「KOSHIRO」で約7.6文字分の幅） */
@@ -308,7 +332,7 @@ a {
 
 .hero-title span {
   display: inline-block;
-  animation: letter-in 1s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  animation: letter-in 1s var(--ease) both;
 }
 
 .hero-title span:nth-child(1) { animation-delay: 0.15s; }
@@ -334,111 +358,192 @@ a {
 
 .hero-meta {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
-  padding-top: 0.5rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.25);
-  animation: fade-up 0.9s 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  gap: 0.5rem 1.5rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(244, 236, 221, 0.28);
+  animation: fade-up 0.9s 0.7s var(--ease) both;
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(32px);
+  }
 }
 
 .hero-name {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.25rem 1.25rem;
   margin: 0;
-  font-size: clamp(1.1rem, 3vw, 1.5rem);
+  font-family: var(--font-mincho);
   font-weight: 700;
-  letter-spacing: 0.3em;
+  font-size: clamp(1.5rem, 4.5vw, 2.1rem);
+  line-height: 1.3;
+  letter-spacing: 0.32em;
 }
 
-.scroll-cue {
+.hero-role {
+  font-family: system-ui, -apple-system, "Hiragino Sans", "Yu Gothic", sans-serif;
+  font-weight: 400;
+  font-size: 0.8rem;
+  letter-spacing: 0.12em;
+  color: var(--haze);
+}
+
+/* ---- 音のボタン ---- */
+
+.sound {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  pointer-events: auto;
+}
+
+.sound-hint {
+  margin: 0;
+  font-family: var(--font-mincho);
+  font-weight: 700;
+  font-size: 0.95rem;
+  letter-spacing: 0.08em;
+  color: var(--glow);
+}
+
+.sound-btn {
   display: inline-flex;
   align-items: center;
-  gap: 0.75rem;
-  min-height: 44px;
-  color: var(--muted);
-  font-family: var(--font-display);
-  font-size: 0.75rem;
-  letter-spacing: 0.25em;
-  text-transform: uppercase;
-  transition: color var(--transition);
+  gap: 0.65rem;
+  min-height: 48px;
+  padding: 0 1.3rem 0 1.1rem;
+  border: 1px solid var(--glow);
+  border-radius: 999px;
+  background-color: rgba(17, 26, 43, 0.55);
+  color: var(--paper);
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: background-color 0.25s var(--ease), color 0.25s var(--ease);
 }
 
-.scroll-cue:hover {
-  color: var(--accent);
+.sound-btn:hover {
+  background-color: rgba(252, 139, 47, 0.25);
 }
 
-/* 「Scroll」の横で上下に流れる線 */
-.scroll-cue::after {
-  content: "";
-  width: 1px;
-  height: 2.25rem;
-  background: linear-gradient(var(--accent), var(--accent)) no-repeat 0 0 / 100% 50%, var(--line);
-  animation: cue 1.8s ease-in-out infinite;
+.sound-btn[aria-pressed="true"] {
+  background-color: var(--glow);
+  color: var(--deep);
 }
 
-@keyframes cue {
-  0% { background-position: 0 -1.2rem, 0 0; }
-  100% { background-position: 0 2.25rem, 0 0; }
+/* 3本の棒。音が出ているあいだだけ動く */
+.sound-bars {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 14px;
+}
+
+.sound-bars i {
+  width: 3px;
+  height: 100%;
+  border-radius: 2px;
+  background-color: currentColor;
+  transform: scaleY(0.3);
+  transform-origin: 50% 100%;
+}
+
+.sound-btn[aria-pressed="true"] .sound-bars i {
+  animation: bars 0.9s ease-in-out infinite alternate;
+}
+
+.sound-btn[aria-pressed="true"] .sound-bars i:nth-child(2) { animation-duration: 0.6s; animation-delay: -0.3s; }
+.sound-btn[aria-pressed="true"] .sound-bars i:nth-child(3) { animation-duration: 1.2s; animation-delay: -0.6s; }
+
+@keyframes bars {
+  from { transform: scaleY(0.2); }
+  to { transform: scaleY(1); }
+}
+
+/* 音が出せる状態のとき、海の上では指カーソルにする */
+.hero.is-playable {
+  cursor: pointer;
 }
 
 /* =========
-   キャッチコピー
+   キャッチコピー（縦書き）
    ========= */
 
 .statement {
-  padding: clamp(6rem, 18vh, 11rem) 0;
+  padding: clamp(5rem, 16vh, 10rem) 0;
+}
+
+.statement-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(2.5rem, 7vh, 4.5rem);
 }
 
 .statement-text {
   margin: 0;
-  font-size: clamp(2.4rem, 9.5vw, 7rem);
-  font-weight: 800;
-  line-height: 1.25;
-  letter-spacing: 0.02em;
+  writing-mode: vertical-rl;
+  font-family: var(--font-mincho);
+  font-weight: 700;
+  font-size: clamp(2.75rem, 12.5vw, 6rem);
+  line-height: 1.55;
+  letter-spacing: 0.12em;
+  white-space: nowrap;
 }
 
 .statement-text span {
   display: block;
 }
 
-.statement-text span:last-child {
-  color: var(--accent);
-}
-
-/* 画面内を通過するのに合わせて1行ずつ点灯 */
+/* 画面内を通過するのに合わせて、右の行から順に点灯 */
 @supports (animation-timeline: view()) {
   .statement-text span {
     animation: light-up linear both;
     animation-timeline: view();
-    animation-range: cover 22% cover 42%;
   }
 
-  .statement-text span:last-child {
-    animation-name: light-up-accent;
-  }
+  .statement-text span:nth-child(1) { animation-range: cover 12% cover 27%; }
+  .statement-text span:nth-child(2) { animation-range: cover 24% cover 39%; }
+  .statement-text span:nth-child(3) { animation-range: cover 36% cover 51%; }
 }
 
 @keyframes light-up {
   from { color: var(--dim); }
-  to { color: var(--text); }
-}
-
-@keyframes light-up-accent {
-  from { color: var(--dim); }
-  to { color: var(--accent); }
+  to { color: var(--paper); }
 }
 
 /* 非対応ブラウザ向け（main.js が .is-lit を付ける） */
 .js-fallback .statement-text span {
   color: var(--dim);
-  transition: color 0.8s ease-out;
+  transition: color 0.9s ease-out;
 }
 
-.js-fallback .statement-text span.is-lit {
-  color: var(--text);
+.js-fallback .statement-text span:nth-child(2) { transition-delay: 0.35s; }
+.js-fallback .statement-text span:nth-child(3) { transition-delay: 0.7s; }
+
+.js-fallback .statement-text.is-lit span {
+  color: var(--paper);
 }
 
-.js-fallback .statement-text span.is-lit:last-child {
-  color: var(--accent);
+.statement-en {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: clamp(1.15rem, 3.4vw, 1.6rem);
+  line-height: 1.3;
+  color: var(--haze);
+  text-align: center;
 }
 
 /* =========
@@ -450,17 +555,20 @@ a {
 }
 
 .section-alt {
-  background-color: var(--bg-alt);
+  background-color: var(--deep);
 }
 
 .section-head {
-  display: flex;
   padding-bottom: 1rem;
   margin-bottom: 1.5rem;
   border-bottom: 1px solid var(--line);
 }
 
 .section-title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.25rem 1.25rem;
   margin: 0;
   font-family: var(--font-display);
   font-weight: 800;
@@ -469,54 +577,19 @@ a {
   letter-spacing: -0.035em;
 }
 
+/* 英語の見出しに添える日本語 */
+.section-ja {
+  font-family: var(--font-mincho);
+  font-weight: 700;
+  font-size: 1rem;
+  letter-spacing: 0.2em;
+  color: var(--glow);
+}
+
 .section-subtitle {
   margin: 0 0 2rem;
-  color: var(--muted);
+  color: var(--haze);
   font-size: 0.95rem;
-}
-
-.coming {
-  display: inline-block;
-  margin: 0;
-  padding: clamp(0.4rem, 1.8vw, 0.7rem) clamp(1rem, 4vw, 1.6rem);
-  border: 1px dashed rgba(255, 255, 255, 0.3);
-  border-radius: 999px;
-  color: var(--muted);
-  font-family: var(--font-display);
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  font-size: 0.8rem;
-}
-
-/* スクロールで下からふわっと表示（対応ブラウザはCSSだけで、それ以外は main.js が担当） */
-@supports (animation-timeline: view()) {
-  .reveal {
-    animation: fade-up linear both;
-    animation-timeline: view();
-    animation-range: entry 0% cover 28%;
-  }
-}
-
-.js-fallback .reveal {
-  opacity: 0;
-  transform: translateY(48px);
-  transition: opacity 0.9s ease-out, transform 0.9s cubic-bezier(0.2, 0.8, 0.2, 1);
-}
-
-.js-fallback .reveal.is-in {
-  opacity: 1;
-  transform: none;
-}
-
-@keyframes fade-up {
-  from {
-    opacity: 0;
-    transform: translateY(48px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
 }
 
 /* =========
@@ -532,15 +605,10 @@ a {
 .video {
   position: relative;
   aspect-ratio: 16 / 9;
-  border-radius: 1.25rem;
+  border-radius: 6px;
   overflow: hidden;
-  background-color: var(--bg-alt);
+  background-color: var(--deep);
   border: 1px solid var(--line);
-  transition: border-color var(--transition);
-}
-
-.video:hover {
-  border-color: rgba(245, 177, 76, 0.6);
 }
 
 .video iframe,
@@ -552,15 +620,13 @@ a {
   border: 0;
 }
 
+/* 動画がまだ無いあいだは、トップの絵を暗くして敷いておく */
 .video-placeholder {
-  z-index: 1;
   display: grid;
   place-content: center;
   justify-items: center;
   gap: clamp(0.5rem, 2.5vw, 1rem);
-  /* 下のイコライザーと重ならないよう、中身を上寄りに置く */
-  padding-bottom: 15%;
-  background: radial-gradient(circle at 50% 40%, rgba(245, 177, 76, 0.14), transparent 60%);
+  background: linear-gradient(rgba(17, 26, 43, 0.55), rgba(17, 26, 43, 0.8)), url("images/hero-bg.jpg") 50% 42% / cover;
 }
 
 .video-play {
@@ -568,44 +634,19 @@ a {
   width: clamp(2.75rem, 11vw, 4.5rem);
   height: clamp(2.75rem, 11vw, 4.5rem);
   padding: clamp(0.65rem, 2.7vw, 1.1rem);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(244, 236, 221, 0.45);
   border-radius: 50%;
-  fill: var(--text);
+  fill: var(--paper);
 }
 
-/* 飾りのイコライザー */
-.eq {
-  position: absolute;
-  inset: auto 0 0;
-  height: 26%;
-  display: flex;
-  align-items: flex-end;
-  gap: clamp(2px, 0.6vw, 6px);
-  padding: 0 clamp(0.75rem, 3vw, 2rem);
-  opacity: 0.55;
-}
-
-.eq i {
-  flex: 1;
-  height: 100%;
-  border-radius: 999px 999px 0 0;
-  background: linear-gradient(var(--accent), rgba(245, 177, 76, 0));
-  transform-origin: 50% 100%;
-  animation: eq 1.1s ease-in-out infinite alternate;
-}
-
-.eq i:nth-child(2n) { animation-duration: 0.8s; }
-.eq i:nth-child(3n) { animation-duration: 1.4s; }
-.eq i:nth-child(5n) { animation-duration: 0.65s; }
-.eq i:nth-child(7n) { animation-duration: 1.7s; }
-.eq i:nth-child(4n + 1) { animation-delay: -0.35s; }
-.eq i:nth-child(4n + 2) { animation-delay: -0.8s; }
-.eq i:nth-child(4n + 3) { animation-delay: -0.15s; }
-.eq i:nth-child(6n) { animation-delay: -1.1s; }
-
-@keyframes eq {
-  from { transform: scaleY(0.06); }
-  to { transform: scaleY(1); }
+.coming {
+  margin: 0;
+  font-family: var(--font-mincho);
+  font-weight: 700;
+  font-size: clamp(0.85rem, 2.6vw, 1rem);
+  letter-spacing: 0.3em;
+  /* 字間のぶん右に寄って見えるのを戻す */
+  text-indent: 0.3em;
 }
 
 /* チャンネルへのリンクボタン */
@@ -617,16 +658,15 @@ a {
   margin-top: 1.75rem;
   padding: 0.8rem 1.7rem;
   border-radius: 999px;
-  background-color: var(--accent);
-  color: #1a1206;
+  background-color: var(--glow);
+  color: var(--deep);
   font-weight: 700;
   font-size: 0.95rem;
-  transition: transform var(--transition), box-shadow var(--transition);
+  transition: background-color 0.25s var(--ease);
 }
 
 .btn-channel:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 14px 40px -12px rgba(245, 177, 76, 0.7);
+  background-color: var(--paper);
 }
 
 .btn-channel .icon {
@@ -653,11 +693,11 @@ a {
 }
 
 .news-list time {
-  color: var(--accent);
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-size: 0.9rem;
-  letter-spacing: 0.06em;
+  color: var(--glow);
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 1.25rem;
+  line-height: 1.2;
 }
 
 .news-list p {
@@ -670,13 +710,11 @@ a {
   margin-left: 0.5rem;
   padding: 0.1rem 0.6rem;
   border-radius: 999px;
-  background-color: var(--accent);
-  color: #1a1206;
-  font-family: var(--font-display);
-  font-weight: 800;
+  background-color: var(--sun);
+  color: var(--deep);
+  font-weight: 700;
   font-size: 0.7rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  letter-spacing: 0.06em;
   vertical-align: middle;
 }
 
@@ -700,14 +738,9 @@ a {
   content: "";
   position: absolute;
   inset: 0;
-  border: 1px solid var(--accent);
-  border-radius: 1.25rem;
-  transform: translate(14px, 14px);
-  transition: transform var(--transition);
-}
-
-.about-figure:hover::before {
-  transform: translate(8px, 8px);
+  border: 1px solid var(--sun);
+  border-radius: 6px;
+  transform: translate(12px, 12px);
 }
 
 .about-photo {
@@ -717,7 +750,7 @@ a {
   height: auto;
   aspect-ratio: 4 / 5;
   object-fit: cover;
-  border-radius: 1.25rem;
+  border-radius: 6px;
 }
 
 .profile {
@@ -728,12 +761,11 @@ a {
 }
 
 .profile dt {
-  color: var(--accent);
-  font-family: var(--font-display);
-  font-size: 0.75rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  padding-top: 0.3rem;
+  color: var(--glow);
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 1.1rem;
+  line-height: 1.6;
 }
 
 .profile dd {
@@ -742,7 +774,8 @@ a {
 
 .about-text {
   margin: 0;
-  color: var(--muted);
+  max-width: 34em;
+  color: var(--haze);
 }
 
 /* =========
@@ -765,48 +798,47 @@ a {
   font-size: clamp(1.6rem, 6vw, 3.25rem);
   line-height: 1.1;
   letter-spacing: -0.03em;
-  color: var(--text);
-  transition: color var(--transition), padding var(--transition), background-color var(--transition);
+  color: var(--paper);
+  transition: color 0.25s var(--ease), padding 0.25s var(--ease);
 }
 
-/* 右端の矢印 */
+/* 右端の矢印（別のサイトが開く印） */
 .pill::after {
   content: "↗";
   margin-left: auto;
   font-family: system-ui, sans-serif;
   font-weight: 400;
   font-size: 0.7em;
-  color: var(--muted);
-  transition: transform var(--transition), color var(--transition);
+  color: var(--haze);
+  transition: transform 0.25s var(--ease), color 0.25s var(--ease);
 }
 
 .pill:hover {
-  padding-left: 1.25rem;
-  color: var(--accent);
-  background-color: rgba(245, 177, 76, 0.06);
+  padding-left: 1rem;
+  color: var(--glow);
 }
 
 .pill:hover::after {
-  color: var(--accent);
+  color: var(--glow);
   transform: translate(4px, -4px);
 }
 
-/* SNSアイコン（公式ロゴ形状・白1色はブランドガイドラインで許可された使い方） */
+/* SNSアイコン（公式ロゴ形状・1色はブランドガイドラインで許可された使い方） */
 .icon {
   width: 1.15rem;
   height: 1.15rem;
-  fill: var(--text);
+  fill: var(--paper);
   flex-shrink: 0;
 }
 
 .pill .icon {
   width: 0.62em;
   height: 0.62em;
-  transition: fill var(--transition);
+  transition: fill 0.25s var(--ease);
 }
 
 .pill:hover .icon {
-  fill: var(--accent);
+  fill: var(--glow);
 }
 
 /* =========
@@ -816,7 +848,7 @@ a {
 .site-footer {
   overflow: hidden;
   padding: 4rem 0 2rem;
-  color: var(--muted);
+  color: var(--haze);
   font-size: 0.8rem;
   letter-spacing: 0.05em;
   border-top: 1px solid var(--line);
@@ -832,7 +864,7 @@ a {
   letter-spacing: -0.045em;
   white-space: nowrap;
   color: transparent;
-  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.28);
+  -webkit-text-stroke: 1px rgba(252, 139, 47, 0.55);
 }
 
 .footer-inner {
@@ -853,17 +885,46 @@ a {
   display: inline-flex;
   align-items: center;
   min-height: 44px;
-  color: var(--text);
-  transition: color var(--transition);
+  color: var(--paper);
+  transition: color 0.25s var(--ease);
 }
 
 .footer-nav a:hover {
-  color: var(--accent);
+  color: var(--glow);
 }
 
 /* =========
    レスポンシブ
    ========= */
+
+/* PCなど広い画面：上のメニューを大きくして、押しやすく読みやすくする（画面が広いほど少しずつ大きくなる） */
+@media (min-width: 900px) {
+  html {
+    scroll-padding-top: 80px;
+  }
+
+  .header-inner {
+    height: 80px;
+  }
+
+  .logo {
+    font-size: clamp(1.4rem, 1.6vw, 1.9rem);
+  }
+
+  .nav {
+    gap: clamp(2.25rem, 3vw, 3.75rem);
+    font-size: clamp(1.05rem, 1.15vw, 1.35rem);
+  }
+
+  .nav a::after {
+    inset: auto 0 6px;
+    height: 2px;
+  }
+
+  .progress {
+    height: 3px;
+  }
+}
 
 /* スマホを横向きにしたとき：大見出しが人物の頭に重ならないよう小さくする */
 @media (orientation: landscape) and (max-height: 480px) {
@@ -891,6 +952,16 @@ a {
     padding: 4.5rem 0;
   }
 
+  .sound {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .sound-hint {
+    font-size: 0.85rem;
+    letter-spacing: 0.04em;
+  }
+
   .news-list li {
     grid-template-columns: 1fr;
   }
@@ -910,7 +981,7 @@ a {
   }
 }
 
-/* 「動きを減らす」設定の端末ではアニメーションを止める */
+/* 「動きを減らす」設定の端末ではアニメーションを止める（音と波紋は、触れたときだけ出る） */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -923,16 +994,7 @@ a {
     scroll-behavior: auto;
   }
 
-  .js-fallback .reveal {
-    opacity: 1;
-    transform: none;
-  }
-
   .js-fallback .statement-text span {
-    color: var(--text);
-  }
-
-  .js-fallback .statement-text span:last-child {
-    color: var(--accent);
+    color: var(--paper);
   }
 }
