@@ -25,6 +25,7 @@
   var lyrics = document.querySelectorAll(".lyrics-full");
   var jacket = document.querySelector(".jacket img");
   var lyricsName = document.querySelector(".track-lyrics-name");
+  var lyricsBox = document.querySelector(".track-lyrics");
   if (!audio || !ui || !playButton || !playLabel || !seek || !canvas || !nowText || !totalText || !titleText || !rows.length) return;
   var g = canvas.getContext && canvas.getContext("2d");
   if (!g || !audio.play) return;
@@ -205,6 +206,16 @@
   });
 
   window.addEventListener("resize", draw);
+
+  /* PCなど広い画面では、歌詞はジャケットの右に最初から開いておく */
+  if (lyricsBox && window.matchMedia) {
+    var wide = window.matchMedia("(min-width: 900px)");
+    if (wide.matches) lyricsBox.open = true;
+    var openIfWide = function (event) {
+      if (event.matches) lyricsBox.open = true;
+    };
+    if (wide.addEventListener) wide.addEventListener("change", openIfWide);
+  }
 
   /* 準備ができたら、標準の再生バーを専用の画面に置き換える */
   audio.controls = false;
