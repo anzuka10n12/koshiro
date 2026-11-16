@@ -596,6 +596,90 @@ a {
    Music：プログラムだけで演奏するイメージ曲
    ========= */
 
+/* 曲リスト */
+.tracks {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.track {
+  padding: 2.25rem 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.track:first-child {
+  padding-top: 0.75rem;
+}
+
+.track-head {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.track-head .song-title {
+  margin: 0;
+}
+
+.track-no,
+.track-length {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 1.5rem;
+  line-height: 1;
+  color: var(--glow);
+  font-variant-numeric: tabular-nums;
+}
+
+.track-length {
+  margin-left: auto;
+  font-size: 1.25rem;
+}
+
+.track .song-note {
+  margin-bottom: 1.25rem;
+}
+
+/* 音源の再生バー（ブラウザ標準のもの） */
+.track-audio {
+  display: block;
+  width: 100%;
+  max-width: 640px;
+  height: 48px;
+  color-scheme: dark;
+}
+
+.track-lyrics {
+  margin-top: 1.25rem;
+}
+
+.track-lyrics summary {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--paper);
+  font-size: 0.9rem;
+  text-decoration: underline;
+  text-decoration-color: var(--glow);
+  text-underline-offset: 0.35em;
+  cursor: pointer;
+}
+
+.lyrics-full {
+  padding-top: 0.5rem;
+  font-family: var(--font-mincho);
+  font-weight: 700;
+  font-size: clamp(1.05rem, 4vw, 1.25rem);
+  line-height: 2;
+  letter-spacing: 0.06em;
+}
+
+.lyrics-full p {
+  margin: 0 0 1.5rem;
+}
+
 .song {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
@@ -607,7 +691,7 @@ a {
   margin: 0 0 1rem;
   font-family: var(--font-mincho);
   font-weight: 700;
-  font-size: clamp(1.9rem, 6vw, 3rem);
+  font-size: clamp(1.4rem, 5vw, 2.25rem);
   line-height: 1.3;
   letter-spacing: 0.1em;
 }
@@ -1097,7 +1181,7 @@ a {
     font-size: 0.78rem;
   }
 
-  .nav-retro {
+  .nav .nav-retro {
     display: none;
   }
 
@@ -1144,8 +1228,8 @@ a {
   }
 }
 
-/* 幅のせまいスマホ：メニュー5項目が1行に収まるよう、左上の名前を隠す（すぐ下に大きく出ているため） */
-@media (max-width: 400px) {
+/* 幅のせまいスマホ：メニューが1行に収まるよう、左上の名前を隠す（すぐ下に大きく出ているため） */
+@media (max-width: 340px) {
   .logo {
     display: none;
   }
