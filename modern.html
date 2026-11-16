@@ -21,12 +21,14 @@
     <link rel="apple-touch-icon" href="images/apple-touch-icon.png" />
     <link rel="stylesheet" href="style.css" />
     <script src="main.js" defer></script>
+    <script src="song.js" defer></script>
   </head>
   <body>
     <header class="site-header">
       <div class="container header-inner">
         <a href="#top" class="logo">KOSHIRO</a>
         <nav class="nav" aria-label="メニュー">
+          <a href="#music">Music</a>
           <a href="#youtube">YouTube</a>
           <a href="#news">News</a>
           <a href="#about">About</a>
@@ -68,6 +70,39 @@
           <!-- TODO: キャッチコピーを差し替え（行ごとに <span> で区切る。漢字を変えたら README の「見出しの明朝体」を参照） -->
           <p class="statement-text"><span>日々の景色を</span><span>音にして</span><span>届ける</span></p>
           <p class="statement-en" lang="en">Everyday scenery, turned into sound.</p>
+        </div>
+      </section>
+
+      <!-- ===== Music：プログラムだけで演奏するイメージ曲（song.js）。音声ファイルは無い =====
+           歌詞を変えるときは、ここの <li> と、song.js の MELODY（発音）の両方を直す -->
+      <section id="music" class="section section-alt">
+        <div class="container">
+          <div class="section-head">
+            <h2 class="section-title">Music<span class="section-ja">音楽</span></h2>
+          </div>
+          <div class="song">
+            <div class="song-main">
+              <h3 class="song-title">夕陽の帰り道</h3>
+              <p class="song-note">このサイトのために、プログラムだけで作ったイメージ曲です。音声ファイルは使わず、伴奏も歌声も、お使いの端末がその場で計算して鳴らします。歌声は機械の合成音で、航士朗本人の歌ではありません。</p>
+              <div class="song-controls" hidden>
+                <button class="song-play" type="button" aria-pressed="false"><svg class="song-icon song-icon-play" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 5v14l11-7z"/></svg><svg class="song-icon song-icon-pause" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg><span class="song-play-label">再生する</span></button>
+                <button class="song-reset" type="button" hidden>最初に戻す</button>
+                <p class="song-time">0:00 / 1:08</p>
+              </div>
+              <div class="song-bar" aria-hidden="true"></div>
+              <p class="song-tip">曲を流したままトップの海を弾くと、同じ調なので合奏になります。</p>
+            </div>
+            <ol class="lyrics" aria-label="歌詞">
+              <li>日々の景色が　音になる</li>
+              <li>夕陽に染まる　帰り道</li>
+              <li>波のリズムに　歩いてく</li>
+              <li>言葉は海へ　溶けていく</li>
+              <li>歌うよ　今日の空を</li>
+              <li>届け　君の街まで</li>
+              <li>沈む光も　明日の色</li>
+              <li>ここから　始まる歌</li>
+            </ol>
+          </div>
         </div>
       </section>
 
