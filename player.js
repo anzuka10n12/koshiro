@@ -33,6 +33,11 @@
   var miniPlay = mini && mini.querySelector(".mini-play");
   var miniLabel = mini && mini.querySelector(".mini-play-label");
   var playerInView = true; /* 大きなプレーヤーが画面に見えているか */
+  /* 画面下のバーは「いま流れているもの」（曲か歌詞動画か）を操作する */
+  var vid = document.querySelector(".vplayer-video");
+  var active = "audio";      /* 最後に再生が始まったほう："audio"（曲）か "video"（歌詞動画） */
+  var videoInView = true;   /* 歌詞動画の画面が見えているか */
+  var videoPlayed = false;  /* 歌詞動画を一度でも再生したか */
   if (!audio || !ui || !playButton || !playLabel || !seek || !canvas || !nowText || !totalText || !titleText || !rows.length) return;
   var g = canvas.getContext && canvas.getContext("2d");
   if (!g || !audio.play) return;
@@ -91,7 +96,7 @@
     totalText.textContent = clock(total);
     seek.value = total > 0 ? String(Math.round((at / total) * 1000)) : "0";
     seek.setAttribute("aria-valuetext", clock(at) + " / " + clock(total));
-    if (mini) mini.style.setProperty("--mini", total > 0 ? (at / total).toFixed(4) : "0");
+    if (mini && active === "audio") mini.style.setProperty("--mini", total > 0 ? (at / total).toFixed(4) : "0");
     draw();
   }
 
@@ -103,6 +108,30 @@
     for (var i = 0; i < rows.length; i++) {
       rows[i].classList.toggle("is-playing", playing && i === current);
     }
+    syncMini();
+  }
+
+  /* 画面下のバーの中身（絵・曲名・再生ボタン）を、いま流れているほうに合わせる */
+  function syncMini() {
+    if (!mini) return;
+    var playing;
+    if (active === "video" && vid) {
+      playing = !vid.paused && !vid.ended;
+      var card = document.querySelector('.vcard[aria-current="true"]');
+      var vtitle = document.querySelector(".vplayer-title");
+      if (miniTitle && vtitle) miniTitle.textContent = vtitle.textContent;
+      if (miniArt && card) miniArt.setAttribute("src", card.getAttribute("data-poster") || "");
+      var d = vid.duration;
+      mini.style.setProperty("--mini", isFinite(d) && d > 0 ? (vid.currentTime / d).toFixed(4) : "0");
+    } else {
+      playing = !audio.paused && !audio.ended;
+      var row = rows[current];
+      if (miniTitle) miniTitle.textContent = titleText.textContent;
+      if (miniArt && row && row.getAttribute("data-art")) miniArt.setAttribute("src", row.getAttribute("data-art"));
+      var total = length();
+      mini.style.setProperty("--mini", total > 0 ? (position() / total).toFixed(4) : "0");
+    }
+    mini.classList.toggle("is-video", active === "video");
     if (miniPlay) {
       miniPlay.setAttribute("aria-pressed", playing ? "true" : "false");
       miniLabel.textContent = playing ? "一時停止" : "再生";
@@ -113,7 +142,7 @@
   /* ミニプレーヤーは「曲を選んだあと」かつ「大きなプレーヤーが画面に見えていない」ときだけ出す */
   function miniShow() {
     if (!mini) return;
-    var show = picked && !playerInView;
+    var show = active === "video" ? videoPlayed && !videoInView : picked && !playerInView;
     if (show && mini.hidden) {
       mini.hidden = false;
       mini.classList.add("is-away");
@@ -184,8 +213,7 @@
       jacket.setAttribute("alt", row.getAttribute("data-art-alt") || "");
     }
     if (lyricsName) lyricsName.textContent = "（" + titleText.textContent + "）";
-    if (miniTitle) miniTitle.textContent = titleText.textContent;
-    if (miniArt && art) miniArt.setAttribute("src", art);
+    if (active === "audio") syncMini();
     mark();
     for (var k = 0; k < lyrics.length; k++) {
       lyrics[k].hidden = lyrics[k].getAttribute("data-track") !== String(index);
@@ -247,6 +275,9 @@
     refresh();
   });
   audio.addEventListener("timeupdate", refresh);
+  audio.addEventListener("play", function () {
+    active = "audio";
+  });
   audio.addEventListener("play", state);
   /* 音楽が始まったら、歌詞動画を止める（同時に鳴らないように） */
   audio.addEventListener("play", function () {
@@ -284,14 +315,24 @@
   /* ミニプレーヤーの操作 */
   if (mini && miniPlay && miniOpen) {
     miniPlay.addEventListener("click", function () {
+      if (active === "video" && vid) {
+        if (vid.paused) {
+          var r = vid.play();
+          if (r && r.catch) r.catch(function () {});
+        } else {
+          vid.pause();
+        }
+        return;
+      }
       if (audio.paused) start();
       else audio.pause();
     });
-    /* 曲名を押すと、大きなプレーヤーの位置へ戻る */
+    /* 曲名を押すと、流れているほうの大きな画面（曲のプレーヤーか歌詞動画）へ戻る */
     miniOpen.addEventListener("click", function () {
-      if (!stage || !stage.scrollIntoView) return;
+      var target = active === "video" && vid ? vid : stage;
+      if (!target || !target.scrollIntoView) return;
       var calm = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      stage.scrollIntoView({ behavior: calm ? "auto" : "smooth", block: "start" });
+      target.scrollIntoView({ behavior: calm ? "auto" : "smooth", block: active === "video" ? "center" : "start" });
     });
     /* 大きなプレーヤー（再生ボタンと波形の部分）が画面から外れたかどうかを見張る */
     if ("IntersectionObserver" in window) {
@@ -299,7 +340,44 @@
         playerInView = entries[0].isIntersecting;
         miniShow();
       }).observe(ui);
+      if (vid) {
+        new IntersectionObserver(function (entries) {
+          videoInView = entries[0].isIntersecting;
+          miniShow();
+        }).observe(vid);
+      }
     }
+  }
+
+  /* 歌詞動画の再生・停止・進み具合を、画面下のバーに反映する */
+  if (vid) {
+    vid.addEventListener("play", function () {
+      active = "video";
+      videoPlayed = true;
+      syncMini();
+    });
+    vid.addEventListener("pause", syncMini);
+    vid.addEventListener("ended", syncMini);
+    vid.addEventListener("timeupdate", function () {
+      if (active === "video") syncMini();
+    });
+    /* 動画を切り替えたとき（曲名と絵が替わる） */
+    vid.addEventListener("loadstart", function () {
+      if (active === "video") syncMini();
+    });
+  }
+
+  /* 曲のプレーヤーの「この曲の歌詞動画を見る」：同じ順番の歌詞動画を流す */
+  var toVideo = document.querySelector(".player-video-link");
+  var vcards = document.querySelectorAll(".vcard");
+  if (toVideo && vcards.length) {
+    toVideo.hidden = false;
+    toVideo.addEventListener("click", function (event) {
+      var card = vcards[current];
+      if (!card) return;
+      event.preventDefault();
+      card.click();
+    });
   }
 
   /* 準備ができたら、標準の再生バーを専用の画面に置き換える */
