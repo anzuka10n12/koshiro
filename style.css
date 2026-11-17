@@ -789,6 +789,119 @@ a {
   animation: fade-up 0.6s var(--ease) both;
 }
 
+/* ---- ミニプレーヤー（画面の下に固定。大きなプレーヤーが見えないときだけ出る） ---- */
+
+.mini-player {
+  position: fixed;
+  left: 50%;
+  bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px));
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  width: min(560px, calc(100% - 1.5rem));
+  padding: 0.55rem 0.55rem 0.55rem 0.55rem;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background-color: rgba(17, 26, 43, 0.82);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  box-shadow: 0 18px 40px -18px rgba(0, 0, 0, 0.9);
+  translate: -50% 0;
+  transition: translate 0.35s var(--ease), opacity 0.35s var(--ease);
+}
+
+/* 隠れているときは画面の下へ沈める（hidden を外した直後の1コマは沈んだ位置から始める） */
+.mini-player.is-away {
+  translate: -50% calc(100% + 2rem);
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* 上端の細い線で再生位置を示す（player.js が --mini を 0〜1 で更新する） */
+.mini-progress {
+  position: absolute;
+  inset: 0 0 auto;
+  height: 2px;
+  background-color: var(--sun);
+  transform: scaleX(var(--mini, 0));
+  transform-origin: 0 50%;
+}
+
+.mini-art {
+  display: block;
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  border-radius: 6px;
+  object-fit: cover;
+}
+
+.mini-open {
+  display: grid;
+  flex: 1;
+  min-width: 0;
+  min-height: 48px;
+  align-content: center;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--paper);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.mini-title {
+  overflow: hidden;
+  font-family: var(--font-mincho);
+  font-weight: 700;
+  font-size: 1rem;
+  line-height: 1.4;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.mini-artist {
+  font-size: 0.75rem;
+  line-height: 1.4;
+  color: var(--haze);
+}
+
+.mini-play {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background-color: var(--glow);
+  color: var(--deep);
+  cursor: pointer;
+  transition: background-color 0.25s var(--ease);
+}
+
+.mini-play:hover {
+  background-color: var(--paper);
+}
+
+.mini-play[aria-pressed="true"] .player-icon-play {
+  display: none;
+}
+
+.mini-play[aria-pressed="true"] .player-icon-pause {
+  display: block;
+}
+
+/* ミニプレーヤーが出ているあいだ、ページの最後（フッター）が隠れないよう下に余白を足す */
+body.has-mini {
+  padding-bottom: 5.5rem;
+}
+
 /* ---- 曲の一覧 ---- */
 
 .tracklist {
