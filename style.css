@@ -395,91 +395,39 @@ a {
   color: var(--haze);
 }
 
-/* ---- 音のボタン ---- */
+/* ---- 「曲を聴く」ボタン ---- */
 
-.sound {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  pointer-events: auto;
-}
-
-/* 音を出していないときは空なので出さない */
-.sound-hint:empty {
-  display: none;
-}
-
-.sound-hint {
-  margin: 0;
-  font-family: var(--font-mincho);
-  font-weight: 700;
-  font-size: 0.95rem;
-  letter-spacing: 0.08em;
-  color: var(--glow);
-}
-
-.sound-btn {
-  margin-left: auto; /* 案内文が無いときも右端にそろえる */
+.hero-listen {
   display: inline-flex;
   align-items: center;
-  gap: 0.65rem;
-  min-height: 48px;
-  padding: 0 1.3rem 0 1.1rem;
-  border: 1px solid var(--glow);
+  gap: 0.6rem;
+  min-height: 52px;
+  margin-left: auto;
+  padding: 0 1.6rem 0 1.25rem;
   border-radius: 999px;
-  background-color: rgba(17, 26, 43, 0.55);
-  color: var(--paper);
-  font: inherit;
-  font-size: 0.9rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  white-space: nowrap;
-  flex-shrink: 0;
-  cursor: pointer;
-  transition: background-color 0.25s var(--ease), color 0.25s var(--ease);
-}
-
-.sound-btn:hover {
-  background-color: rgba(252, 139, 47, 0.25);
-}
-
-.sound-btn[aria-pressed="true"] {
   background-color: var(--glow);
   color: var(--deep);
+  font-weight: 700;
+  font-size: 1rem;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+  pointer-events: auto;
+  transition: background-color 0.25s var(--ease);
 }
 
-/* 3本の棒。音が出ているあいだだけ動く */
-.sound-bars {
-  display: inline-flex;
-  align-items: flex-end;
-  gap: 3px;
-  height: 14px;
+.hero-listen:hover {
+  background-color: var(--paper);
 }
 
-.sound-bars i {
-  width: 3px;
-  height: 100%;
-  border-radius: 2px;
-  background-color: currentColor;
-  transform: scaleY(0.3);
-  transform-origin: 50% 100%;
+.hero-listen-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  fill: currentColor;
 }
-
-.sound-btn[aria-pressed="true"] .sound-bars i {
-  animation: bars 0.9s ease-in-out infinite alternate;
-}
-
-.sound-btn[aria-pressed="true"] .sound-bars i:nth-child(2) { animation-duration: 0.6s; animation-delay: -0.3s; }
-.sound-btn[aria-pressed="true"] .sound-bars i:nth-child(3) { animation-duration: 1.2s; animation-delay: -0.6s; }
 
 @keyframes bars {
   from { transform: scaleY(0.2); }
   to { transform: scaleY(1); }
-}
-
-/* 音が出せる状態のとき、海の上では指カーソルにする */
-.hero.is-playable {
-  cursor: pointer;
 }
 
 /* =========
@@ -908,67 +856,89 @@ body.has-mini {
   padding-bottom: 5.5rem;
 }
 
-/* ---- 曲の一覧 ---- */
+/* ---- 曲の一覧：ジャケットを並べる ---- */
 
 .tracklist {
-  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 2.5rem 1.75rem;
+  margin: 2.5rem 0 0;
   padding: 0;
   list-style: none;
-  border-top: 1px solid var(--line);
 }
 
 .tracklist-row {
-  display: grid;
-  grid-template-columns: 2.5rem 48px minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 0.5rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
   width: 100%;
-  min-height: 68px;
-  padding: 0.75rem 0.75rem;
+  padding: 0;
   border: 0;
-  border-bottom: 1px solid var(--line);
   background: none;
   color: var(--paper);
   font: inherit;
   text-align: left;
   cursor: pointer;
-  transition: background-color 0.25s var(--ease);
 }
 
-.tracklist-row:hover {
-  background-color: rgba(244, 236, 221, 0.05);
+.tracklist-cover {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  border-radius: 6px;
+  box-shadow: 0 24px 40px -28px rgba(0, 0, 0, 0.95);
 }
 
-.tracklist-no,
-.tracklist-length {
-  font-family: var(--font-serif);
-  font-style: italic;
-  font-size: 1.25rem;
-  line-height: 1;
-  color: var(--haze);
-  font-variant-numeric: tabular-nums;
-}
-
-/* 一覧の小さなジャケット */
 .tracklist-art {
   display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1;
+  object-fit: cover;
+  transition: scale 0.6s var(--ease);
+}
+
+.tracklist-row:hover .tracklist-art {
+  scale: 1.04;
+}
+
+/* ジャケットの右下に出る丸い再生マーク（再生中は動く3本の棒になる） */
+.tracklist-mark {
+  position: absolute;
+  right: 0.75rem;
+  bottom: 0.75rem;
+  display: grid;
+  place-items: center;
   width: 48px;
   height: 48px;
-  border-radius: 3px;
-  object-fit: cover;
+  border-radius: 50%;
+  background-color: var(--glow);
+  color: var(--deep);
+  opacity: 0;
+  translate: 0 8px;
+  transition: opacity 0.3s var(--ease), translate 0.3s var(--ease);
 }
 
-.tracklist-title {
-  font-family: var(--font-mincho);
-  font-weight: 700;
-  font-size: clamp(1.1rem, 4vw, 1.35rem);
-  letter-spacing: 0.08em;
+.tracklist-row:hover .tracklist-mark,
+.tracklist-row:focus-visible .tracklist-mark,
+.tracklist-row[aria-current="true"] .tracklist-mark {
+  opacity: 1;
+  translate: 0 0;
 }
 
-/* 選ばれている曲は色を変え、鳴っているあいだは番号の代わりに3本の棒が動く */
-.tracklist-row[aria-current="true"] .tracklist-title,
-.tracklist-row[aria-current="true"] .tracklist-no {
-  color: var(--glow);
+/* 指で触る端末にはマウスを重ねる動きが無いので、いつも出しておく */
+@media (hover: none) {
+  .tracklist-mark {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+.tracklist-play {
+  width: 44%;
+  height: 44%;
+  fill: currentColor;
+  translate: 6% 0;
 }
 
 .tracklist-bars {
@@ -982,7 +952,7 @@ body.has-mini {
   width: 3px;
   height: 100%;
   border-radius: 2px;
-  background-color: var(--sun);
+  background-color: currentColor;
   transform-origin: 50% 100%;
   animation: bars 0.9s ease-in-out infinite alternate;
 }
@@ -990,12 +960,42 @@ body.has-mini {
 .tracklist-bars i:nth-child(2) { animation-duration: 0.6s; animation-delay: -0.3s; }
 .tracklist-bars i:nth-child(3) { animation-duration: 1.2s; animation-delay: -0.6s; }
 
-.tracklist-row.is-playing .tracklist-num {
+.tracklist-row.is-playing .tracklist-play {
   display: none;
 }
 
 .tracklist-row.is-playing .tracklist-bars {
   display: inline-flex;
+}
+
+/* 選んでいる曲：ジャケットを夕日の色でふちどり、曲名の色を変える */
+.tracklist-row[aria-current="true"] .tracklist-cover {
+  box-shadow: 0 0 0 2px var(--sun), 0 24px 40px -28px rgba(0, 0, 0, 0.95);
+}
+
+.tracklist-row[aria-current="true"] .tracklist-title {
+  color: var(--glow);
+}
+
+.tracklist-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 1.05rem;
+  line-height: 1;
+  color: var(--haze);
+  font-variant-numeric: tabular-nums;
+}
+
+.tracklist-title {
+  margin-top: -0.35rem;
+  font-family: var(--font-mincho);
+  font-weight: 700;
+  font-size: 1.15rem;
+  line-height: 1.45;
+  letter-spacing: 0.06em;
 }
 
 /* 歌詞：プレーヤーと曲の一覧のあいだに置く。長い歌詞でも一覧が遠くならないよう、枠の中でスクロールする */
@@ -1431,10 +1431,6 @@ body.has-mini {
     margin-bottom: 1.25rem;
   }
 
-  .side:has(.track-lyrics[open]) .tracklist {
-    display: none;
-  }
-
   .side:has(.track-lyrics[open]) .track-lyrics {
     position: absolute;
     inset: 0;
@@ -1488,15 +1484,26 @@ body.has-mini {
     margin-top: 1.75rem;
   }
 
-  .tracklist-row {
-    grid-template-columns: 1.75rem 44px minmax(0, 1fr) auto;
-    gap: 0.5rem 0.75rem;
-    padding-inline: 0.25rem;
+  .tracklist {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 2rem 1rem;
+    margin-top: 1.75rem;
   }
 
-  .tracklist-art {
-    width: 44px;
-    height: 44px;
+  .tracklist-mark {
+    right: 0.5rem;
+    bottom: 0.5rem;
+    width: 40px;
+    height: 40px;
+  }
+
+  .tracklist-meta {
+    font-size: 0.95rem;
+  }
+
+  .tracklist-title {
+    font-size: 1rem;
+    letter-spacing: 0.04em;
   }
 
   .header-inner {
@@ -1519,16 +1526,6 @@ body.has-mini {
 
   .section {
     padding: 4.5rem 0;
-  }
-
-  .sound {
-    width: 100%;
-    justify-content: space-between;
-  }
-
-  .sound-hint {
-    font-size: 0.85rem;
-    letter-spacing: 0.04em;
   }
 
   .news-list li {

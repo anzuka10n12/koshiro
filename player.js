@@ -130,6 +130,9 @@
   function reveal() {
     if (!stage || !stage.classList.contains("is-idle")) return;
     stage.classList.remove("is-idle");
+    /* PCでは歌詞をジャケットの右に開いて出す（スマホでは閉じたまま） */
+    var lyricsBox = document.querySelector(".track-lyrics");
+    if (lyricsBox && window.matchMedia && window.matchMedia("(min-width: 900px)").matches) lyricsBox.open = true;
     refresh();
     /* 現れる動きの途中の位置ではなく、動かない外枠（.stage）の位置まで動かす */
     if (stage.scrollIntoView) {
@@ -262,6 +265,15 @@
   });
 
   window.addEventListener("resize", draw);
+
+  /* トップの「曲を聴く」：曲リストへ移動して、いまプレーヤーにある曲（最初は1曲目）を流す */
+  var listen = document.querySelector(".hero-listen");
+  if (listen) {
+    listen.addEventListener("click", function (event) {
+      event.preventDefault();
+      start();
+    });
+  }
 
   /* ミニプレーヤーの操作 */
   if (mini && miniPlay && miniOpen) {
