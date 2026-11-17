@@ -19,10 +19,11 @@
     <meta name="twitter:card" content="summary_large_image" />
     <link rel="icon" href="images/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="images/apple-touch-icon.png" />
-    <link rel="stylesheet" href="style.css?v=20261117c" />
+    <link rel="stylesheet" href="style.css?v=20261117d" />
     <!-- style.css・main.js・player.js を直したら、下の ?v= の値をすべて新しくする（古いファイルがブラウザに残って、新旧が混ざらないようにするため） -->
-    <script src="main.js?v=20261117c" defer></script>
-    <script src="player.js?v=20261117c" defer></script>
+    <script src="main.js?v=20261117d" defer></script>
+    <script src="player.js?v=20261117d" defer></script>
+    <script src="video.js?v=20261117d" defer></script>
   </head>
   <body>
     <header class="site-header">
@@ -30,6 +31,7 @@
         <a href="#top" class="logo">KOSHIRO</a>
         <nav class="nav" aria-label="メニュー">
           <a href="#music">Music</a>
+          <a href="#video">Video</a>
           <a href="#news">News</a>
           <a href="#about">About</a>
           <a href="#contact">SNS</a>
@@ -333,8 +335,69 @@
         </div>
       </section>
 
+      <!-- ===== Video：歌詞動画 =====
+           動画は videos/ フォルダ（mp4 と、同じ名前の jpg が一覧の絵）。足すときは <li> を丸ごとコピーして書き換える。
+           video.js が動けば一覧を押すと上の画面で流れる。動かない環境では、一覧を押すと動画のファイルが開く -->
+      <section id="video" class="section">
+        <div class="container">
+          <div class="section-head">
+            <h2 class="section-title">Video<span class="section-ja">歌詞動画</span></h2>
+          </div>
+          <div class="vstage">
+            <div class="vplayer">
+              <video class="vplayer-video" controls playsinline preload="none" poster="videos/yuuhi-no-kaerimichi.jpg" src="videos/yuuhi-no-kaerimichi.mp4" width="1920" height="1080">お使いのブラウザでは動画を再生できません。</video>
+              <p class="vplayer-title">夕陽の帰り道</p>
+            </div>
+            <ol class="vlist" aria-label="動画の一覧">
+            <li>
+              <a class="vcard" href="videos/yuuhi-no-kaerimichi.mp4" data-src="videos/yuuhi-no-kaerimichi.mp4" data-poster="videos/yuuhi-no-kaerimichi.jpg" aria-current="true">
+                <span class="vcard-thumb"><img src="videos/yuuhi-no-kaerimichi.jpg" alt="" width="1280" height="720" loading="lazy" /><span class="vcard-length">3:37</span></span>
+                <span class="vcard-title">夕陽の帰り道</span>
+              </a>
+            </li>
+            <li>
+              <a class="vcard" href="videos/claude.mp4" data-src="videos/claude.mp4" data-poster="videos/claude.jpg">
+                <span class="vcard-thumb"><img src="videos/claude.jpg" alt="" width="1280" height="720" loading="lazy" /><span class="vcard-length">2:42</span></span>
+                <span class="vcard-title">CLAUDE</span>
+              </a>
+            </li>
+            <li>
+              <a class="vcard" href="videos/mada-kaerenai.mp4" data-src="videos/mada-kaerenai.mp4" data-poster="videos/mada-kaerenai.jpg">
+                <span class="vcard-thumb"><img src="videos/mada-kaerenai.jpg" alt="" width="1280" height="720" loading="lazy" /><span class="vcard-length">5:33</span></span>
+                <span class="vcard-title">まだ帰れない僕ら</span>
+              </a>
+            </li>
+            <li>
+              <a class="vcard" href="videos/okaeri-wo-iu-hi-made.mp4" data-src="videos/okaeri-wo-iu-hi-made.mp4" data-poster="videos/okaeri-wo-iu-hi-made.jpg">
+                <span class="vcard-thumb"><img src="videos/okaeri-wo-iu-hi-made.jpg" alt="" width="1280" height="720" loading="lazy" /><span class="vcard-length">5:53</span></span>
+                <span class="vcard-title">おかえりを言う日まで feat. Yuzuki</span>
+              </a>
+            </li>
+            <li>
+              <a class="vcard" href="videos/jouhin-na-rokudenashi.mp4" data-src="videos/jouhin-na-rokudenashi.mp4" data-poster="videos/jouhin-na-rokudenashi.jpg">
+                <span class="vcard-thumb"><img src="videos/jouhin-na-rokudenashi.jpg" alt="" width="1280" height="720" loading="lazy" /><span class="vcard-length">3:49</span></span>
+                <span class="vcard-title">上品なろくでなし</span>
+              </a>
+            </li>
+            <li>
+              <a class="vcard" href="videos/otona-no-kuseni.mp4" data-src="videos/otona-no-kuseni.mp4" data-poster="videos/otona-no-kuseni.jpg">
+                <span class="vcard-thumb"><img src="videos/otona-no-kuseni.jpg" alt="" width="1280" height="720" loading="lazy" /><span class="vcard-length">4:14</span></span>
+                <span class="vcard-title">大人のくせに</span>
+              </a>
+            </li>
+            <li>
+              <a class="vcard" href="videos/quiet-riot.mp4" data-src="videos/quiet-riot.mp4" data-poster="videos/quiet-riot.jpg">
+                <span class="vcard-thumb"><img src="videos/quiet-riot.jpg" alt="" width="1280" height="720" loading="lazy" /><span class="vcard-length">4:16</span></span>
+                <span class="vcard-title">QUIET RIOT</span>
+              </a>
+            </li>
+            </ol>
+          </div>
+        </div>
+      </section>
+
       <!-- ===== News：お知らせは新しいものを上に追加（<li>ごとコピー） ===== -->
-      <section id="news" class="section">
+      <section id="news" class="section section-alt">
         <div class="container">
           <div class="section-head">
             <h2 class="section-title">News<span class="section-ja">お知らせ</span></h2>
@@ -349,7 +412,7 @@
       </section>
 
       <!-- ===== About ===== -->
-      <section id="about" class="section section-alt">
+      <section id="about" class="section">
         <div class="container about">
           <div class="about-figure">
             <img class="about-photo" src="images/photo.jpg" alt="航士朗の写真" width="300" height="375" loading="lazy" />
@@ -403,7 +466,7 @@
       </section>
 
       <!-- ===== SNS ===== -->
-      <section id="contact" class="section">
+      <section id="contact" class="section section-alt">
         <div class="container">
           <div class="section-head">
             <h2 class="section-title">SNS<span class="section-ja">リンク</span></h2>
