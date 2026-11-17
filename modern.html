@@ -418,5 +418,16 @@
         <small>© KOSHIRO. All Rights Reserved.</small>
       </div>
     </footer>
+
+    <!-- ===== ミニプレーヤー：曲を選んだあと、大きなプレーヤーが画面から外れると下に出る（player.js が出し入れする） ===== -->
+    <div class="mini-player" hidden>
+      <div class="mini-progress" aria-hidden="true"></div>
+      <img class="mini-art" src="images/jacket-yuuhi.jpg" alt="" width="96" height="96" />
+      <button class="mini-open" type="button" aria-label="プレーヤーに戻る">
+        <span class="mini-title">夕陽の帰り道</span>
+        <span class="mini-artist">航士朗</span>
+      </button>
+      <button class="mini-play" type="button" aria-pressed="false"><svg class="player-icon player-icon-play" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 5v14l11-7z"/></svg><svg class="player-icon player-icon-pause" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg><span class="mini-play-label visually-hidden">再生</span></button>
+    </div>
   </body>
 </html>
