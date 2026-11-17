@@ -248,6 +248,12 @@
   });
   audio.addEventListener("timeupdate", refresh);
   audio.addEventListener("play", state);
+  /* 音楽が始まったら、歌詞動画を止める（同時に鳴らないように） */
+  audio.addEventListener("play", function () {
+    Array.prototype.forEach.call(document.querySelectorAll("video"), function (v) {
+      if (!v.paused) v.pause();
+    });
+  });
   audio.addEventListener("pause", state);
   audio.addEventListener("ended", function () {
     /* 次の曲があれば続けて再生、無ければ先頭に戻して止まる */
