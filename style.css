@@ -1168,6 +1168,120 @@ body.has-mini {
 }
 
 /* =========
+   Video：歌詞動画（PCでは左に大きな画面、右に一覧。スマホでは画面の下に一覧）
+   ========= */
+
+.vstage {
+  display: grid;
+  gap: 1.75rem;
+}
+
+.vplayer-video {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  border-radius: 6px;
+  background-color: #000;
+  box-shadow: 0 30px 60px -30px rgba(0, 0, 0, 0.9);
+}
+
+.vplayer-title {
+  margin: 1rem 0 0;
+  font-family: var(--font-mincho);
+  font-weight: 700;
+  font-size: clamp(1.25rem, 3.5vw, 1.6rem);
+  line-height: 1.4;
+  letter-spacing: 0.06em;
+}
+
+.vlist {
+  display: grid;
+  gap: 0.25rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.vcard {
+  display: grid;
+  grid-template-columns: 148px minmax(0, 1fr);
+  align-items: center;
+  gap: 1rem;
+  padding: 0.5rem;
+  border-radius: 6px;
+  color: var(--paper);
+  transition: background-color 0.25s var(--ease);
+}
+
+.vcard:hover {
+  background-color: rgba(244, 236, 221, 0.06);
+}
+
+.vcard-thumb {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  border-radius: 4px;
+}
+
+.vcard-thumb img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+}
+
+.vcard-length {
+  position: absolute;
+  right: 0.35rem;
+  bottom: 0.35rem;
+  padding: 0.05rem 0.4rem;
+  border-radius: 3px;
+  background-color: rgba(17, 26, 43, 0.85);
+  font-size: 0.75rem;
+  line-height: 1.5;
+  font-variant-numeric: tabular-nums;
+}
+
+.vcard-title {
+  font-family: var(--font-mincho);
+  font-weight: 700;
+  font-size: 1rem;
+  line-height: 1.45;
+  letter-spacing: 0.04em;
+}
+
+/* いま画面に出ている動画 */
+.vcard[aria-current="true"] {
+  background-color: rgba(252, 139, 47, 0.12);
+}
+
+.vcard[aria-current="true"] .vcard-title {
+  color: var(--glow);
+}
+
+.vcard[aria-current="true"] .vcard-thumb {
+  box-shadow: 0 0 0 2px var(--sun);
+}
+
+@media (min-width: 900px) {
+  .vstage {
+    grid-template-columns: minmax(0, 1fr) 340px;
+    align-items: start;
+  }
+
+  /* 一覧は画面の高さに合わせ、はみ出す分は枠の中でスクロール */
+  .vlist {
+    max-height: min(70vh, 34rem);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-color: var(--sun) transparent;
+  }
+}
+
+/* =========
    News
    ========= */
 
