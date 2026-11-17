@@ -26,6 +26,13 @@
   var jacket = document.querySelector(".jacket img");
   var lyricsName = document.querySelector(".track-lyrics-name");
   var stage = document.querySelector(".stage");
+  var mini = document.querySelector(".mini-player");
+  var miniArt = mini && mini.querySelector(".mini-art");
+  var miniTitle = mini && mini.querySelector(".mini-title");
+  var miniOpen = mini && mini.querySelector(".mini-open");
+  var miniPlay = mini && mini.querySelector(".mini-play");
+  var miniLabel = mini && mini.querySelector(".mini-play-label");
+  var playerInView = true; /* 大きなプレーヤーが画面に見えているか */
   if (!audio || !ui || !playButton || !playLabel || !seek || !canvas || !nowText || !totalText || !titleText || !rows.length) return;
   var g = canvas.getContext && canvas.getContext("2d");
   if (!g || !audio.play) return;
@@ -84,6 +91,7 @@
     totalText.textContent = clock(total);
     seek.value = total > 0 ? String(Math.round((at / total) * 1000)) : "0";
     seek.setAttribute("aria-valuetext", clock(at) + " / " + clock(total));
+    if (mini) mini.style.setProperty("--mini", total > 0 ? (at / total).toFixed(4) : "0");
     draw();
   }
 
@@ -95,6 +103,27 @@
     for (var i = 0; i < rows.length; i++) {
       rows[i].classList.toggle("is-playing", playing && i === current);
     }
+    if (miniPlay) {
+      miniPlay.setAttribute("aria-pressed", playing ? "true" : "false");
+      miniLabel.textContent = playing ? "一時停止" : "再生";
+    }
+    miniShow();
+  }
+
+  /* ミニプレーヤーは「曲を選んだあと」かつ「大きなプレーヤーが画面に見えていない」ときだけ出す */
+  function miniShow() {
+    if (!mini) return;
+    var show = picked && !playerInView;
+    if (show && mini.hidden) {
+      mini.hidden = false;
+      mini.classList.add("is-away");
+      void mini.offsetWidth; /* 沈んだ位置を一度描かせてから、上がってくる動きにする */
+    }
+    mini.classList.toggle("is-away", !show);
+    mini.setAttribute("aria-hidden", show ? "false" : "true");
+    if (miniOpen) miniOpen.tabIndex = show ? 0 : -1;
+    if (miniPlay) miniPlay.tabIndex = show ? 0 : -1;
+    document.body.classList.toggle("has-mini", show);
   }
 
   /* 曲を初めて選んだとき、隠していたジャケットとプレーヤーを出し、そこまで画面を動かす */
@@ -152,6 +181,8 @@
       jacket.setAttribute("alt", row.getAttribute("data-art-alt") || "");
     }
     if (lyricsName) lyricsName.textContent = "（" + titleText.textContent + "）";
+    if (miniTitle) miniTitle.textContent = titleText.textContent;
+    if (miniArt && art) miniArt.setAttribute("src", art);
     mark();
     for (var k = 0; k < lyrics.length; k++) {
       lyrics[k].hidden = lyrics[k].getAttribute("data-track") !== String(index);
@@ -231,6 +262,27 @@
   });
 
   window.addEventListener("resize", draw);
+
+  /* ミニプレーヤーの操作 */
+  if (mini && miniPlay && miniOpen) {
+    miniPlay.addEventListener("click", function () {
+      if (audio.paused) start();
+      else audio.pause();
+    });
+    /* 曲名を押すと、大きなプレーヤーの位置へ戻る */
+    miniOpen.addEventListener("click", function () {
+      if (!stage || !stage.scrollIntoView) return;
+      var calm = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      stage.scrollIntoView({ behavior: calm ? "auto" : "smooth", block: "start" });
+    });
+    /* 大きなプレーヤー（再生ボタンと波形の部分）が画面から外れたかどうかを見張る */
+    if ("IntersectionObserver" in window) {
+      new IntersectionObserver(function (entries) {
+        playerInView = entries[0].isIntersecting;
+        miniShow();
+      }).observe(ui);
+    }
+  }
 
   /* 準備ができたら、標準の再生バーを専用の画面に置き換える */
   audio.controls = false;
