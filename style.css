@@ -772,6 +772,23 @@ a {
   font-size: 0.9rem;
 }
 
+/* ---- 曲を選ぶまでは、曲の一覧だけを出す ---- */
+
+/* 曲を選んで画面が動いたとき、ジャケットがヘッダーに貼り付かないよう少し余白を取る */
+.stage {
+  scroll-margin-top: 1.5rem;
+}
+
+.stage.is-idle .release,
+.stage.is-idle .lyrics-col {
+  display: none;
+}
+
+/* 曲を選んだ瞬間、ジャケットとプレーヤーがふわっと現れる */
+.stage:not(.is-idle) .release {
+  animation: fade-up 0.6s var(--ease) both;
+}
+
 /* ---- 曲の一覧 ---- */
 
 .tracklist {
@@ -783,7 +800,7 @@ a {
 
 .tracklist-row {
   display: grid;
-  grid-template-columns: 2.5rem minmax(0, 1fr) auto;
+  grid-template-columns: 2.5rem 48px minmax(0, 1fr) auto;
   align-items: center;
   gap: 0.5rem 1rem;
   width: 100%;
@@ -811,6 +828,15 @@ a {
   line-height: 1;
   color: var(--haze);
   font-variant-numeric: tabular-nums;
+}
+
+/* 一覧の小さなジャケット */
+.tracklist-art {
+  display: block;
+  width: 48px;
+  height: 48px;
+  border-radius: 3px;
+  object-fit: cover;
 }
 
 .tracklist-title {
@@ -1277,6 +1303,11 @@ a {
     min-width: 0;
   }
 
+  /* 曲を選ぶ前は、一覧を横いっぱいに出す */
+  .stage.is-idle {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
   .side .track-lyrics {
     margin-bottom: 1.25rem;
   }
@@ -1339,7 +1370,14 @@ a {
   }
 
   .tracklist-row {
+    grid-template-columns: 1.75rem 44px minmax(0, 1fr) auto;
+    gap: 0.5rem 0.75rem;
     padding-inline: 0.25rem;
+  }
+
+  .tracklist-art {
+    width: 44px;
+    height: 44px;
   }
 
   .header-inner {

@@ -25,6 +25,7 @@
   var lyrics = document.querySelectorAll(".lyrics-full");
   var jacket = document.querySelector(".jacket img");
   var lyricsName = document.querySelector(".track-lyrics-name");
+  var stage = document.querySelector(".stage");
   if (!audio || !ui || !playButton || !playLabel || !seek || !canvas || !nowText || !totalText || !titleText || !rows.length) return;
   var g = canvas.getContext && canvas.getContext("2d");
   if (!g || !audio.play) return;
@@ -96,6 +97,18 @@
     }
   }
 
+  /* 曲を初めて選んだとき、隠していたジャケットとプレーヤーを出し、そこまで画面を動かす */
+  function reveal() {
+    if (!stage || !stage.classList.contains("is-idle")) return;
+    stage.classList.remove("is-idle");
+    refresh();
+    /* 現れる動きの途中の位置ではなく、動かない外枠（.stage）の位置まで動かす */
+    if (stage.scrollIntoView) {
+      var calm = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      stage.scrollIntoView({ behavior: calm ? "auto" : "smooth", block: "start" });
+    }
+  }
+
   /* 一覧で「いまプレーヤーにある曲」の行を光らせる（ページを開いた直後は光らせない） */
   function mark() {
     for (var i = 0; i < rows.length; i++) {
@@ -109,6 +122,7 @@
       picked = true;
       mark();
     }
+    reveal();
     if (errorText) errorText.hidden = true;
     var result = audio.play();
     if (result && result.catch) {
@@ -222,5 +236,6 @@
   audio.controls = false;
   ui.hidden = false;
   box.classList.add("is-ready");
+  if (stage) stage.classList.add("is-idle");
   load(0, false);
 })();
