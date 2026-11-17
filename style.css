@@ -22,7 +22,7 @@
    入っていない漢字は端末の明朝体で表示される（README「見出しの明朝体」参照） */
 @font-face {
   font-family: "Shippori Mincho";
-  src: url("fonts/shippori-mincho-700-subset.woff2") format("woff2");
+  src: url("fonts/shippori-mincho-700-subset.woff2?v=20261117h") format("woff2");
   font-weight: 700;
   font-style: normal;
   font-display: swap;
