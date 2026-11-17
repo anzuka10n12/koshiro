@@ -283,22 +283,4 @@
     );
     lit.observe(statement);
   }
-
-  /* 進捗バー */
-  var ticking = false;
-  function updateProgress() {
-    var max = root.scrollHeight - window.innerHeight;
-    root.style.setProperty("--progress", max > 0 ? Math.min(1, window.scrollY / max) : 0);
-    ticking = false;
-  }
-  window.addEventListener(
-    "scroll",
-    function () {
-      if (ticking) return;
-      ticking = true;
-      requestAnimationFrame(updateProgress);
-    },
-    { passive: true }
-  );
-  updateProgress();
 })();
