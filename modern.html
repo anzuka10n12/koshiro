@@ -19,11 +19,11 @@
     <meta name="twitter:card" content="summary_large_image" />
     <link rel="icon" href="images/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="images/apple-touch-icon.png" />
-    <link rel="stylesheet" href="style.css?v=20261117d" />
+    <link rel="stylesheet" href="style.css?v=20261117e" />
     <!-- style.css・main.js・player.js を直したら、下の ?v= の値をすべて新しくする（古いファイルがブラウザに残って、新旧が混ざらないようにするため） -->
-    <script src="main.js?v=20261117d" defer></script>
-    <script src="player.js?v=20261117d" defer></script>
-    <script src="video.js?v=20261117d" defer></script>
+    <script src="main.js?v=20261117e" defer></script>
+    <script src="player.js?v=20261117e" defer></script>
+    <script src="video.js?v=20261117e" defer></script>
   </head>
   <body>
     <header class="site-header">
@@ -106,6 +106,7 @@
                   <p class="player-times" aria-hidden="true"><span class="player-now">0:00</span><span class="player-total">3:37</span></p>
                 </div>
               </div>
+              <a class="player-video-link" href="#video" hidden><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 5h16v14H4zM10 9v6l5-3z"/></svg>この曲の歌詞動画を見る</a>
               <p class="player-error" hidden>音源を再生できませんでした。通信環境を確かめて、もう一度お試しください。</p>
             </div>
           </div>
@@ -495,7 +496,7 @@
       </div>
     </footer>
 
-    <!-- ===== ミニプレーヤー：曲を選んだあと、大きなプレーヤーが画面から外れると下に出る（player.js が出し入れする） ===== -->
+    <!-- ===== ミニプレーヤー：曲か歌詞動画が流れていて、その大きな画面が見えなくなると下に出る（player.js が出し入れする） ===== -->
     <div class="mini-player" hidden>
       <div class="mini-progress" aria-hidden="true"></div>
       <img class="mini-art" src="images/jacket-yuuhi.jpg" alt="" width="96" height="96" />
