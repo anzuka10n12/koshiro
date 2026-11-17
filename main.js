@@ -311,7 +311,7 @@
         }
         button.setAttribute("aria-pressed", soundOn ? "true" : "false");
         label.textContent = soundOn ? "音を止める" : "音を出す";
-        hint.textContent = soundOn ? "海と空に触れてください" : "この海は、弾けます";
+        hint.textContent = soundOn ? "海に触れると鳴ります" : "";
         hero.classList.toggle("is-playable", soundOn);
         if (soundOn) {
           /* 押した合図に、夕日の真下でひとつ鳴らす */
