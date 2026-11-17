@@ -25,7 +25,6 @@
   var lyrics = document.querySelectorAll(".lyrics-full");
   var jacket = document.querySelector(".jacket img");
   var lyricsName = document.querySelector(".track-lyrics-name");
-  var lyricsBox = document.querySelector(".track-lyrics");
   if (!audio || !ui || !playButton || !playLabel || !seek || !canvas || !nowText || !totalText || !titleText || !rows.length) return;
   var g = canvas.getContext && canvas.getContext("2d");
   if (!g || !audio.play) return;
@@ -97,7 +96,19 @@
     }
   }
 
+  /* 一覧で「いまプレーヤーにある曲」の行を光らせる（ページを開いた直後は光らせない） */
+  function mark() {
+    for (var i = 0; i < rows.length; i++) {
+      if (picked && i === current) rows[i].setAttribute("aria-current", "true");
+      else rows[i].removeAttribute("aria-current");
+    }
+  }
+
   function start() {
+    if (!picked) {
+      picked = true;
+      mark();
+    }
     if (errorText) errorText.hidden = true;
     var result = audio.play();
     if (result && result.catch) {
@@ -108,6 +119,8 @@
   }
 
   /* 曲を選ぶ（リストの行に、音源の場所・長さ・波形・曲名が書いてある） */
+  var picked = false; /* 一度でも曲を選んだ・再生したか */
+
   function load(index, autoplay) {
     var row = rows[index];
     var src = row.getAttribute("data-src");
@@ -125,10 +138,7 @@
       jacket.setAttribute("alt", row.getAttribute("data-art-alt") || "");
     }
     if (lyricsName) lyricsName.textContent = "（" + titleText.textContent + "）";
-    for (var i = 0; i < rows.length; i++) {
-      if (i === index) rows[i].setAttribute("aria-current", "true");
-      else rows[i].removeAttribute("aria-current");
-    }
+    mark();
     for (var k = 0; k < lyrics.length; k++) {
       lyrics[k].hidden = lyrics[k].getAttribute("data-track") !== String(index);
       lyrics[k].scrollTop = 0;
@@ -161,6 +171,7 @@
         if (audio.paused) start();
         else audio.pause();
       } else {
+        picked = true;
         load(index, true);
       }
     });
@@ -206,16 +217,6 @@
   });
 
   window.addEventListener("resize", draw);
-
-  /* PCなど広い画面では、歌詞はジャケットの右に最初から開いておく */
-  if (lyricsBox && window.matchMedia) {
-    var wide = window.matchMedia("(min-width: 900px)");
-    if (wide.matches) lyricsBox.open = true;
-    var openIfWide = function (event) {
-      if (event.matches) lyricsBox.open = true;
-    };
-    if (wide.addEventListener) wide.addEventListener("change", openIfWide);
-  }
 
   /* 準備ができたら、標準の再生バーを専用の画面に置き換える */
   audio.controls = false;
