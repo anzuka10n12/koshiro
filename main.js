@@ -5,7 +5,7 @@
   - このファイル1つだけを自サイトから読み込む（CSP: script-src 'self'。外部スクリプト・インラインスクリプトは禁止のまま）
   - 通信しない（fetch / XHR なし）・保存しない（Cookie / localStorage なし）・文字入力を受け取らない
   - HTMLを文字列から組み立てない（innerHTML / eval / document.write は使わない）
-  - 音は音声ファイルを読み込まず、その場で計算して鳴らす（マイクは使わない）。ボタンを押すまで絶対に鳴らない
+  - 音は鳴らさない（曲の再生は player.js が担当）
 */
 (function () {
   "use strict";
@@ -39,9 +39,7 @@
 
   /* =========
      2. 弾ける海
-        海に触れると波紋が広がり、空に触れると星がまたたく。
-        「音を出す」を押したあとは、触れた場所の左右の位置に応じた高さの音が鳴る
-        （左が低く右が高い。どこを触っても濁らない5音の音階。空は2オクターブ高い鈴のような音）。
+        海に触れると波紋が広がり、空に触れると星がまたたく（音は鳴らない。説明のない小さな仕掛け）。
      ========= */
   (function sea() {
     var canvas = document.querySelector(".hero-sea");
@@ -177,157 +175,43 @@
       schedule();
     }
 
-    /* ---- 音 ---- */
+    /* ---- 触れたとき（音は鳴らさない。触れた場所に波紋や星が出るだけ） ---- */
 
-    var AudioCtx = window.AudioContext || window.webkitAudioContext;
-    var audio = null;
-    var out = null;
-    var soundOn = false;
-    var lastNote = 0;
+    var dragging = false;
+    var lastX = 0;
+    var lastY = 0;
 
-    /* レを基準にした5音の音階（レ・ミ・ファ♯・ラ・シ）を、左から右へ12段 */
-    var STEPS = [0, 2, 4, 7, 9];
-    var COLUMNS = 12;
-
-    function setupAudio() {
-      audio = new AudioCtx();
-      var limiter = audio.createDynamicsCompressor();
-      limiter.threshold.value = -16;
-      limiter.ratio.value = 8;
-      limiter.connect(audio.destination);
-
-      out = audio.createGain();
-      out.gain.value = 0.55;
-      out.connect(limiter);
-
-      /* 海の広さを感じる、やまびこ */
-      var echo = audio.createDelay(1);
-      echo.delayTime.value = 0.36;
-      var back = audio.createGain();
-      back.gain.value = 0.34;
-      var wet = audio.createGain();
-      wet.gain.value = 0.32;
-      out.connect(echo);
-      echo.connect(back);
-      back.connect(echo);
-      echo.connect(wet);
-      wet.connect(limiter);
-    }
-
-    function play(column, star, strength) {
-      if (!soundOn || !audio) return;
-      var now = audio.currentTime;
-      if (now - lastNote < 0.05) return; /* 連打しすぎを防ぐ */
-      lastNote = now;
-
-      var semitone = STEPS[column % 5] + 12 * Math.floor(column / 5) + (star ? 24 : 0);
-      var freq = 146.83 * Math.pow(2, semitone / 12); /* 146.83Hz = 低いレ */
-      var length = star ? 1.6 : 2.6;
-
-      var env = audio.createGain();
-      env.gain.setValueAtTime(0.0001, now);
-      env.gain.exponentialRampToValueAtTime(strength * (star ? 0.22 : 0.4), now + 0.012);
-      env.gain.exponentialRampToValueAtTime(0.0001, now + length);
-      env.connect(out);
-
-      var body = audio.createOscillator();
-      body.type = "sine";
-      body.frequency.value = freq;
-      body.connect(env);
-      body.start(now);
-      body.stop(now + length + 0.05);
-
-      if (!star) {
-        /* 弦をはじいたような明るさを少し足す */
-        var shine = audio.createOscillator();
-        var shineGain = audio.createGain();
-        shine.type = "triangle";
-        shine.frequency.value = freq * 2;
-        shineGain.gain.setValueAtTime(0.22, now);
-        shineGain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
-        shine.connect(shineGain);
-        shineGain.connect(env);
-        shine.start(now);
-        shine.stop(now + 0.55);
-      }
-    }
-
-    /* ---- 触れたとき ---- */
-
-    var lastColumn = -1;
-    var lastStar = false;
-
-    function touch(event, pressed) {
+    function touch(event) {
       /* ボタンやリンクの上は対象外 */
       if (event.target.closest && event.target.closest("a, button")) return;
       var box = hero.getBoundingClientRect();
       var x = event.clientX - box.left;
       var y = event.clientY - box.top;
       if (x < 0 || x > box.width || y < 0 || y > box.height) return;
-      var star = y < scene().horizon;
-      var column = Math.min(COLUMNS - 1, Math.floor((x / box.width) * COLUMNS));
-
-      /* なぞっているあいだは、隣の音の列に入ったときだけ鳴らす（ハープのように） */
-      if (!pressed && column === lastColumn && star === lastStar) return;
-      lastColumn = column;
-      lastStar = star;
-
-      addMark(x, y, star);
-      play(column, star, pressed ? 1 : 0.6);
+      lastX = x;
+      lastY = y;
+      addMark(x, y, y < scene().horizon);
     }
 
     hero.addEventListener("pointerdown", function (event) {
-      touch(event, true);
+      dragging = true;
+      touch(event);
     });
+    /* なぞると、少し離れるたびに波紋が続く */
     hero.addEventListener("pointermove", function (event) {
-      /* 音を出していないときは、なぞっても何もしない（押したときの波紋だけ） */
-      if (!soundOn) return;
-      touch(event, false);
+      if (!dragging) return;
+      var box = hero.getBoundingClientRect();
+      var dx = event.clientX - box.left - lastX;
+      var dy = event.clientY - box.top - lastY;
+      if (dx * dx + dy * dy > 60 * 60) touch(event);
     });
-    hero.addEventListener("pointerleave", function () {
-      lastColumn = -1;
-    });
-
-    /* ---- 音のボタン ---- */
-
-    var panel = document.querySelector(".sound");
-    var button = document.querySelector(".sound-btn");
-    var label = document.querySelector(".sound-label");
-    var hint = document.querySelector(".sound-hint");
-
-    if (AudioCtx && panel && button && label && hint) {
-      panel.hidden = false;
-      button.addEventListener("click", function () {
-        soundOn = !soundOn;
-        try {
-          if (soundOn) {
-            if (!audio) setupAudio();
-            audio.resume();
-          } else if (audio) {
-            audio.suspend();
-          }
-        } catch (error) {
-          soundOn = false;
-        }
-        button.setAttribute("aria-pressed", soundOn ? "true" : "false");
-        label.textContent = soundOn ? "音を止める" : "音を出す";
-        hint.textContent = soundOn ? "海に触れると鳴ります" : "";
-        hero.classList.toggle("is-playable", soundOn);
-        if (soundOn) {
-          /* 押した合図に、夕日の真下でひとつ鳴らす */
-          var s = scene();
-          addMark(s.sunX, s.horizon + (H - s.horizon) * 0.35, false);
-          play(5, false, 0.8);
-        }
+    ["pointerup", "pointercancel", "pointerleave"].forEach(function (name) {
+      hero.addEventListener(name, function () {
+        dragging = false;
       });
-    }
+    });
 
-    /* 別のタブに移ったら音を止める */
     document.addEventListener("visibilitychange", function () {
-      if (audio && soundOn) {
-        if (document.hidden) audio.suspend();
-        else audio.resume();
-      }
       schedule();
     });
 
