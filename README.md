@@ -11,7 +11,7 @@ GitHub Pages で無料公開している静的サイト。レトロ版は HTML/C
 | `video.js` | 今風版の歌詞動画の欄（一覧を押すと上の画面で流れる）。動かない環境では一覧が動画ファイルへのリンクになる |
 | `videos/` | 歌詞動画（`曲名.mp4`）と、一覧に出す絵（同じ名前の `.jpg`） |
 | `audio/` | 今風版の曲リストで流す音源（`yuuhi-no-kaerimichi.m4a`）。曲を足すときはここに置き、`modern.html` の曲リストに `<li class="track">` を足す |
-| `fonts/` | 今風版の見出し用フォント（Syne / Instrument Serif / しっぽり明朝、いずれもOFLライセンス。ライセンス文を同梱） |
+| `fonts/` | 今風版の見出し用フォント（Syne / しっぽり明朝、いずれもOFLライセンス。ライセンス文を同梱） |
 | `images/hero-bg.jpg` / `images/hero-figure.webp` | 今風版のトップの絵。奥の景色と、手前の人物（背景透明）の2層。差し替えるときは同じファイル名で上書きする |
 | `images/` | 写真・背景画像 |
 | `.nojekyll` | GitHub Pages の Jekyll 変換を無効化 |
