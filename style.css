@@ -404,6 +404,11 @@ a {
   pointer-events: auto;
 }
 
+/* 音を出していないときは空なので出さない */
+.sound-hint:empty {
+  display: none;
+}
+
 .sound-hint {
   margin: 0;
   font-family: var(--font-mincho);
@@ -414,6 +419,7 @@ a {
 }
 
 .sound-btn {
+  margin-left: auto; /* 案内文が無いときも右端にそろえる */
   display: inline-flex;
   align-items: center;
   gap: 0.65rem;
