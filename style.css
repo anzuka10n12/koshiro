@@ -743,6 +743,31 @@ a {
   animation: fade-up 0.6s var(--ease) both;
 }
 
+/* 曲のプレーヤーから歌詞動画へ */
+.player-video-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  margin-top: 1rem;
+  color: var(--haze);
+  font-size: 0.9rem;
+  text-decoration: underline;
+  text-decoration-color: rgba(255, 184, 102, 0.6);
+  text-underline-offset: 0.35em;
+  transition: color 0.25s var(--ease);
+}
+
+.player-video-link:hover {
+  color: var(--glow);
+}
+
+.player-video-link svg {
+  width: 1.1rem;
+  height: 1.1rem;
+  fill: currentColor;
+}
+
 /* ---- ミニプレーヤー（画面の下に固定。大きなプレーヤーが見えないときだけ出る） ---- */
 
 .mini-player {
@@ -781,6 +806,11 @@ a {
   background-color: var(--sun);
   transform: scaleX(var(--mini, 0));
   transform-origin: 0 50%;
+}
+
+/* 歌詞動画のときは、絵を横長にする */
+.mini-player.is-video .mini-art {
+  width: 85px;
 }
 
 .mini-art {
