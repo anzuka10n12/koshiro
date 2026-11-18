@@ -142,3 +142,43 @@ h1 {
 .icon-x { color: #000000; }
 .icon-instagram { color: #ff0069; }
 .icon-tiktok { color: #000000; }
+
+/* 曲の一覧 */
+.songs {
+  margin-top: 40px;
+}
+
+.song-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #ffffff;
+}
+
+.song-table td {
+  border: 1px solid #000000;
+  padding: 8px;
+  vertical-align: top;
+}
+
+.song-table .no {
+  width: 2em;
+  text-align: center;
+  font-size: 14px;
+}
+
+.song-table .len {
+  font-weight: normal;
+  font-size: 14px;
+}
+
+.song-table .song {
+  font-weight: bold;
+}
+
+.song-table audio {
+  display: block;
+  width: 100%;
+  max-width: 420px;
+  height: 36px;
+  margin-top: 6px;
+}
