@@ -1339,38 +1339,6 @@ body.has-mini {
   }
 }
 
-/* =========
-   News
-   ========= */
-
-.news-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.news-list li {
-  display: grid;
-  grid-template-columns: 8.5rem 1fr;
-  gap: 0.25rem 1.5rem;
-  align-items: baseline;
-  padding: 1.4rem 0;
-  border-bottom: 1px solid var(--line);
-}
-
-.news-list time {
-  color: var(--haze);
-  font-size: 0.95rem;
-  font-variant-numeric: tabular-nums;
-  letter-spacing: 0.04em;
-  line-height: 1.2;
-}
-
-.news-list p {
-  margin: 0;
-  font-size: 1.05rem;
-}
-
 .new {
   display: inline-block;
   margin-left: 0.5rem;
@@ -1661,10 +1629,6 @@ body.has-mini {
 
   .section {
     padding: 4.5rem 0;
-  }
-
-  .news-list li {
-    grid-template-columns: 1fr;
   }
 
   .about {
