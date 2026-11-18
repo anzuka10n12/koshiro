@@ -913,6 +913,47 @@ a {
   color: var(--haze);
 }
 
+/* 戻る・再生・次へ をひとまとまりに */
+.mini-controls {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  gap: 0.15rem;
+}
+
+.mini-skip {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 40px;
+  height: 48px;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  color: var(--paper);
+  cursor: pointer;
+  transition: color 0.25s var(--ease), background-color 0.25s var(--ease);
+}
+
+.mini-skip svg {
+  width: 22px;
+  height: 22px;
+  fill: currentColor;
+}
+
+/* 指で触る端末では、押したあとに色が残らないよう、マウスのときだけ色を変える */
+@media (hover: hover) {
+  .mini-skip:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+  }
+}
+
+.mini-skip:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
 .mini-play {
   display: grid;
   place-items: center;
