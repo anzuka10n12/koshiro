@@ -819,6 +819,16 @@ a {
   transition: translate 0.35s var(--ease), opacity 0.35s var(--ease);
 }
 
+/* スマホで横・下へはらえるよう、バーの上での指の動きはページのスクロールに使わない */
+.mini-player {
+  touch-action: none;
+}
+
+/* 指で動かしている間は、指にぴったりついてくる */
+.mini-player.is-dragging {
+  transition: none;
+}
+
 /* 隠れているときは画面の下へ沈める（hidden を外した直後の1コマは沈んだ位置から始める） */
 .mini-player.is-away {
   translate: -50% calc(100% + 2rem);
