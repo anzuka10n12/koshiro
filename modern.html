@@ -19,11 +19,11 @@
     <meta name="twitter:card" content="summary_large_image" />
     <link rel="icon" href="images/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="images/apple-touch-icon.png" />
-    <link rel="stylesheet" href="style.css?v=20261118b" />
+    <link rel="stylesheet" href="style.css?v=20261118d" />
     <!-- style.css・main.js・player.js を直したら、下の ?v= の値をすべて新しくする（古いファイルがブラウザに残って、新旧が混ざらないようにするため） -->
-    <script src="main.js?v=20261118b" defer></script>
-    <script src="player.js?v=20261118b" defer></script>
-    <script src="video.js?v=20261118b" defer></script>
+    <script src="main.js?v=20261118d" defer></script>
+    <script src="player.js?v=20261118d" defer></script>
+    <script src="video.js?v=20261118d" defer></script>
   </head>
   <body>
     <header class="site-header">
@@ -104,11 +104,12 @@
                 </div>
               </div>
               <a class="player-video-link" href="#video" hidden><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 5h16v14H4zM10 9v6l5-3z"/></svg>この曲の歌詞動画を見る</a>
+              <button class="stage-close" type="button" hidden><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6.4 5 5 6.4 10.6 12 5 17.6 6.4 19l5.6-5.6 5.6 5.6 1.4-1.4-5.6-5.6L19 6.4 17.6 5 12 10.6z"/></svg>停止して閉じる</button>
               <p class="player-error" hidden>音源を再生できませんでした。通信環境を確かめて、もう一度お試しください。</p>
             </div>
           </div>
 
-          <!-- 歌詞：いま選んでいる曲のものだけを表示する。スマホでは閉じておき、PCではジャケットの右に開いて出す -->
+          <!-- 歌詞：いま選んでいる曲のものだけを表示する。最初は閉じておき、「歌詞」を押すと開く -->
           <div class="side">
           <div class="lyrics-col">
           <details class="track-lyrics">
