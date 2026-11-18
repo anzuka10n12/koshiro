@@ -379,20 +379,41 @@
   }
 
   /* 「停止して閉じる」：再生をやめて、曲を選ぶ前の一覧だけの状態に戻す */
+  /* 曲の再生をやめ、ジャケットとプレーヤーをしまう（keepView なら、いま見ている位置が動かないようにする） */
+  function closeStage(keepView) {
+    audio.pause();
+    if (audio.readyState >= 1) audio.currentTime = 0;
+    pendingSeek = -1;
+    picked = false;
+    mark();
+    var lyricsBox = document.querySelector(".track-lyrics");
+    if (lyricsBox) lyricsBox.open = false;
+    if (stage && !stage.classList.contains("is-idle")) {
+      var before = stage.getBoundingClientRect();
+      stage.classList.add("is-idle");
+      /* しまった欄が画面より上にあったときは、縮んだぶんだけ戻して、見ている所がずれないようにする */
+      if (keepView && before.bottom < 0) {
+        var after = stage.getBoundingClientRect();
+        window.scrollBy(0, after.height - before.height);
+      }
+    }
+    state();
+    refresh();
+  }
+
+  /* 歌詞動画を止めて頭に戻し、表紙の絵を出した状態にする */
+  function resetVideo() {
+    if (!vid) return;
+    vid.pause();
+    if (vid.getAttribute("src")) vid.load();
+    videoPlayed = false;
+  }
+
   var closeButton = document.querySelector(".stage-close");
   if (closeButton && stage) {
     closeButton.hidden = false;
     closeButton.addEventListener("click", function () {
-      audio.pause();
-      if (audio.readyState >= 1) audio.currentTime = 0;
-      pendingSeek = -1;
-      picked = false;
-      mark();
-      var lyricsBox = document.querySelector(".track-lyrics");
-      if (lyricsBox) lyricsBox.open = false;
-      stage.classList.add("is-idle");
-      state();
-      refresh();
+      closeStage(false);
       /* しまったあとは、曲の一覧の頭へ */
       var music = document.getElementById("music") || stage;
       if (music.scrollIntoView) {
@@ -402,6 +423,74 @@
       /* キーボードで操作している人のために、いまの曲の行へ戻る */
       if (rows[current] && rows[current].focus) rows[current].focus({ preventScroll: true });
     });
+  }
+
+  /* スマホ：画面下のバーを横か下へはらうと、再生をやめてすべて閉じる
+     （曲の再生欄をしまい、歌詞動画も止めて頭に戻す）。少し動かしただけなら元に戻る */
+  if (mini) {
+    var drag = null;
+    var swallowClick = false;
+    mini.addEventListener("pointerdown", function (e) {
+      if (e.pointerType !== "touch" || mini.classList.contains("is-away")) return;
+      drag = { id: e.pointerId, x: e.clientX, y: e.clientY, dx: 0, dy: 0, t: Date.now(), moved: false };
+    });
+    mini.addEventListener("pointermove", function (e) {
+      if (!drag || e.pointerId !== drag.id) return;
+      drag.dx = e.clientX - drag.x;
+      drag.dy = Math.max(0, e.clientY - drag.y); /* 上へは動かさない */
+      if (!drag.moved && Math.abs(drag.dx) + drag.dy > 10) {
+        drag.moved = true;
+        try { mini.setPointerCapture(drag.id); } catch (err) { /* 取れなくても動く */ }
+        mini.classList.add("is-dragging");
+      }
+      if (drag.moved) {
+        var far = Math.min(1, Math.max(Math.abs(drag.dx) / mini.offsetWidth, drag.dy / 120));
+        mini.style.translate = "calc(-50% + " + drag.dx + "px) " + drag.dy + "px";
+        mini.style.opacity = String(1 - far * 0.7);
+      }
+    });
+    function endDrag(e) {
+      if (!drag || e.pointerId !== drag.id) return;
+      var d = drag;
+      drag = null;
+      mini.classList.remove("is-dragging");
+      if (!d.moved) return;
+      swallowClick = true; /* はらった指を離したときに、ボタンが押されたことにしない */
+      window.setTimeout(function () { swallowClick = false; }, 400);
+      var fast = (Math.abs(d.dx) + d.dy) / Math.max(1, Date.now() - d.t) > 0.6;
+      var away = Math.abs(d.dx) > mini.offsetWidth * 0.3 || d.dy > 50 || (fast && Math.abs(d.dx) + d.dy > 30);
+      if (!away) {
+        mini.style.translate = "";
+        mini.style.opacity = "";
+        return;
+      }
+      /* はらった向きへ飛ばしてから閉じる */
+      if (d.dy > Math.abs(d.dx)) mini.style.translate = "-50% calc(100% + 2rem)";
+      else mini.style.translate = "calc(-50% + " + (d.dx > 0 ? "" : "-") + "110vw) " + d.dy + "px";
+      mini.style.opacity = "0";
+      window.setTimeout(function () {
+        closeStage(true);
+        resetVideo();
+        active = "audio";
+        miniShow();
+        mini.style.translate = "";
+        mini.style.opacity = "";
+      }, 260);
+    }
+    mini.addEventListener("pointerup", endDrag);
+    mini.addEventListener("pointercancel", function (e) {
+      if (!drag || e.pointerId !== drag.id) return;
+      drag = null;
+      mini.classList.remove("is-dragging");
+      mini.style.translate = "";
+      mini.style.opacity = "";
+    });
+    mini.addEventListener("click", function (e) {
+      if (!swallowClick) return;
+      swallowClick = false;
+      e.preventDefault();
+      e.stopPropagation();
+    }, true);
   }
 
   /* 準備ができたら、標準の再生バーを専用の画面に置き換える */
