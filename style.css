@@ -29,7 +29,6 @@
   --deep: #111a2b; /* 一段暗い夜 */
   --paper: #f4ecdd; /* 文字 */
   --haze: #a4abc4; /* 控えめな文字 */
-  --dim: rgba(244, 236, 221, 0.16);
   --sun: #fc8b2f; /* 夕日 */
   --glow: #ffb866; /* 夕日の明るいところ */
   --line: rgba(244, 236, 221, 0.14);
@@ -440,76 +439,6 @@ a {
 @keyframes bars {
   from { transform: scaleY(0.2); }
   to { transform: scaleY(1); }
-}
-
-/* =========
-   キャッチコピー（縦書き）
-   ========= */
-
-.statement {
-  padding: clamp(5rem, 16vh, 10rem) 0;
-}
-
-.statement-inner {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: clamp(2.5rem, 7vh, 4.5rem);
-}
-
-.statement-text {
-  margin: 0;
-  writing-mode: vertical-rl;
-  font-family: var(--font-mincho);
-  font-weight: 700;
-  font-size: clamp(2.1rem, 8.5vw, 4.25rem);
-  line-height: 1.7;
-  letter-spacing: 0.1em;
-  white-space: nowrap;
-}
-
-.statement-text span {
-  display: block;
-}
-
-/* 画面内を通過するのに合わせて、右の行から順に点灯 */
-@supports (animation-timeline: view()) {
-  .statement-text span {
-    animation: light-up linear both;
-    animation-timeline: view();
-  }
-
-  .statement-text span:nth-child(1) { animation-range: cover 12% cover 27%; }
-  .statement-text span:nth-child(2) { animation-range: cover 24% cover 39%; }
-  .statement-text span:nth-child(3) { animation-range: cover 36% cover 51%; }
-}
-
-@keyframes light-up {
-  from { color: var(--dim); }
-  to { color: var(--paper); }
-}
-
-/* 非対応ブラウザ向け（main.js が .is-lit を付ける） */
-.js-fallback .statement-text span {
-  color: var(--dim);
-  transition: color 0.9s ease-out;
-}
-
-.js-fallback .statement-text span:nth-child(2) { transition-delay: 0.35s; }
-.js-fallback .statement-text span:nth-child(3) { transition-delay: 0.7s; }
-
-.js-fallback .statement-text.is-lit span {
-  color: var(--paper);
-}
-
-/* 歌詞の出どころ（曲名） */
-.statement-source {
-  margin: 0;
-  font-family: var(--font-mincho);
-  font-weight: 700;
-  font-size: 0.95rem;
-  letter-spacing: 0.15em;
-  color: var(--haze);
 }
 
 /* =========
@@ -1780,9 +1709,5 @@ body.has-mini {
 
   html {
     scroll-behavior: auto;
-  }
-
-  .js-fallback .statement-text span {
-    color: var(--paper);
   }
 }
