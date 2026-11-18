@@ -261,26 +261,4 @@
       if (section) spy.observe(section);
     });
   }
-
-  /* =========
-     4. スクロール連動アニメーション非対応のブラウザ向けの代替（対応ブラウザではCSSに任せる）
-     ========= */
-  if (window.CSS && CSS.supports && CSS.supports("animation-timeline", "view()")) return;
-  if (!("IntersectionObserver" in window)) return;
-
-  root.classList.add("js-fallback");
-
-  /* キャッチコピー：画面に入ったら右の行から順に点灯 */
-  var statement = document.querySelector(".statement-text");
-  if (statement) {
-    var lit = new IntersectionObserver(
-      function (entries) {
-        if (!entries[0].isIntersecting) return;
-        statement.classList.add("is-lit");
-        lit.disconnect();
-      },
-      { rootMargin: "0px 0px -30% 0px" }
-    );
-    lit.observe(statement);
-  }
 })();
