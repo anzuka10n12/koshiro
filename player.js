@@ -159,9 +159,7 @@
   function reveal() {
     if (!stage || !stage.classList.contains("is-idle")) return;
     stage.classList.remove("is-idle");
-    /* PCでは歌詞をジャケットの右に開いて出す（スマホでは閉じたまま） */
-    var lyricsBox = document.querySelector(".track-lyrics");
-    if (lyricsBox && window.matchMedia && window.matchMedia("(min-width: 900px)").matches) lyricsBox.open = true;
+    /* 歌詞は閉じたまま出す（「歌詞」を押すと開く） */
     refresh();
     /* 現れる動きの途中の位置ではなく、動かない外枠（.stage）の位置まで動かす */
     if (stage.scrollIntoView) {
@@ -377,6 +375,32 @@
       if (!card) return;
       event.preventDefault();
       card.click();
+    });
+  }
+
+  /* 「停止して閉じる」：再生をやめて、曲を選ぶ前の一覧だけの状態に戻す */
+  var closeButton = document.querySelector(".stage-close");
+  if (closeButton && stage) {
+    closeButton.hidden = false;
+    closeButton.addEventListener("click", function () {
+      audio.pause();
+      if (audio.readyState >= 1) audio.currentTime = 0;
+      pendingSeek = -1;
+      picked = false;
+      mark();
+      var lyricsBox = document.querySelector(".track-lyrics");
+      if (lyricsBox) lyricsBox.open = false;
+      stage.classList.add("is-idle");
+      state();
+      refresh();
+      /* しまったあとは、曲の一覧の頭へ */
+      var music = document.getElementById("music") || stage;
+      if (music.scrollIntoView) {
+        var calm = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        music.scrollIntoView({ behavior: calm ? "auto" : "smooth", block: "start" });
+      }
+      /* キーボードで操作している人のために、いまの曲の行へ戻る */
+      if (rows[current] && rows[current].focus) rows[current].focus({ preventScroll: true });
     });
   }
 
