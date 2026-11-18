@@ -35,7 +35,7 @@ GitHub Pages はファイルを10分ほどブラウザに覚えさせるため�
 ## 曲を追加するとき
 
 1. 音源を `audio/` に置く（iPhoneでも確実に鳴る AAC の `.m4a` か `.mp3` にする）
-2. ジャケット（正方形・800×800px 程度の JPEG）を `images/` に置く
+2. ジャケット（正方形・600×600px 以上の JPEG）を `images/` に置く
 3. `modern.html` の `<ol class="tracklist">` の `<li>` を丸ごとコピーし、`data-src`・`data-seconds`・`data-art`・曲名・長さを書き換える
 4. 波形（`data-peaks`）は、音源の音量を180個の数字（0〜100、カンマ区切り）にしたもの。作り方が分からなければ `50` を180個並べても動く（平らな波形になる）
 5. 歌詞は `<div class="lyrics-full" data-track="1">`（番号は0始まり）を足す
