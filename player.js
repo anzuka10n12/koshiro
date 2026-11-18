@@ -32,6 +32,8 @@
   var miniOpen = mini && mini.querySelector(".mini-open");
   var miniPlay = mini && mini.querySelector(".mini-play");
   var miniLabel = mini && mini.querySelector(".mini-play-label");
+  var miniPrev = mini && mini.querySelector(".mini-prev");
+  var miniNext = mini && mini.querySelector(".mini-next");
   var playerInView = true; /* 大きなプレーヤーが画面に見えているか */
   /* 画面下のバーは「いま流れているもの」（曲か歌詞動画か）を操作する */
   var vid = document.querySelector(".vplayer-video");
@@ -152,6 +154,8 @@
     mini.setAttribute("aria-hidden", show ? "false" : "true");
     if (miniOpen) miniOpen.tabIndex = show ? 0 : -1;
     if (miniPlay) miniPlay.tabIndex = show ? 0 : -1;
+    if (miniPrev) miniPrev.tabIndex = show ? 0 : -1;
+    if (miniNext) miniNext.tabIndex = show ? 0 : -1;
     document.body.classList.toggle("has-mini", show);
   }
 
@@ -325,6 +329,8 @@
       if (audio.paused) start();
       else audio.pause();
     });
+    if (miniPrev) miniPrev.addEventListener("click", function () { step(-1); });
+    if (miniNext) miniNext.addEventListener("click", function () { step(1); });
     /* 曲名を押すと、流れているほうの大きな画面（曲のプレーヤーか歌詞動画）へ戻る */
     miniOpen.addEventListener("click", function () {
       var target = active === "video" && vid ? vid : stage;
@@ -376,6 +382,47 @@
       event.preventDefault();
       card.click();
     });
+  }
+
+  /* 前の曲・次の曲（画面下のバーのボタンと、スマホのロック画面のボタン）
+     ・曲：鳴っていれば次の曲も続けて鳴らし、止まっていれば止まったまま替える。
+       「前」は、曲の頭から3秒より後ならその曲の頭へ戻る。最後の曲の「次」は1曲目へ
+     ・歌詞動画：となりの動画へ替えて流す（画面は動かさない） */
+  function step(dir) {
+    if (active === "video" && vid && vcards.length) {
+      var at = -1;
+      for (var i = 0; i < vcards.length; i++) {
+        if (vcards[i].getAttribute("aria-current") === "true") at = i;
+      }
+      if (dir < 0 && at >= 0 && vid.currentTime > 3) {
+        vid.currentTime = 0;
+        return;
+      }
+      var to = (Math.max(0, at) + dir + vcards.length) % vcards.length;
+      var ev;
+      try {
+        ev = new CustomEvent("vcard-quiet");
+      } catch (err) {
+        ev = document.createEvent("Event");
+        ev.initEvent("vcard-quiet", false, false);
+      }
+      vcards[to].dispatchEvent(ev);
+      return;
+    }
+    var playing = !audio.paused && !audio.ended;
+    if (dir < 0 && (position() > 3 || current === 0)) {
+      if (audio.readyState >= 1) audio.currentTime = 0;
+      refresh();
+      return;
+    }
+    load((current + dir + rows.length) % rows.length, playing);
+  }
+
+  if ("mediaSession" in navigator) {
+    try {
+      navigator.mediaSession.setActionHandler("previoustrack", function () { step(-1); });
+      navigator.mediaSession.setActionHandler("nexttrack", function () { step(1); });
+    } catch (err) { /* 対応していない端末では何もしない */ }
   }
 
   /* 「停止して閉じる」：再生をやめて、曲を選ぶ前の一覧だけの状態に戻す */
