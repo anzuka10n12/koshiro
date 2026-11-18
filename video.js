@@ -14,7 +14,7 @@
   var cards = document.querySelectorAll(".vcard");
   if (!video || !title || !cards.length) return;
 
-  function pick(card, play) {
+  function pick(card, play, quiet) {
     var src = card.getAttribute("data-src");
     if (!src) return;
     if (video.getAttribute("src") !== src) {
@@ -32,7 +32,7 @@
       if (result && result.catch) result.catch(function () {});
       /* 画面が一覧のほうにあるときは、動画の位置まで戻す */
       var box = video.getBoundingClientRect();
-      if (box.top < 0 || box.bottom > window.innerHeight) {
+      if (!quiet && (box.top < 0 || box.bottom > window.innerHeight)) {
         var calm = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
         video.scrollIntoView({ behavior: calm ? "auto" : "smooth", block: "center" });
       }
@@ -43,6 +43,10 @@
     card.addEventListener("click", function (event) {
       event.preventDefault();
       pick(card, true);
+    });
+    /* 画面下のバーの「前・次」から呼ばれたとき：画面は動かさずに替えて流す */
+    card.addEventListener("vcard-quiet", function () {
+      pick(card, true, true);
     });
   });
 

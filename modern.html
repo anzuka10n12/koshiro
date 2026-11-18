@@ -19,11 +19,11 @@
     <meta name="twitter:card" content="summary_large_image" />
     <link rel="icon" href="images/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="images/apple-touch-icon.png" />
-    <link rel="stylesheet" href="style.css?v=20261119b" />
+    <link rel="stylesheet" href="style.css?v=20261119c" />
     <!-- style.css・main.js・player.js を直したら、下の ?v= の値をすべて新しくする（古いファイルがブラウザに残って、新旧が混ざらないようにするため） -->
-    <script src="main.js?v=20261119b" defer></script>
-    <script src="player.js?v=20261119b" defer></script>
-    <script src="video.js?v=20261119b" defer></script>
+    <script src="main.js?v=20261119c" defer></script>
+    <script src="player.js?v=20261119c" defer></script>
+    <script src="video.js?v=20261119c" defer></script>
   </head>
   <body>
     <header class="site-header">
@@ -654,7 +654,11 @@
         <span class="mini-title">夕陽の帰り道</span>
         <span class="mini-artist">航士朗</span>
       </button>
-      <button class="mini-play" type="button" aria-pressed="false"><svg class="player-icon player-icon-play" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 5v14l11-7z"/></svg><svg class="player-icon player-icon-pause" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg><span class="mini-play-label visually-hidden">再生</span></button>
+      <div class="mini-controls">
+        <button class="mini-skip mini-prev" type="button" aria-label="前の曲"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6h2v12H6zM9.5 12L18 18V6z"/></svg></button>
+        <button class="mini-play" type="button" aria-pressed="false"><svg class="player-icon player-icon-play" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 5v14l11-7z"/></svg><svg class="player-icon player-icon-pause" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg><span class="mini-play-label visually-hidden">再生</span></button>
+        <button class="mini-skip mini-next" type="button" aria-label="次の曲"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M16 6h2v12h-2zM6 18l8.5-6L6 6z"/></svg></button>
+      </div>
     </div>
   </body>
 </html>
