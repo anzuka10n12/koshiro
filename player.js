@@ -159,18 +159,69 @@
     document.body.classList.toggle("has-mini", show);
   }
 
-  /* 曲を初めて選んだとき、隠していたジャケットとプレーヤーを出し、そこまで画面を動かす */
+  /* 再生中の画面を、音楽アプリのように画面いっぱいに下から出す。閉じても再生は続き、画面下のバーで操作できる */
+  var sheetClose = document.querySelector(".sheet-close");
+  var sheetBack = null; /* 開く前にフォーカスがあった所（閉じたら戻す） */
+  var stageHome = null; /* 再生中の画面の、もとの置き場所の目印 */
   function reveal() {
-    if (!stage || !stage.classList.contains("is-idle")) return;
-    stage.classList.remove("is-idle");
-    /* 歌詞は閉じたまま出す（「歌詞」を押すと開く） */
-    refresh();
-    /* 現れる動きの途中の位置ではなく、動かない外枠（.stage）の位置まで動かす */
-    if (stage.scrollIntoView) {
-      var calm = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      stage.scrollIntoView({ behavior: calm ? "auto" : "smooth", block: "start" });
+    if (!stage) return;
+    if (stage.classList.contains("is-sheet")) return;
+    sheetBack = document.activeElement;
+    /* 親の要素の動き（変形）に引っぱられず画面いっぱいに出すため、開いているあいだは body の直下へ移す */
+    if (!stageHome) {
+      stageHome = document.createComment("stage");
+      stage.parentNode.insertBefore(stageHome, stage);
     }
+    document.body.appendChild(stage);
+    stage.classList.remove("is-idle");
+    stage.classList.add("is-sheet");
+    document.documentElement.classList.add("sheet-open");
+    if (sheetClose) sheetClose.hidden = false;
+    stage.scrollTop = 0;
+    /* 波形は画面に出てから幅が決まるので、出したあとで描き直す */
+    refresh();
+    window.requestAnimationFrame(draw);
+    if (sheetClose && sheetClose.focus) sheetClose.focus({ preventScroll: true });
   }
+
+  function hideSheet() {
+    if (!stage || !stage.classList.contains("is-sheet")) return;
+    stage.classList.remove("is-sheet");
+    stage.classList.add("is-idle");
+    stage.style.translate = "";
+    if (stageHome && stageHome.parentNode) stageHome.parentNode.insertBefore(stage, stageHome);
+    document.documentElement.classList.remove("sheet-open");
+    if (sheetClose) sheetClose.hidden = true;
+    if (sheetBack && sheetBack.focus && document.contains(sheetBack)) sheetBack.focus({ preventScroll: true });
+    miniShow();
+  }
+
+  if (sheetClose) sheetClose.addEventListener("click", hideSheet);
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") hideSheet();
+  });
+  /* 画面の一番上で下へなぞると閉じる（指で触る端末だけ） */
+  if (stage) {
+    var sy = -1;
+    stage.addEventListener("touchstart", function (e) {
+      sy = stage.classList.contains("is-sheet") && stage.scrollTop <= 0 && e.touches.length === 1 ? e.touches[0].clientY : -1;
+    }, { passive: true });
+    stage.addEventListener("touchmove", function (e) {
+      if (sy < 0) return;
+      var dy = e.touches[0].clientY - sy;
+      stage.style.translate = dy > 0 ? "0 " + dy + "px" : "";
+    }, { passive: true });
+    stage.addEventListener("touchend", function (e) {
+      if (sy < 0) return;
+      var dy = (e.changedTouches[0] ? e.changedTouches[0].clientY : sy) - sy;
+      sy = -1;
+      if (dy > 110) hideSheet();
+      else stage.style.translate = "";
+    });
+  }
+  /* 「この曲の歌詞動画を見る」は、画面を閉じてから動画へ */
+  var toVideoLink = document.querySelector(".player-video-link");
+  if (toVideoLink) toVideoLink.addEventListener("click", hideSheet);
 
   /* 一覧で「いまプレーヤーにある曲」の行を光らせる（ページを開いた直後は光らせない） */
   function mark() {
@@ -251,6 +302,7 @@
         picked = true;
         load(index, true);
       }
+      reveal();
     });
   });
 
@@ -334,7 +386,7 @@
     /* 曲名を押すと、流れているほうの大きな画面（曲のプレーヤーか歌詞動画）へ戻る */
     miniOpen.addEventListener("click", function () {
       /* 曲のときは、しまってある「いま流れている曲」の画面を出してから、そこへ動く */
-      if (active !== "video" && stage && stage.classList.contains("is-idle")) {
+      if (active !== "video" && stage) {
         reveal();
         return;
       }
@@ -449,6 +501,7 @@
       albumPlay.addEventListener("click", function () {
         picked = true;
         load(0, true);
+        reveal();
       });
     }
   }
@@ -463,6 +516,7 @@
     mark();
     var lyricsBox = document.querySelector(".track-lyrics");
     if (lyricsBox) lyricsBox.open = false;
+    if (stage && stage.classList.contains("is-sheet")) hideSheet();
     if (stage && !stage.classList.contains("is-idle")) {
       var before = stage.getBoundingClientRect();
       stage.classList.add("is-idle");
