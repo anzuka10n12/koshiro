@@ -1388,7 +1388,7 @@ body.has-mini {
   display: grid;
   grid-template-columns: auto 1fr;
   gap: 0.6rem 1.75rem;
-  margin: 0 0 1.75rem;
+  margin: 0;
 }
 
 .profile dt {
@@ -1399,12 +1399,6 @@ body.has-mini {
 
 .profile dd {
   margin: 0;
-}
-
-.about-text {
-  margin: 0;
-  max-width: 34em;
-  color: var(--haze);
 }
 
 /* =========
