@@ -790,6 +790,89 @@ a {
   animation: fade-up 0.6s var(--ease) both;
 }
 
+/* 再生中の画面：曲を選ぶと、音楽アプリのように画面いっぱいに下から出る */
+.sheet-close {
+  display: none;
+}
+
+.stage.is-sheet {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  margin: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 0 clamp(1.25rem, 5vw, 3rem) 3rem;
+  background:
+    radial-gradient(120% 60% at 50% 0%, rgba(252, 139, 47, 0.18), transparent 70%),
+    var(--deep);
+  animation: sheet-up 0.38s var(--ease) both;
+}
+
+@keyframes sheet-up {
+  from { translate: 0 100%; }
+  to { translate: 0 0; }
+}
+
+.stage.is-sheet .sheet-close {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  width: calc(100% + 2 * clamp(1.25rem, 5vw, 3rem));
+  margin: 0 calc(-1 * clamp(1.25rem, 5vw, 3rem));
+  padding: 0.6rem 0 0.4rem;
+  border: 0;
+  background: linear-gradient(var(--deep) 60%, transparent);
+  color: var(--haze);
+  cursor: pointer;
+}
+
+.sheet-grip {
+  width: 44px;
+  height: 5px;
+  border-radius: 3px;
+  background-color: rgba(244, 236, 221, 0.35);
+}
+
+.stage.is-sheet .sheet-close svg {
+  width: 30px;
+  height: 30px;
+  fill: currentColor;
+}
+
+.stage.is-sheet .sheet-close:focus-visible {
+  outline: 2px solid var(--glow);
+  outline-offset: -4px;
+}
+
+.stage.is-sheet .release {
+  max-width: 1080px;
+  margin: 0.5rem auto 2rem;
+  grid-template-columns: minmax(0, 460px) minmax(0, 1fr);
+  animation: none;
+}
+
+.stage.is-sheet .lyrics-col {
+  max-width: 1080px;
+  margin: 0 auto;
+}
+
+/* 開いているあいだ、後ろのページは動かさない */
+html.sheet-open,
+html.sheet-open body {
+  overflow: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stage.is-sheet {
+    animation: none;
+  }
+}
+
 /* 曲のプレーヤーから歌詞動画へ */
 .player-video-link {
   display: inline-flex;
@@ -1692,6 +1775,11 @@ body.has-mini {
   .release {
     grid-template-columns: 1fr;
     margin-top: 1.75rem;
+  }
+
+  .stage.is-sheet .release {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
   }
 
   .tracklist-row {
