@@ -58,7 +58,7 @@ GitHub Pages はファイルを10分ほどブラウザに覚えさせるため�
 
 ### 移行しやすくするための約束事（今から守る）
 
-- リンク・画像は **相対パス** で書く（`images/photo.jpg` ○ ／ `/images/photo.jpg` ✕ ／ `https://anzuka10n12.github.io/...` ✕）
+- リンク・画像は **相対パス** で書く（`images/photo-2.png` ○ ／ `/images/photo-2.png` ✕ ／ `https://anzuka10n12.github.io/...` ✕）
   → `/koshiro/` 配下でもドメイン直下でもそのまま動く
 - サイト内に `github.io` のURLを直書きしない（例外：`index.html`・`modern.html` の `og:url` / `og:image` はSNS共有の仕様上フルURL必須 → 移行時に書き換える）
 - SNSのプロフィール欄には、移行後は独自ドメインのURLを載せ直す
