@@ -185,7 +185,6 @@
       picked = true;
       mark();
     }
-    reveal();
     if (errorText) errorText.hidden = true;
     var result = audio.play();
     if (result && result.catch) {
@@ -311,6 +310,7 @@
     listen.addEventListener("click", function (event) {
       event.preventDefault();
       start();
+      reveal();
     });
   }
 
@@ -333,6 +333,11 @@
     if (miniNext) miniNext.addEventListener("click", function () { step(1); });
     /* 曲名を押すと、流れているほうの大きな画面（曲のプレーヤーか歌詞動画）へ戻る */
     miniOpen.addEventListener("click", function () {
+      /* 曲のときは、しまってある「いま流れている曲」の画面を出してから、そこへ動く */
+      if (active !== "video" && stage && stage.classList.contains("is-idle")) {
+        reveal();
+        return;
+      }
       var target = active === "video" && vid ? vid : stage;
       if (!target || !target.scrollIntoView) return;
       var calm = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -423,6 +428,29 @@
       navigator.mediaSession.setActionHandler("previoustrack", function () { step(-1); });
       navigator.mediaSession.setActionHandler("nexttrack", function () { step(1); });
     } catch (err) { /* 対応していない端末では何もしない */ }
+  }
+
+  /* アルバム：頭を押すと曲の一覧を開け閉めする（最初は閉じておく）。「アルバムを再生」は1曲目から流す */
+  var albumHead = document.querySelector(".album-head");
+  var albumPlay = document.querySelector(".album-play");
+  var albumList = document.getElementById("album-tracks");
+  function albumOpen(open) {
+    if (!albumHead || !albumList) return;
+    albumHead.setAttribute("aria-expanded", open ? "true" : "false");
+    albumList.hidden = !open;
+    if (albumPlay) albumPlay.hidden = !open;
+  }
+  if (albumHead && albumList) {
+    albumOpen(false);
+    albumHead.addEventListener("click", function () {
+      albumOpen(albumHead.getAttribute("aria-expanded") !== "true");
+    });
+    if (albumPlay) {
+      albumPlay.addEventListener("click", function () {
+        picked = true;
+        load(0, true);
+      });
+    }
   }
 
   /* 「停止して閉じる」：再生をやめて、曲を選ぶ前の一覧だけの状態に戻す */
