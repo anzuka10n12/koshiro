@@ -387,6 +387,21 @@
     refresh();
   });
   audio.addEventListener("timeupdate", refresh);
+  /* 曲が完全に止まる（ended）前に、次の曲へつなぐ。
+     Android の Brave などは、いったん止まってから次を鳴らそうとすると、画面を消している間などに再生を止めてしまう。
+     止まる手前で切り替えれば「鳴り続けている」扱いのまま次の曲へ進める */
+  var handing = false;
+  audio.addEventListener("timeupdate", function () {
+    if (handing || audio.paused || current + 1 >= rows.length) return;
+    var d = audio.duration;
+    if (isFinite(d) && d > 1 && d - audio.currentTime < 0.4) {
+      handing = true;
+      load(current + 1, true);
+    }
+  });
+  audio.addEventListener("playing", function () {
+    handing = false;
+  });
   audio.addEventListener("play", function () {
     active = "audio";
   });
@@ -399,7 +414,8 @@
   });
   audio.addEventListener("pause", state);
   audio.addEventListener("ended", function () {
-    /* 次の曲があれば続けて再生、無ければ先頭に戻して止まる */
+    /* 手前で切り替えられなかったときの予備：次の曲があれば続けて再生、無ければ先頭に戻して止まる */
+    if (handing) return;
     if (current + 1 < rows.length) {
       load(current + 1, true);
     } else {
