@@ -510,33 +510,47 @@ a {
 
 /* ---- いま選ばれている曲：ジャケットとプレーヤー ---- */
 
-/* アルバムの紹介：Music の見出しのすぐ下 */
+/* アルバム：頭（ジャケット・タイトル）を押すと、下の曲の一覧が開く */
 .album {
+  margin: 0 0 1.5rem;
+}
+
+.album-head {
   display: flex;
   align-items: center;
   gap: clamp(1rem, 3vw, 2rem);
-  margin: 0 0 2rem;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--paper);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
 }
 
 .album-art {
-  width: clamp(110px, 22vw, 200px);
+  flex-shrink: 0;
+  width: clamp(120px, 24vw, 220px);
   height: auto;
-  border-radius: 4px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  aspect-ratio: 1;
+  border-radius: 6px;
+  box-shadow: 0 18px 36px -18px rgba(0, 0, 0, 0.9);
 }
 
-.album-meta p,
-.album-title {
-  margin: 0;
+.album-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  min-width: 0;
 }
 
 .album-kind {
   font-size: 0.8rem;
-  opacity: 0.7;
+  color: var(--haze);
 }
 
 .album-title {
-  margin: 0.2rem 0 0.4rem;
   font-family: var(--font-display);
   font-weight: 700;
   font-size: clamp(1.5rem, 4.5vw, 2.4rem);
@@ -551,7 +565,56 @@ a {
 
 .album-info {
   font-size: 0.9rem;
-  opacity: 0.8;
+  color: var(--haze);
+}
+
+.album-chevron {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  margin-left: auto;
+  fill: var(--haze);
+  transition: rotate 0.3s var(--ease);
+}
+
+.album-head[aria-expanded="true"] .album-chevron {
+  rotate: 180deg;
+}
+
+.album-head:focus-visible {
+  outline: 2px solid var(--glow);
+  outline-offset: 6px;
+  border-radius: 6px;
+}
+
+.album-play {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  margin-top: 1.25rem;
+  padding: 0 1.4rem 0 1.1rem;
+  border: 0;
+  border-radius: 999px;
+  background-color: var(--glow);
+  color: var(--deep);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.album-play[hidden] {
+  display: none;
+}
+
+.album-play svg {
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
+}
+
+.album-play:hover {
+  background-color: var(--paper);
 }
 
 .release {
@@ -959,89 +1022,104 @@ body.has-mini {
   padding-bottom: 5.5rem;
 }
 
-/* ---- 曲の一覧：ジャケットを並べる ---- */
+/* ---- 曲の一覧：音楽アプリのアルバム画面のように、1曲1行で並べる ---- */
 
 .tracklist {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
-  gap: 2.5rem 1.75rem;
-  margin: 2.5rem 0 0;
+  margin: 0 0 2.5rem;
   padding: 0;
   list-style: none;
+  border-top: 1px solid var(--line);
+}
+
+.tracklist[hidden] {
+  display: none;
+}
+
+.tracklist li {
+  border-bottom: 1px solid var(--line);
 }
 
 .tracklist-row {
-  display: flex;
-  flex-direction: column;
-  gap: 0.85rem;
+  display: grid;
+  grid-template-columns: 2rem 56px minmax(0, 1fr) auto;
+  grid-template-areas: "num cover title length";
+  align-items: center;
+  gap: 0 1rem;
   width: 100%;
-  padding: 0;
+  min-height: 72px;
+  padding: 0.5rem 0.25rem;
   border: 0;
   background: none;
   color: var(--paper);
   font: inherit;
   text-align: left;
   cursor: pointer;
+  transition: background-color 0.2s var(--ease);
+}
+
+.tracklist-row:hover {
+  background-color: rgba(255, 255, 255, 0.04);
+}
+
+.tracklist-row:focus-visible {
+  outline: 2px solid var(--glow);
+  outline-offset: -2px;
+}
+
+.tracklist-meta {
+  display: contents;
+}
+
+.tracklist-num {
+  grid-area: num;
+  justify-self: center;
+  font-size: 0.9rem;
+  color: var(--haze);
+  font-variant-numeric: tabular-nums;
+}
+
+.tracklist-length {
+  grid-area: length;
+  font-size: 0.85rem;
+  color: var(--haze);
+  font-variant-numeric: tabular-nums;
 }
 
 .tracklist-cover {
+  grid-area: cover;
   position: relative;
   display: block;
+  width: 56px;
+  height: 56px;
   overflow: hidden;
-  border-radius: 6px;
-  box-shadow: 0 24px 40px -28px rgba(0, 0, 0, 0.95);
+  border-radius: 4px;
 }
 
 .tracklist-art {
   display: block;
   width: 100%;
-  height: auto;
-  aspect-ratio: 1;
+  height: 100%;
   object-fit: cover;
-  transition: scale 0.6s var(--ease);
 }
 
-.tracklist-row:hover .tracklist-art {
-  scale: 1.04;
-}
-
-/* ジャケットの右下に出る丸い再生マーク（再生中は動く3本の棒になる） */
+/* 選んでいる曲：小さなジャケットの上に、再生マーク（再生中は動く3本の棒）を重ねる */
 .tracklist-mark {
   position: absolute;
-  right: 0.75rem;
-  bottom: 0.75rem;
-  display: grid;
+  inset: 0;
+  display: none;
   place-items: center;
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background-color: var(--glow);
-  color: var(--deep);
-  opacity: 0;
-  translate: 0 8px;
-  transition: opacity 0.3s var(--ease), translate 0.3s var(--ease);
+  background-color: rgba(10, 14, 30, 0.55);
+  color: var(--glow);
 }
 
-.tracklist-row:hover .tracklist-mark,
-.tracklist-row:focus-visible .tracklist-mark,
 .tracklist-row[aria-current="true"] .tracklist-mark {
-  opacity: 1;
-  translate: 0 0;
-}
-
-/* 指で触る端末にはマウスを重ねる動きが無いので、いつも出しておく */
-@media (hover: none) {
-  .tracklist-mark {
-    opacity: 1;
-    translate: 0 0;
-  }
+  display: grid;
 }
 
 .tracklist-play {
-  width: 44%;
-  height: 44%;
+  width: 50%;
+  height: 50%;
   fill: currentColor;
-  translate: 6% 0;
 }
 
 .tracklist-bars {
@@ -1071,24 +1149,9 @@ body.has-mini {
   display: inline-flex;
 }
 
-/* 選んでいる曲：ジャケットを夕日の色でふちどり、曲名の色を変える */
-.tracklist-row[aria-current="true"] .tracklist-cover {
-  box-shadow: 0 0 0 2px var(--sun), 0 24px 40px -28px rgba(0, 0, 0, 0.95);
-}
-
-.tracklist-row[aria-current="true"] .tracklist-title {
+.tracklist-row[aria-current="true"] .tracklist-title,
+.tracklist-row[aria-current="true"] .tracklist-num {
   color: var(--glow);
-}
-
-.tracklist-meta {
-  display: flex;
-  justify-content: space-between;
-  gap: 1rem;
-  font-size: 0.78rem;
-  letter-spacing: 0.04em;
-  line-height: 1;
-  color: var(--haze);
-  font-variant-numeric: tabular-nums;
 }
 
 /* 曲名は言葉の途中で折り返さない（「・」や空白、<wbr> の所でだけ折り返す。入りきらないときだけ途中で折る） */
@@ -1099,12 +1162,12 @@ body.has-mini {
 }
 
 .tracklist-title {
-  margin-top: -0.35rem;
+  grid-area: title;
   font-family: var(--font-mincho);
   font-weight: 700;
-  font-size: 1.15rem;
+  font-size: 1.05rem;
   line-height: 1.45;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.04em;
 }
 
 /* 歌詞：プレーヤーと曲の一覧のあいだに置く。長い歌詞でも一覧が遠くならないよう、枠の中でスクロールする */
@@ -1631,26 +1694,23 @@ body.has-mini {
     margin-top: 1.75rem;
   }
 
-  .tracklist {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 2rem 1rem;
-    margin-top: 1.75rem;
+  .tracklist-row {
+    grid-template-columns: 1.5rem 52px minmax(0, 1fr) auto;
+    gap: 0 0.75rem;
   }
 
-  .tracklist-mark {
-    right: 0.5rem;
-    bottom: 0.5rem;
-    width: 40px;
-    height: 40px;
-  }
-
-  .tracklist-meta {
-    font-size: 0.95rem;
+  .tracklist-cover {
+    width: 52px;
+    height: 52px;
   }
 
   .tracklist-title {
-    font-size: 1rem;
-    letter-spacing: 0.04em;
+    font-size: 0.98rem;
+  }
+
+  .album-chevron {
+    width: 26px;
+    height: 26px;
   }
 
   .header-inner {
