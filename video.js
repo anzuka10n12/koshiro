@@ -57,11 +57,11 @@
     });
   });
 
-  /* 最後まで流れたら、次の動画を用意する（自動では流さない） */
+  /* 最後まで流れたら、次の動画を続けて流す（画面は動かさない。最後の動画で止まる） */
   video.addEventListener("ended", function () {
     for (var i = 0; i < cards.length - 1; i++) {
       if (cards[i].getAttribute("aria-current") === "true") {
-        pick(cards[i + 1], false);
+        pick(cards[i + 1], true, true);
         return;
       }
     }
