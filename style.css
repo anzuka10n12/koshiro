@@ -773,6 +773,25 @@ a {
 }
 
 /* 波形。上に透明なスライダーを重ねてあり、なぞる・押す・矢印キーで位置を変えられる */
+/* スマホ：波形は触れただけでは飛ばない（player.js が、横になぞったときだけ位置を動かす） */
+@media (pointer: coarse) {
+  .player-seek {
+    pointer-events: none;
+  }
+
+  .player-wave-wrap {
+    touch-action: pan-y;
+  }
+}
+
+/* 前・次の長押し（早送り・巻き戻し）で、文字の選択や長押しメニューが出ないように */
+.player-skip,
+.mini-skip {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
 .player-wave-wrap {
   position: relative;
   height: clamp(52px, 8vw, 72px);
@@ -863,28 +882,29 @@ a {
   to { translate: 0 0; }
 }
 
-/* 閉じるボタン：親指が届く画面の下に浮かべる */
+/* 閉じるボタン：親指が届く画面の下に、横いっぱいの帯として置く（中身の上に重ならない） */
 .stage.is-sheet .sheet-close {
   position: fixed;
-  left: 50%;
-  bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
+  left: 0;
+  right: 0;
+  bottom: 0;
   z-index: 2;
-  display: inline-flex;
+  display: flex;
   align-items: center;
+  justify-content: center;
   gap: 0.35rem;
-  min-height: 48px;
-  padding: 0 1.4rem 0 1rem;
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  background-color: rgba(17, 26, 43, 0.82);
+  width: 100%;
+  min-height: 56px;
+  padding: 0 0 env(safe-area-inset-bottom, 0px);
+  border: 0;
+  border-top: 1px solid var(--line);
+  background-color: rgba(17, 26, 43, 0.94);
   -webkit-backdrop-filter: blur(12px);
   backdrop-filter: blur(12px);
   color: var(--paper);
   font: inherit;
   font-size: 0.95rem;
-  translate: -50% 0;
   cursor: pointer;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
 }
 
 .stage.is-sheet .sheet-close svg {
@@ -895,7 +915,7 @@ a {
 
 .stage.is-sheet .sheet-close:focus-visible {
   outline: 2px solid var(--glow);
-  outline-offset: 3px;
+  outline-offset: -4px;
 }
 
 /* 上には、なぞって下げられることを示す小さなつまみだけ */
