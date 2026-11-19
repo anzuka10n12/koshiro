@@ -60,7 +60,10 @@
     return isFinite(audio.duration) && audio.duration > 0 ? audio.duration : seconds;
   }
 
+  var scrubAt = -1; /* 指で波形をなぞっている間の、仮の再生位置（離したときにそこへ飛ぶ） */
+
   function position() {
+    if (scrubAt >= 0) return scrubAt;
     return pendingSeek >= 0 ? pendingSeek : audio.currentTime || 0;
   }
 
@@ -314,8 +317,7 @@
   });
 
   /* 波形の上をなぞる・押すと、その位置へ飛ぶ */
-  seek.addEventListener("input", function () {
-    var target = (Number(seek.value) / 1000) * length();
+  function seekTo(target) {
     if (audio.readyState >= 1) {
       audio.currentTime = target;
     } else {
@@ -325,7 +327,57 @@
       audio.load();
     }
     refresh();
+  }
+
+  seek.addEventListener("input", function () {
+    seekTo((Number(seek.value) / 1000) * length());
   });
+
+  /* スマホ：波形に指が触れただけでは飛ばない。横へなぞったときだけ位置を動かし、指を離したところへ飛ぶ。
+     縦になぞったときは、ふつうに画面がスクロールする */
+  var wrap = canvas.parentNode;
+  var touchId = null, tx = 0, ty = 0, dragging = false;
+  function scrubFrom(e) {
+    var r = wrap.getBoundingClientRect();
+    var f = Math.min(1, Math.max(0, (e.clientX - r.left) / r.width));
+    scrubAt = f * length();
+    refresh();
+  }
+  wrap.addEventListener("pointerdown", function (e) {
+    if (e.pointerType !== "touch") return;
+    touchId = e.pointerId; tx = e.clientX; ty = e.clientY; dragging = false;
+  });
+  wrap.addEventListener("pointermove", function (e) {
+    if (e.pointerId !== touchId) return;
+    var dx = Math.abs(e.clientX - tx), dy = Math.abs(e.clientY - ty);
+    if (!dragging) {
+      if (dx > 12 && dx > dy * 1.5) {
+        dragging = true;
+        if (wrap.setPointerCapture) wrap.setPointerCapture(touchId);
+      } else if (dy > 12) {
+        touchId = null;
+        return;
+      } else {
+        return;
+      }
+    }
+    scrubFrom(e);
+  });
+  function scrubEnd(e, apply) {
+    if (e.pointerId !== touchId) return;
+    touchId = null;
+    if (dragging && apply && scrubAt >= 0) {
+      var target = scrubAt;
+      scrubAt = -1;
+      seekTo(target);
+    } else {
+      scrubAt = -1;
+      refresh();
+    }
+    dragging = false;
+  }
+  wrap.addEventListener("pointerup", function (e) { scrubEnd(e, true); });
+  wrap.addEventListener("pointercancel", function (e) { scrubEnd(e, false); });
 
   audio.addEventListener("loadedmetadata", function () {
     if (pendingSeek >= 0) {
@@ -389,6 +441,51 @@
       else audio.pause();
     });
     if (miniPrev) miniPrev.addEventListener("click", function () { step(-1); });
+    /* 前・次のボタンは、長押しすると早送り・巻き戻し（押している間、10倍の速さで進む・戻る） */
+    function holdToSkip(btn, dir) {
+      if (!btn) return;
+      var timer = null, tick = null, held = false;
+      function stop() {
+        clearTimeout(timer);
+        clearInterval(tick);
+        timer = tick = null;
+      }
+      btn.addEventListener("pointerdown", function (e) {
+        if (e.button > 0) return;
+        held = false;
+        stop();
+        timer = setTimeout(function () {
+          held = true;
+          tick = setInterval(function () {
+            if (active === "video" && vid) {
+              if (vid.readyState >= 1) vid.currentTime = Math.max(0, Math.min((vid.duration || 0) - 0.5, vid.currentTime + dir));
+              return;
+            }
+            if (audio.readyState < 1) return;
+            audio.currentTime = Math.max(0, Math.min(length() - 0.5, audio.currentTime + dir));
+            refresh();
+          }, 100);
+        }, 450);
+      });
+      ["pointerup", "pointercancel", "pointerleave"].forEach(function (name) {
+        btn.addEventListener(name, stop);
+      });
+      /* 長押しのあとに来る「押した」は、曲送りにしない */
+      btn.addEventListener("click", function (e) {
+        if (held) {
+          held = false;
+          e.stopImmediatePropagation();
+          e.preventDefault();
+        }
+      }, true);
+      /* スマホの長押しメニューを出さない */
+      btn.addEventListener("contextmenu", function (e) { e.preventDefault(); });
+    }
+    holdToSkip(miniPrev, -1);
+    holdToSkip(miniNext, 1);
+    holdToSkip(document.querySelector(".player-prev"), -1);
+    holdToSkip(document.querySelector(".player-next"), 1);
+
     /* 再生中の画面の 前・次 */
     var bigPrev = document.querySelector(".player-prev");
     var bigNext = document.querySelector(".player-next");
