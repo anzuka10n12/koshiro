@@ -19,11 +19,11 @@
     <meta name="twitter:card" content="summary_large_image" />
     <link rel="icon" href="images/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="images/apple-touch-icon.png" />
-    <link rel="stylesheet" href="style.css?v=20261120d" />
+    <link rel="stylesheet" href="style.css?v=20261120e" />
     <!-- style.css・main.js・player.js を直したら、下の ?v= の値をすべて新しくする（古いファイルがブラウザに残って、新旧が混ざらないようにするため） -->
-    <script src="main.js?v=20261120d" defer></script>
-    <script src="player.js?v=20261120d" defer></script>
-    <script src="video.js?v=20261120d" defer></script>
+    <script src="main.js?v=20261120e" defer></script>
+    <script src="player.js?v=20261120e" defer></script>
+    <script src="video.js?v=20261120e" defer></script>
   </head>
   <body>
     <header class="site-header">
@@ -235,8 +235,8 @@
                曲を選ぶと、音楽アプリのように画面いっぱいに下から出る（player.js が .is-idle と .is-sheet を付け外しする）。
                player.js が動かない環境では、ここにそのまま標準の再生バーが出る -->
           <div class="stage">
-          <!-- 再生中の画面を、画面いっぱいに出したときの「下げる」ボタン（下へなぞっても閉じる） -->
-          <button class="sheet-close" type="button" hidden aria-label="再生中の画面を閉じる（再生は続く）"><span class="sheet-grip" aria-hidden="true"></span><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7.4 8.6 12 13.2l4.6-4.6L18 10l-6 6-6-6z"/></svg></button>
+          <!-- 再生中の画面を、画面いっぱいに出したときの「閉じる」ボタン。指が届きやすいよう画面の下に出す（下へなぞっても閉じる） -->
+          <button class="sheet-close" type="button" hidden aria-label="再生中の画面を閉じる（再生は続く）"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7.4 8.6 12 13.2l4.6-4.6L18 10l-6 6-6-6z"/></svg>閉じる</button>
           <div class="release">
             <figure class="jacket">
               <img src="images/jacket-yuuhi.jpg?v=3" alt="ジャケット：夕日の沈む海辺。防波堤に座って海を眺める青年の後ろ姿" width="600" height="600" loading="lazy" />
