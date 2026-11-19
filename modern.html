@@ -19,11 +19,11 @@
     <meta name="twitter:card" content="summary_large_image" />
     <link rel="icon" href="images/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="images/apple-touch-icon.png" />
-    <link rel="stylesheet" href="style.css?v=20261120c" />
+    <link rel="stylesheet" href="style.css?v=20261120d" />
     <!-- style.css・main.js・player.js を直したら、下の ?v= の値をすべて新しくする（古いファイルがブラウザに残って、新旧が混ざらないようにするため） -->
-    <script src="main.js?v=20261120c" defer></script>
-    <script src="player.js?v=20261120c" defer></script>
-    <script src="video.js?v=20261120c" defer></script>
+    <script src="main.js?v=20261120d" defer></script>
+    <script src="player.js?v=20261120d" defer></script>
+    <script src="video.js?v=20261120d" defer></script>
   </head>
   <body>
     <header class="site-header">
@@ -247,7 +247,11 @@
               <!-- player.js が動けば下の専用画面に切り替わる。動かない環境ではこの標準の再生バーを使う -->
               <audio class="player-audio" controls preload="none" src="audio/yuuhi-no-kaerimichi.m4a">お使いのブラウザでは再生できません。</audio>
               <div class="player-ui" hidden>
-                <button class="player-play" type="button" aria-pressed="false"><svg class="player-icon player-icon-play" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 5v14l11-7z"/></svg><svg class="player-icon player-icon-pause" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg><span class="player-play-label visually-hidden">再生</span></button>
+                <div class="player-controls">
+                  <button class="player-skip player-prev" type="button" aria-label="前の曲"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6h2v12H6zM9.5 12L18 18V6z"/></svg></button>
+                  <button class="player-play" type="button" aria-pressed="false"><svg class="player-icon player-icon-play" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 5v14l11-7z"/></svg><svg class="player-icon player-icon-pause" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg><span class="player-play-label visually-hidden">再生</span></button>
+                  <button class="player-skip player-next" type="button" aria-label="次の曲"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M16 6h2v12h-2zM6 18l8.5-6L6 6z"/></svg></button>
+                </div>
                 <div class="player-line">
                   <div class="player-wave-wrap">
                     <input class="player-seek" type="range" min="0" max="1000" step="1" value="0" aria-label="再生位置" />
