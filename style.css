@@ -1047,6 +1047,13 @@ body.has-mini {
   font-variant-numeric: tabular-nums;
 }
 
+/* 曲名は言葉の途中で折り返さない（「・」や空白、<wbr> の所でだけ折り返す。入りきらないときだけ途中で折る） */
+.tracklist-title,
+.vcard-title {
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+
 .tracklist-title {
   margin-top: -0.35rem;
   font-family: var(--font-mincho);
