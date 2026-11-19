@@ -510,6 +510,50 @@ a {
 
 /* ---- いま選ばれている曲：ジャケットとプレーヤー ---- */
 
+/* アルバムの紹介：Music の見出しのすぐ下 */
+.album {
+  display: flex;
+  align-items: center;
+  gap: clamp(1rem, 3vw, 2rem);
+  margin: 0 0 2rem;
+}
+
+.album-art {
+  width: clamp(110px, 22vw, 200px);
+  height: auto;
+  border-radius: 4px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+
+.album-meta p,
+.album-title {
+  margin: 0;
+}
+
+.album-kind {
+  font-size: 0.8rem;
+  opacity: 0.7;
+}
+
+.album-title {
+  margin: 0.2rem 0 0.4rem;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(1.5rem, 4.5vw, 2.4rem);
+  line-height: 1.5;
+}
+
+.album-title rt {
+  font-size: 0.4em;
+  font-weight: 400;
+  opacity: 0.8;
+}
+
+.album-info {
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+
 .release {
   display: grid;
   grid-template-columns: minmax(0, 340px) minmax(0, 1fr);
