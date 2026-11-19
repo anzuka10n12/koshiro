@@ -206,11 +206,18 @@
     stage.addEventListener("touchstart", function (e) {
       sy = stage.classList.contains("is-sheet") && stage.scrollTop <= 0 && e.touches.length === 1 ? e.touches[0].clientY : -1;
     }, { passive: true });
+    /* 下へなぞっている間は、ブラウザの「引っぱって更新」が動かないように止める */
     stage.addEventListener("touchmove", function (e) {
       if (sy < 0) return;
       var dy = e.touches[0].clientY - sy;
-      stage.style.translate = dy > 0 ? "0 " + dy + "px" : "";
-    }, { passive: true });
+      if (dy > 0) {
+        if (e.cancelable) e.preventDefault();
+        stage.style.translate = "0 " + dy + "px";
+      } else {
+        stage.style.translate = "";
+        sy = -1; /* 上へなぞったときは、ふつうに中をスクロールする */
+      }
+    }, { passive: false });
     stage.addEventListener("touchend", function (e) {
       if (sy < 0) return;
       var dy = (e.changedTouches[0] ? e.changedTouches[0].clientY : sy) - sy;
@@ -382,6 +389,11 @@
       else audio.pause();
     });
     if (miniPrev) miniPrev.addEventListener("click", function () { step(-1); });
+    /* 再生中の画面の 前・次 */
+    var bigPrev = document.querySelector(".player-prev");
+    var bigNext = document.querySelector(".player-next");
+    if (bigPrev) bigPrev.addEventListener("click", function () { step(-1); });
+    if (bigNext) bigNext.addEventListener("click", function () { step(1); });
     if (miniNext) miniNext.addEventListener("click", function () { step(1); });
     /* 曲名を押すと、流れているほうの大きな画面（曲のプレーヤーか歌詞動画）へ戻る */
     miniOpen.addEventListener("click", function () {

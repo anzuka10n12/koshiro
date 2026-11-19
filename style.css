@@ -669,10 +669,59 @@ a {
   display: none;
 }
 
+/* 波形を上に、その下に 前・再生・次 を並べる（音楽アプリの再生画面と同じ並び） */
 .player-ui {
   display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 1.25rem;
+}
+
+.player-line {
+  order: 1;
+}
+
+.player-controls {
+  order: 2;
+  display: flex;
   align-items: center;
-  gap: clamp(1rem, 3vw, 1.75rem);
+  justify-content: center;
+  gap: clamp(1.5rem, 6vw, 2.75rem);
+}
+
+.player-skip {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  color: var(--paper);
+  cursor: pointer;
+  transition: background-color 0.2s var(--ease);
+}
+
+.player-skip svg {
+  width: 30px;
+  height: 30px;
+  fill: currentColor;
+}
+
+.player-skip:active {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+@media (hover: hover) {
+  .player-skip:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+  }
+}
+
+.player-skip:focus-visible {
+  outline: 2px solid var(--glow);
+  outline-offset: 2px;
 }
 
 .player-play {
@@ -801,7 +850,7 @@ a {
   z-index: 60;
   margin: 0;
   overflow-y: auto;
-  overscroll-behavior: contain;
+  overscroll-behavior: none;
   padding: 0 clamp(1.25rem, 5vw, 3rem) 3rem;
   background:
     radial-gradient(120% 60% at 50% 0%, rgba(252, 139, 47, 0.18), transparent 70%),
@@ -865,6 +914,8 @@ a {
 html.sheet-open,
 html.sheet-open body {
   overflow: hidden;
+  /* スマホで画面を下へ引っぱったとき、ページの再読み込み（引っぱって更新）をさせない */
+  overscroll-behavior-y: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
