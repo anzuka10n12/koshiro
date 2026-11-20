@@ -334,6 +334,12 @@
     /* ジャケットと歌詞の見出しも、選んだ曲のものに替える */
     var art = row.getAttribute("data-art");
     if (jacket && art) {
+      if (jacket.getAttribute("src") !== art) {
+        /* 曲が替わったら、ジャケットをふわっと出し直す */
+        jacket.style.animation = "none";
+        void jacket.offsetWidth;
+        jacket.style.animation = "";
+      }
       jacket.setAttribute("src", art);
       jacket.setAttribute("alt", row.getAttribute("data-art-alt") || "");
     }
