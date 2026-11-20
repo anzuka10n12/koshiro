@@ -2340,3 +2340,51 @@ body.has-mini {
     animation: none;
   }
 }
+
+/* ---- 端末の端に合わせる ----
+   viewport-fit=cover で画面のすみずみまで背景を広げ、
+   ノッチ・丸い角・ホームバーの所には中身がかからないよう、その分だけ内側に余白を取る */
+.container {
+  padding-left: max(1.25rem, env(safe-area-inset-left, 0px));
+  padding-right: max(1.25rem, env(safe-area-inset-right, 0px));
+}
+
+.site-header {
+  padding-top: env(safe-area-inset-top, 0px);
+}
+
+html {
+  scroll-padding-top: calc(60px + env(safe-area-inset-top, 0px));
+  /* 横向きにしたとき、iPhone が勝手に文字を大きくしないように */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  /* 2回タップしたときの拡大（誤操作）をなくす。指2本での拡大・縮小は残す */
+  touch-action: manipulation;
+}
+
+.site-footer {
+  padding-bottom: calc(2rem + env(safe-area-inset-bottom, 0px));
+}
+
+.stage.is-sheet {
+  padding-top: env(safe-area-inset-top, 0px);
+}
+
+.stage.is-sheet .stage-body {
+  padding-left: max(clamp(1.25rem, 5vw, 3rem), env(safe-area-inset-left, 0px));
+  padding-right: max(clamp(1.25rem, 5vw, 3rem), env(safe-area-inset-right, 0px));
+}
+
+.mini-player {
+  width: min(560px, calc(100% - 1.5rem - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px)));
+}
+
+.hero-note {
+  top: calc(60px + 0.75rem + env(safe-area-inset-top, 0px));
+}
+
+@media (min-width: 900px) {
+  .hero-note {
+    top: calc(80px + 0.9rem + env(safe-area-inset-top, 0px));
+  }
+}
