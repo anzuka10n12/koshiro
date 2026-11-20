@@ -253,6 +253,17 @@ a {
   to { transform: translateY(14%); }
 }
 
+/* スマホ・タブレット（指で操作する端末）：スクロール中に景色だけが動くと、
+   人物・夕日のきらめきとずれてブレて見えるので、景色は動かさない（ページと一緒にそのまま流れる） */
+@supports (animation-timeline: scroll()) {
+  @media (pointer: coarse) {
+    .hero-bg {
+      animation: bg-in 2.4s var(--ease) both;
+      animation-timeline: auto;
+    }
+  }
+}
+
 /* 波紋・きらめき・星を描く層（main.js が描く）。景色と人物のあいだに挟む */
 .hero-sea {
   position: absolute;
