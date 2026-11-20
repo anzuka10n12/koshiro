@@ -733,11 +733,50 @@
     load(nextIndex(dir, true), playing);
   }
 
+  /* ロック画面・通知・AirPods などのイヤホン・車のボタンから操作できるようにする（Media Session）。
+     AirPods：1回押し＝再生／一時停止、2回押し＝次の曲、3回押し＝前の曲。
+     ロック画面では、再生位置のバーを動かしたり、10秒戻す・進めるもできる。
+     対応していない操作や端末では、その操作だけ何もしない */
   if ("mediaSession" in navigator) {
-    try {
-      navigator.mediaSession.setActionHandler("previoustrack", function () { step(-1); });
-      navigator.mediaSession.setActionHandler("nexttrack", function () { step(1); });
-    } catch (err) { /* 対応していない端末では何もしない */ }
+    var ms = navigator.mediaSession;
+    var handle = function (action, fn) {
+      try { ms.setActionHandler(action, fn); } catch (err) { /* その操作に対応していない端末 */ }
+    };
+    handle("play", function () {
+      picked = true;
+      var r = audio.play();
+      if (r && r.catch) r.catch(function () {});
+    });
+    handle("pause", function () { audio.pause(); });
+    handle("stop", function () { audio.pause(); });
+    handle("previoustrack", function () { step(-1); });
+    handle("nexttrack", function () { step(1); });
+    handle("seekbackward", function (d) {
+      if (audio.readyState >= 1) audio.currentTime = Math.max(0, audio.currentTime - ((d && d.seekOffset) || 10));
+      refresh();
+    });
+    handle("seekforward", function (d) {
+      if (audio.readyState >= 1) audio.currentTime = Math.min(length() - 0.5, audio.currentTime + ((d && d.seekOffset) || 10));
+      refresh();
+    });
+    handle("seekto", function (d) {
+      if (!d || typeof d.seekTime !== "number") return;
+      if (d.fastSeek && audio.fastSeek) audio.fastSeek(d.seekTime);
+      else seekTo(d.seekTime);
+    });
+    /* 再生中かどうかと、いまの位置・長さを伝える（ロック画面の時間の表示とバーのため） */
+    var tellState = function () {
+      try {
+        ms.playbackState = audio.paused ? "paused" : "playing";
+        var d = audio.duration;
+        if (ms.setPositionState && isFinite(d) && d > 0) {
+          ms.setPositionState({ duration: d, playbackRate: audio.playbackRate || 1, position: Math.min(d, Math.max(0, audio.currentTime)) });
+        }
+      } catch (err) { /* 古い端末では何もしない */ }
+    };
+    ["play", "pause", "playing", "seeked", "loadedmetadata", "ratechange"].forEach(function (name) {
+      audio.addEventListener(name, tellState);
+    });
   }
 
   /* アルバム：頭を押すと曲の一覧を開け閉めする（最初は閉じておく）。「アルバムを再生」は1曲目から流す */
