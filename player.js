@@ -176,6 +176,10 @@
       stage.parentNode.insertBefore(stageHome, stage);
     }
     document.body.appendChild(stage);
+    /* 開いているあいだ、後ろのページは Tab で選べない・読み上げないようにする */
+    Array.prototype.forEach.call(document.body.children, function (el) {
+      if (el !== stage && el.tagName !== "SCRIPT") el.inert = true;
+    });
     stage.classList.remove("is-idle");
     stage.classList.add("is-sheet");
     document.documentElement.classList.add("sheet-open");
@@ -192,6 +196,9 @@
     stage.classList.remove("is-sheet");
     stage.classList.add("is-idle");
     stage.style.translate = "";
+    Array.prototype.forEach.call(document.body.children, function (el) {
+      el.inert = false;
+    });
     if (stageHome && stageHome.parentNode) stageHome.parentNode.insertBefore(stage, stageHome);
     document.documentElement.classList.remove("sheet-open");
     if (sheetClose) sheetClose.hidden = true;

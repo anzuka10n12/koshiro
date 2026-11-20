@@ -124,6 +124,10 @@ a {
 }
 
 .logo {
+  /* 指で押しやすいよう、押せる範囲を上下に広げる（見た目の大きさは同じ） */
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
   font-family: var(--font-display);
   font-weight: 800;
   font-size: 1.05rem;
