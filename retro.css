@@ -192,3 +192,10 @@ h1 {
   height: 36px;
   margin-top: 6px;
 }
+
+/* 大きな画面でも、中身は読みやすい幅（1000px）までにして真ん中に置く（背景の模様は画面いっぱい） */
+.tile > * {
+  max-width: 1000px;
+  margin-left: auto;
+  margin-right: auto;
+}
