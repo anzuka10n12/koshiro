@@ -2478,3 +2478,51 @@ html {
   z-index: 1;
   margin-top: 1.6rem;
 }
+
+/* ジャケットの長押し（左＝巻き戻し・右＝早送り）の印 */
+.jacket {
+  position: relative;
+}
+
+.seek-hint {
+  position: absolute;
+  top: 50%;
+  right: 6%;
+  z-index: 2;
+  padding: 0.45rem 0.9rem;
+  border-radius: 999px;
+  background-color: rgba(10, 14, 30, 0.72);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  color: var(--paper);
+  font-size: 0.9rem;
+  font-weight: 700;
+  opacity: 0;
+  scale: 0.9;
+  translate: 0 -50%;
+  pointer-events: none;
+  transition: opacity 0.25s var(--ios), scale 0.35s var(--spring);
+}
+
+.seek-hint.is-left {
+  right: auto;
+  left: 6%;
+}
+
+.seek-hint.is-on {
+  opacity: 1;
+  scale: 1;
+}
+
+.stage.is-sheet .jacket img,
+.stage.is-sheet .jacket-video {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .seek-hint {
+    transition: none;
+  }
+}

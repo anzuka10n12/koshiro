@@ -939,6 +939,57 @@
   }
   showModes();
 
+  /* ジャケットの長押し：左半分を押し続けると巻き戻し、右半分なら早送り（押している間、10倍の速さ）。
+     指が少しでも動いたら長押しにはしない（左右になぞる曲送りと区別するため）。押している間は、その側に印を出す */
+  if (jacketBox && stage) {
+    var hint = document.createElement("span");
+    hint.className = "seek-hint";
+    hint.setAttribute("aria-hidden", "true");
+    jacketBox.appendChild(hint);
+    var holdTimer = null, holdTick = null, hx = 0, hy = 0, holdOn = false;
+    var stopHold = function () {
+      clearTimeout(holdTimer);
+      clearInterval(holdTick);
+      holdTimer = holdTick = null;
+      if (holdOn) {
+        holdOn = false;
+        hint.classList.remove("is-on");
+        stage.classList.remove("is-seeking");
+      }
+    };
+    jacketBox.addEventListener("pointerdown", function (e) {
+      if (!stage.classList.contains("is-sheet") || (e.pointerType === "mouse" && e.button !== 0)) return;
+      stopHold();
+      hx = e.clientX; hy = e.clientY;
+      var r = jacketBox.getBoundingClientRect();
+      var dir = e.clientX - r.left < r.width / 2 ? -1 : 1;
+      holdTimer = setTimeout(function () {
+        if (audio.readyState < 1) return;
+        holdOn = true;
+        jacketAxis = "none"; /* 長押し中は、なぞって曲を替える動きにしない */
+        hint.textContent = dir < 0 ? "≪ 巻き戻し" : "早送り ≫";
+        hint.classList.toggle("is-left", dir < 0);
+        hint.classList.add("is-on");
+        stage.classList.add("is-seeking");
+        holdTick = setInterval(function () {
+          audio.currentTime = Math.max(0, Math.min(length() - 0.5, audio.currentTime + dir));
+          refresh();
+        }, 100);
+      }, 450);
+    });
+    jacketBox.addEventListener("pointermove", function (e) {
+      if (!holdTimer || holdOn) return;
+      if (Math.abs(e.clientX - hx) > 10 || Math.abs(e.clientY - hy) > 10) stopHold();
+    });
+    ["pointerup", "pointercancel", "pointerleave"].forEach(function (name) {
+      jacketBox.addEventListener(name, stopHold);
+    });
+    /* 長押しで画像の保存メニューなどが出ないように */
+    jacketBox.addEventListener("contextmenu", function (e) {
+      if (stage.classList.contains("is-sheet")) e.preventDefault();
+    });
+  }
+
   /* 「停止して閉じる」：再生をやめて、曲を選ぶ前の一覧だけの状態に戻す */
   /* 曲の再生をやめ、ジャケットとプレーヤーをしまう（keepView なら、いま見ている位置が動かないようにする） */
   function closeStage(keepView) {
