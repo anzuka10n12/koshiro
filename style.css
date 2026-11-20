@@ -2025,3 +2025,10 @@ body.has-mini {
     align-items: center;
   }
 }
+
+/* 再生中の画面のジャケット：左右になぞって曲を替える（縦のスクロールはそのまま） */
+.stage.is-sheet .jacket {
+  touch-action: pan-y;
+  -webkit-user-select: none;
+  user-select: none;
+}

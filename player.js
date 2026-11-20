@@ -223,6 +223,11 @@
     /* 下へなぞっている間は、ブラウザの「引っぱって更新」が動かないように止める */
     stage.addEventListener("touchmove", function (e) {
       if (sy < 0) return;
+      /* ジャケットを横になぞっているときは、画面を下げる動きにしない */
+      if (jacketAxis === "x") {
+        stage.style.translate = "";
+        return;
+      }
       var dy = e.touches[0].clientY - sy;
       if (dy > 0) {
         if (e.cancelable) e.preventDefault();
@@ -700,6 +705,72 @@
         reveal();
       });
     }
+  }
+
+  /* 再生中の画面のジャケット（歌詞動画で見ているときは動画）を左右になぞると、曲を替える。
+     左へ：次の曲／右へ：前の曲。誤って替わらないよう、次のときだけ替える
+     ・横へ 80px 以上（またはジャケットの幅の3割以上）動かした
+     ・縦より横の動きがはっきり大きい（縦の 2倍以上）
+     ・指1本で、ジャケットの上から始めた
+     最初・最後の曲では、それ以上は進まず元に戻る。曲の進み方は「前・次」ボタンと同じ（鳴っていれば鳴らしたまま替える） */
+  var jacketAxis = "";
+  var jacketBox = document.querySelector(".stage .jacket");
+  if (jacketBox && stage) {
+    var jx = 0, jy = 0, jdx = 0, jt = 0;
+    function jacketMove(px, animate) {
+      jacketBox.style.transition = animate ? "translate 0.22s ease, opacity 0.22s ease" : "none";
+      jacketBox.style.translate = px ? px + "px 0" : "";
+      jacketBox.style.opacity = px ? String(Math.max(0.35, 1 - Math.abs(px) / 500)) : "";
+    }
+    jacketBox.addEventListener("touchstart", function (e) {
+      if (!stage.classList.contains("is-sheet") || e.touches.length !== 1) {
+        jacketAxis = "none";
+        return;
+      }
+      jx = e.touches[0].clientX; jy = e.touches[0].clientY; jdx = 0; jt = Date.now();
+      jacketAxis = "";
+    }, { passive: true });
+    jacketBox.addEventListener("touchmove", function (e) {
+      if (jacketAxis === "none" || jacketAxis === "y") return;
+      if (e.touches.length !== 1) { jacketAxis = "none"; jacketMove(0, true); return; }
+      var dx = e.touches[0].clientX - jx, dy = e.touches[0].clientY - jy;
+      if (!jacketAxis) {
+        if (Math.abs(dx) < 12 && Math.abs(dy) < 12) return;
+        jacketAxis = Math.abs(dx) > Math.abs(dy) * 2 ? "x" : "y";
+        if (jacketAxis !== "x") return;
+      }
+      if (e.cancelable) e.preventDefault();
+      /* 最初・最後の曲で、その先へなぞったときは重く（ほとんど動かない） */
+      var edge = (dx > 0 && current === 0) || (dx < 0 && current === rows.length - 1);
+      jdx = dx;
+      jacketMove(edge ? dx * 0.2 : dx * 0.9, false);
+    }, { passive: false });
+    function jacketEnd() {
+      if (jacketAxis !== "x") { jacketAxis = ""; return; }
+      jacketAxis = "";
+      var w = jacketBox.getBoundingClientRect().width || 300;
+      var far = Math.abs(jdx) >= Math.min(80, w * 0.3) || (Math.abs(jdx) >= 50 && Date.now() - jt < 250);
+      var dir = jdx < 0 ? 1 : -1;
+      var to = current + dir;
+      if (!far || to < 0 || to >= rows.length) {
+        jacketMove(0, true);
+        return;
+      }
+      /* なぞった方へ流して消し、反対側から新しい曲のジャケットを入れる */
+      jacketMove(-dir * w * 0.6, true);
+      setTimeout(function () {
+        var playing = !audio.paused && !audio.ended;
+        load(to, playing);
+        jacketMove(dir * w * 0.6, false);
+        void jacketBox.offsetWidth;
+        jacketMove(0, true);
+      }, 180);
+    }
+    jacketBox.addEventListener("touchend", jacketEnd);
+    jacketBox.addEventListener("touchcancel", function () {
+      jacketAxis = "";
+      jacketMove(0, true);
+    });
   }
 
   /* 「停止して閉じる」：再生をやめて、曲を選ぶ前の一覧だけの状態に戻す */
