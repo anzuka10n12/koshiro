@@ -165,7 +165,9 @@
   /* 再生中の画面を、音楽アプリのように画面いっぱいに下から出す。閉じても再生は続き、画面下のバーで操作できる */
   var sheetClose = document.querySelector(".sheet-close");
   var sheetBack = null; /* 開く前にフォーカスがあった所（閉じたら戻す） */
+  var jvEl = document.querySelector(".jacket-video");
   var stageHome = null; /* 再生中の画面の、もとの置き場所の目印 */
+  var stageBody = stage ? stage.querySelector(".stage-body") || stage : null; /* 再生中の画面で、スクロールする中身 */
   function reveal() {
     if (!stage) return;
     if (stage.classList.contains("is-sheet")) return;
@@ -184,10 +186,11 @@
     stage.classList.add("is-sheet");
     document.documentElement.classList.add("sheet-open");
     if (sheetClose) sheetClose.hidden = false;
-    stage.scrollTop = 0;
+    stageBody.scrollTop = 0;
     /* 波形は画面に出てから幅が決まるので、出したあとで描き直す */
     refresh();
     window.requestAnimationFrame(draw);
+    if (typeof syncVideo === "function") syncVideo(true);
     if (sheetClose && sheetClose.focus) sheetClose.focus({ preventScroll: true });
   }
 
@@ -202,6 +205,7 @@
     if (stageHome && stageHome.parentNode) stageHome.parentNode.insertBefore(stage, stageHome);
     document.documentElement.classList.remove("sheet-open");
     if (sheetClose) sheetClose.hidden = true;
+    if (jvEl && !jvEl.paused) jvEl.pause();
     if (sheetBack && sheetBack.focus && document.contains(sheetBack)) sheetBack.focus({ preventScroll: true });
     miniShow();
   }
@@ -214,7 +218,7 @@
   if (stage) {
     var sy = -1;
     stage.addEventListener("touchstart", function (e) {
-      sy = stage.classList.contains("is-sheet") && stage.scrollTop <= 0 && e.touches.length === 1 ? e.touches[0].clientY : -1;
+      sy = stage.classList.contains("is-sheet") && stageBody.scrollTop <= 0 && e.touches.length === 1 ? e.touches[0].clientY : -1;
     }, { passive: true });
     /* 下へなぞっている間は、ブラウザの「引っぱって更新」が動かないように止める */
     stage.addEventListener("touchmove", function (e) {
@@ -236,9 +240,6 @@
       else stage.style.translate = "";
     });
   }
-  /* 「この曲の歌詞動画を見る」は、画面を閉じてから動画へ */
-  var toVideoLink = document.querySelector(".player-video-link");
-  if (toVideoLink) toVideoLink.addEventListener("click", hideSheet);
 
   /* 一覧で「いまプレーヤーにある曲」の行を光らせる（ページを開いた直後は光らせない） */
   function mark() {
@@ -560,17 +561,80 @@
     });
   }
 
-  /* 曲のプレーヤーの「この曲の歌詞動画を見る」：同じ順番の歌詞動画を流す */
-  var toVideo = document.querySelector(".player-video-link");
+  /* 「歌詞動画で見る」：ジャケットの代わりに、その曲の歌詞動画を流す。
+     音は曲（audio）のまま。動画は消音で、曲の再生・停止・位置にぴったり合わせて動かす。
+     次の曲へ進んでもオンのまま、次の曲の動画に替わる */
   var vcards = document.querySelectorAll(".vcard");
-  if (toVideo && vcards.length) {
-    toVideo.hidden = false;
-    toVideo.addEventListener("click", function (event) {
-      var card = vcards[current];
-      if (!card) return;
-      event.preventDefault();
-      card.click();
+  var jv = document.querySelector(".jacket-video");
+  var vToggle = document.querySelector(".player-video-toggle");
+  var vLabel = vToggle && vToggle.querySelector(".player-video-label");
+  var showVideo = false;
+  function videoFor(i) {
+    /* 曲の音源の名前（audio/○○.m4a）と同じ名前の動画を探す */
+    var src = rows[i] && rows[i].getAttribute("data-src") || "";
+    var name = src.replace(/^audio\//, "").replace(/\.[a-z0-9]+(\?.*)?$/i, "");
+    for (var k = 0; k < vcards.length; k++) {
+      var v = vcards[k].getAttribute("data-src") || "";
+      if (v.replace(/^videos\//, "").replace(/\.[a-z0-9]+(\?.*)?$/i, "") === name) {
+        return { src: v, poster: vcards[k].getAttribute("data-poster") || "" };
+      }
+    }
+    return null;
+  }
+  function syncVideo(force) {
+    if (!showVideo || !jv || jv.hidden) return;
+    if (jv.readyState >= 1) {
+      var drift = Math.abs(jv.currentTime - position());
+      if (force || drift > 0.3) {
+        try { jv.currentTime = position(); } catch (err) { /* 読み込み中は次の機会に合わせる */ }
+      }
+    }
+    var playing = !audio.paused && !audio.ended && stage && stage.classList.contains("is-sheet");
+    if (playing && jv.paused) {
+      var r = jv.play();
+      if (r && r.catch) r.catch(function () {});
+    } else if (!playing && !jv.paused) {
+      jv.pause();
+    }
+  }
+  function applyVideo() {
+    if (!jv || !jacket) return;
+    var v = showVideo ? videoFor(current) : null;
+    if (vToggle) vToggle.hidden = !videoFor(current);
+    if (v) {
+      if (jv.getAttribute("src") !== v.src) {
+        jv.setAttribute("poster", v.poster);
+        jv.setAttribute("src", v.src);
+        jv.preload = "auto";
+      }
+      jv.hidden = false;
+      jacket.hidden = true;
+      jacket.parentNode.classList.add("is-video");
+      syncVideo(true);
+    } else {
+      jv.pause();
+      jv.hidden = true;
+      jacket.hidden = false;
+      jacket.parentNode.classList.remove("is-video");
+    }
+    if (vToggle) {
+      vToggle.setAttribute("aria-pressed", showVideo ? "true" : "false");
+      if (vLabel) vLabel.textContent = showVideo ? "ジャケットに戻す" : "歌詞動画で見る";
+    }
+  }
+  if (jv && vToggle && vcards.length) {
+    vToggle.hidden = false;
+    vToggle.addEventListener("click", function () {
+      showVideo = !showVideo;
+      applyVideo();
     });
+    jv.addEventListener("loadedmetadata", function () { syncVideo(true); });
+    ["play", "pause", "seeked", "playing"].forEach(function (name) {
+      audio.addEventListener(name, function () { syncVideo(name === "seeked"); });
+    });
+    audio.addEventListener("timeupdate", function () { syncVideo(false); });
+    /* 曲が替わったら、その曲の動画へ */
+    audio.addEventListener("loadstart", applyVideo);
   }
 
   /* 前の曲・次の曲（画面下のバーのボタンと、スマホのロック画面のボタン）
