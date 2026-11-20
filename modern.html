@@ -19,11 +19,11 @@
     <meta name="twitter:card" content="summary_large_image" />
     <link rel="icon" href="images/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="images/apple-touch-icon.png" />
-    <link rel="stylesheet" href="style.css?v=20261120i" />
+    <link rel="stylesheet" href="style.css?v=20261120j" />
     <!-- style.css・main.js・player.js を直したら、下の ?v= の値をすべて新しくする（古いファイルがブラウザに残って、新旧が混ざらないようにするため） -->
-    <script src="main.js?v=20261120i" defer></script>
-    <script src="player.js?v=20261120i" defer></script>
-    <script src="video.js?v=20261120i" defer></script>
+    <script src="main.js?v=20261120j" defer></script>
+    <script src="player.js?v=20261120j" defer></script>
+    <script src="video.js?v=20261120j" defer></script>
   </head>
   <body>
     <header class="site-header">
@@ -31,7 +31,6 @@
         <a href="#top" class="logo">KOSHIRO</a>
         <nav class="nav" aria-label="メニュー">
           <a href="#music">Music</a>
-          <a href="#video">Video</a>
           <a href="#about">About</a>
           <a href="index.html" class="nav-retro">Retro</a>
         </nav>
@@ -237,9 +236,12 @@
           <div class="stage">
           <!-- 再生中の画面を、画面いっぱいに出したときの「閉じる」ボタン。指が届きやすいよう画面の下に出す（下へなぞっても閉じる） -->
           <button class="sheet-close" type="button" hidden aria-label="再生中の画面を閉じる（再生は続く）"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7.4 8.6 12 13.2l4.6-4.6L18 10l-6 6-6-6z"/></svg>閉じる</button>
+          <div class="stage-body">
           <div class="release">
             <figure class="jacket">
               <img src="images/jacket-yuuhi.jpg?v=3" alt="ジャケット：夕日の沈む海辺。防波堤に座って海を眺める青年の後ろ姿" width="600" height="600" loading="lazy" />
+              <!-- 「歌詞動画で見る」をオンにすると、ジャケットの代わりにここで歌詞動画が流れる（音は曲のほう。動画は消音で、曲に合わせて進む） -->
+              <video class="jacket-video" muted playsinline preload="none" hidden></video>
             </figure>
             <div class="player">
               <p class="player-artist">航士朗</p>
@@ -260,7 +262,7 @@
                   <p class="player-times" aria-hidden="true"><span class="player-now">0:00</span><span class="player-total">3:37</span></p>
                 </div>
               </div>
-              <a class="player-video-link" href="#video" hidden><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 5h16v14H4zM10 9v6l5-3z"/></svg>この曲の歌詞動画を見る</a>
+              <button class="player-video-toggle" type="button" aria-pressed="false" hidden><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 5h16v14H4zM10 9v6l5-3z"/></svg><span class="player-video-label">歌詞動画で見る</span></button>
               <button class="stage-close" type="button" hidden><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6.4 5 5 6.4 10.6 12 5 17.6 6.4 19l5.6-5.6 5.6 5.6 1.4-1.4-5.6-5.6L19 6.4 17.6 5 12 10.6z"/></svg>停止して閉じる</button>
               <p class="player-error" hidden>音源を再生できませんでした。通信環境を確かめて、もう一度お試しください。</p>
             </div>
@@ -551,14 +553,16 @@
           </div>
 
           </div>
+          
           </div>
+</div>
         </div>
       </section>
 
       <!-- ===== Video：歌詞動画 =====
            動画は videos/ フォルダ（mp4 と、同じ名前の jpg が一覧の絵）。足すときは <li> を丸ごとコピーして書き換える。
            video.js が動けば一覧を押すと上の画面で流れる。動かない環境では、一覧を押すと動画のファイルが開く -->
-      <section id="video" class="section">
+      <section id="video" class="section" hidden>
         <div class="container">
           <div class="section-head">
             <h2 class="section-title">Video</h2>
