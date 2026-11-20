@@ -2040,3 +2040,42 @@ body.has-mini {
   -webkit-user-select: none;
   user-select: none;
 }
+
+/* スマホを横向きにしたとき（画面の高さが低い）：ジャケットを画面の高さに収め、曲名も小さくして、操作ボタンまで見えるように */
+@media (max-height: 520px) and (orientation: landscape) {
+  .stage.is-sheet .release {
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: start;
+    gap: 1.5rem;
+    margin-top: 0;
+  }
+
+  .stage.is-sheet .jacket {
+    width: min(40vw, calc(100vh - 150px));
+    width: min(40vw, calc(100dvh - 150px));
+  }
+
+  .stage.is-sheet .jacket.is-video {
+    width: min(50vw, calc((100dvh - 150px) * 16 / 9));
+  }
+
+  .stage.is-sheet .player-title {
+    font-size: 1.35rem;
+  }
+
+  .stage.is-sheet .player-ui {
+    gap: 0.6rem;
+  }
+
+  .stage.is-sheet .sheet-close {
+    min-height: 44px;
+  }
+
+  .stage.is-sheet::before {
+    margin: 0.5rem auto 0.6rem;
+  }
+}
+
+.stage-body:focus {
+  outline: none;
+}
