@@ -2448,7 +2448,7 @@ html {
 .album-head[aria-expanded="true"] .album-art {
   scale: 1.04;
   rotate: -1.5deg;
-  box-shadow: 0 26px 44px -18px rgba(0, 0, 0, 0.95), 0 0 0 1px rgba(252, 139, 47, 0.25);
+  box-shadow: 0 16px 28px -14px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(252, 139, 47, 0.25);
 }
 
 .album-title,
@@ -2470,4 +2470,11 @@ html {
 /* フッターのコピーライト：小さすぎたので、まわりの文字と同じ大きさに */
 .site-footer small {
   font-size: inherit;
+}
+
+/* ジャケットが浮き上がったときの影が「アルバムを再生」の上にかからないよう、ボタンを手前に置く */
+.album-play {
+  position: relative;
+  z-index: 1;
+  margin-top: 1.6rem;
 }
