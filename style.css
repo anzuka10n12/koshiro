@@ -32,7 +32,8 @@
   --sun: #fc8b2f; /* 夕日 */
   --glow: #ffb866; /* 夕日の明るいところ */
   --line: rgba(244, 236, 221, 0.14);
-  --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  /* ページ全体の動きの曲線：iPhone の画面の動きに近い（すっと動いて、なめらかに止まる） */
+  --ease: cubic-bezier(0.32, 0.72, 0, 1);
   /* iPhone のシートや画面の動きに近い曲線（すっと出て、なめらかに止まる） */
   --ios: cubic-bezier(0.32, 0.72, 0, 1);
   /* 少しだけ行きすぎて戻る、ばねのような曲線 */
@@ -2233,6 +2234,78 @@ body.has-mini {
   }
 
   .tracklist:not([hidden]) {
+    animation: none;
+  }
+}
+
+/* ---- ページ全体の手ごたえ（押すと少し縮み、離すとふわっと戻る） ---- */
+.nav a,
+.logo,
+.mini-open,
+.track-lyrics summary,
+.site-footer a,
+.about a {
+  transition: scale 0.35s var(--spring), color 0.25s var(--ease), border-color 0.25s var(--ease);
+}
+
+.nav a:active,
+.logo:active,
+.site-footer a:active,
+.about a:active {
+  scale: 0.94;
+  transition-duration: 0.12s;
+}
+
+.mini-open:active,
+.track-lyrics summary:active {
+  scale: 0.97;
+  transition-duration: 0.12s;
+}
+
+/* 画面下のバーを押したとき、バーごと少し沈む */
+.mini-player:active:not(.is-dragging) {
+  scale: 0.985;
+}
+
+/* 歌詞：開くときも閉じるときも、高さがなめらかに変わる（対応しているブラウザだけ。未対応ならこれまでどおり） */
+@supports (interpolate-size: allow-keywords) {
+  .track-lyrics {
+    interpolate-size: allow-keywords;
+  }
+
+  .track-lyrics::details-content {
+    height: 0;
+    overflow: clip;
+    opacity: 0;
+    transition: height 0.5s var(--ease), opacity 0.35s var(--ease), content-visibility 0.5s allow-discrete;
+  }
+
+  .track-lyrics[open]::details-content {
+    height: auto;
+    opacity: 1;
+  }
+}
+
+/* 曲を替えたとき：ジャケットがふわっと切り替わる */
+.stage.is-sheet .jacket img {
+  animation: art-in 0.5s var(--ease);
+}
+
+@keyframes art-in {
+  from { opacity: 0.4; }
+  to { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav a, .logo, .mini-open, .track-lyrics summary, .site-footer a, .about a, .mini-player {
+    transition: none;
+  }
+
+  .track-lyrics::details-content {
+    transition: none;
+  }
+
+  .stage.is-sheet .jacket img {
     animation: none;
   }
 }
