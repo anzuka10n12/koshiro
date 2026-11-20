@@ -174,6 +174,15 @@
   var stageBody = stage ? stage.querySelector(".stage-body") || stage : null; /* 再生中の画面で、スクロールする中身 */
   function reveal() {
     if (!stage) return;
+    if (closingTimer) {
+      /* 閉じている途中にもう一度開いたら、閉じるのをやめて元の位置へ戻す */
+      clearTimeout(closingTimer);
+      closingTimer = null;
+      stage.classList.remove("is-closing");
+      stage.style.transition = "translate 0.45s cubic-bezier(0.32, 0.72, 0, 1)";
+      stage.style.translate = "";
+      return;
+    }
     if (stage.classList.contains("is-sheet")) return;
     sheetBack = document.activeElement;
     /* 親の要素の動き（変形）に引っぱられず画面いっぱいに出すため、開いているあいだは body の直下へ移す */
@@ -202,10 +211,34 @@
     }
   }
 
-  function hideSheet() {
+  /* 閉じるときは、iPhone のシートのように下へすべり落ちてから消える（immediate なら、すぐ消す） */
+  var closingTimer = null;
+  var calmMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function hideSheet(immediate) {
     if (!stage || !stage.classList.contains("is-sheet")) return;
-    stage.classList.remove("is-sheet");
+    if (closingTimer) {
+      if (immediate !== true) return;
+      clearTimeout(closingTimer);
+      closingTimer = null;
+    }
+    if (immediate === true || calmMotion) {
+      finishHide();
+      return;
+    }
+    stage.classList.add("is-closing");
+    stage.style.transition = "translate 0.36s cubic-bezier(0.32, 0.72, 0, 1)";
+    void stage.offsetWidth;
+    stage.style.translate = "0 100%";
+    closingTimer = setTimeout(function () {
+      closingTimer = null;
+      finishHide();
+    }, 360);
+  }
+
+  function finishHide() {
+    stage.classList.remove("is-sheet", "is-closing");
     stage.classList.add("is-idle");
+    stage.style.transition = "";
     stage.style.translate = "";
     Array.prototype.forEach.call(document.body.children, function (el) {
       el.inert = false;
@@ -218,7 +251,7 @@
     miniShow();
   }
 
-  if (sheetClose) sheetClose.addEventListener("click", hideSheet);
+  if (sheetClose) sheetClose.addEventListener("click", function () { hideSheet(); });
   document.addEventListener("keydown", function (e) {
     if (e.key === "Escape") hideSheet();
   });
@@ -242,6 +275,7 @@
       var dy = e.touches[0].clientY - sy;
       if (dy > 0) {
         if (e.cancelable) e.preventDefault();
+        stage.style.transition = "none";
         stage.style.translate = "0 " + dy + "px";
       } else {
         stage.style.translate = "";
@@ -252,8 +286,13 @@
       if (sy < 0) return;
       var dy = (e.changedTouches[0] ? e.changedTouches[0].clientY : sy) - sy;
       sy = -1;
-      if (dy > 110) hideSheet();
-      else stage.style.translate = "";
+      if (dy > 110) {
+        hideSheet();
+      } else {
+        stage.style.transition = "translate 0.45s cubic-bezier(0.34, 1.3, 0.64, 1)";
+        stage.style.translate = "";
+        setTimeout(function () { if (!closingTimer) stage.style.transition = ""; }, 460);
+      }
     });
   }
 
@@ -730,7 +769,7 @@
   if (jacketBox && stage) {
     var jx = 0, jy = 0, jdx = 0, jt = 0;
     function jacketMove(px, animate) {
-      jacketBox.style.transition = animate ? "translate 0.22s ease, opacity 0.22s ease" : "none";
+      jacketBox.style.transition = animate ? "translate 0.32s cubic-bezier(0.32, 0.72, 0, 1), opacity 0.32s ease" : "none";
       jacketBox.style.translate = px ? px + "px 0" : "";
       jacketBox.style.opacity = px ? String(Math.max(0.35, 1 - Math.abs(px) / 500)) : "";
     }
@@ -852,7 +891,7 @@
     mark();
     var lyricsBox = document.querySelector(".track-lyrics");
     if (lyricsBox) lyricsBox.open = false;
-    if (stage && stage.classList.contains("is-sheet")) hideSheet();
+    if (stage && stage.classList.contains("is-sheet")) hideSheet(true);
     if (stage && !stage.classList.contains("is-idle")) {
       var before = stage.getBoundingClientRect();
       stage.classList.add("is-idle");
