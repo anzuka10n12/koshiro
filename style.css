@@ -881,6 +881,7 @@ a {
   aspect-ratio: auto;
 }
 
+.player-share,
 .player-video-toggle {
   display: inline-flex;
   align-items: center;
@@ -897,10 +898,16 @@ a {
   cursor: pointer;
 }
 
+.player-share[hidden],
 .player-video-toggle[hidden] {
   display: none;
 }
 
+.player-share {
+  margin-right: 0.5rem;
+}
+
+.player-share svg,
 .player-video-toggle svg {
   width: 20px;
   height: 20px;
@@ -912,6 +919,7 @@ a {
   color: var(--glow);
 }
 
+.player-share:focus-visible,
 .player-video-toggle:focus-visible {
   outline: 2px solid var(--glow);
   outline-offset: 2px;
