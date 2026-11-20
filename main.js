@@ -16,11 +16,13 @@
 
   /* =========
      1. トップの絵に奥行きをつける
-        指・マウスの位置に合わせて、奥の景色と手前の人物を少しだけ逆向きにずらす（視差）
+        マウスの位置に合わせて、奥の景色と手前の人物を少しだけ逆向きにずらす（視差。スマホでは動かさない）
      ========= */
   if (hero && !reduceMotion) {
     var waiting = false;
     hero.addEventListener("pointermove", function (event) {
+      /* 指で触れたときは動かさない（タップした場所へ人物がずれて、止まったままになるため）。マウスだけ */
+      if (event.pointerType !== "mouse") return;
       if (waiting) return;
       waiting = true;
       requestAnimationFrame(function () {
