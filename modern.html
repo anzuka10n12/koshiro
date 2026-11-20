@@ -19,11 +19,11 @@
     <meta name="twitter:card" content="summary_large_image" />
     <link rel="icon" href="images/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="images/apple-touch-icon.png" />
-    <link rel="stylesheet" href="style.css?v=20261120p" />
+    <link rel="stylesheet" href="style.css?v=20261120q" />
     <!-- style.css・main.js・player.js を直したら、下の ?v= の値をすべて新しくする（古いファイルがブラウザに残って、新旧が混ざらないようにするため） -->
-    <script src="main.js?v=20261120p" defer></script>
-    <script src="player.js?v=20261120p" defer></script>
-    <script src="video.js?v=20261120p" defer></script>
+    <script src="main.js?v=20261120q" defer></script>
+    <script src="player.js?v=20261120q" defer></script>
+    <script src="video.js?v=20261120q" defer></script>
   </head>
   <body>
     <header class="site-header">
@@ -250,9 +250,11 @@
               <audio class="player-audio" controls preload="none" src="audio/yuuhi-no-kaerimichi.m4a">お使いのブラウザでは再生できません。</audio>
               <div class="player-ui" hidden>
                 <div class="player-controls">
+                  <button class="player-mode player-shuffle" type="button" aria-pressed="false" aria-label="シャッフル：オフ" hidden><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M10.6 9.2 5.4 4 4 5.4l5.2 5.2zM14.5 4l2 2L4 18.6 5.4 20 18 7.5l2 2V4zm.3 9.4-1.4 1.4 3.1 3.1-2 2H20v-5.5l-2 2z"/></svg></button>
                   <button class="player-skip player-prev" type="button" aria-label="前の曲"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6h2v12H6zM9.5 12L18 18V6z"/></svg></button>
                   <button class="player-play" type="button" aria-pressed="false"><svg class="player-icon player-icon-play" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 5v14l11-7z"/></svg><svg class="player-icon player-icon-pause" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg><span class="player-play-label visually-hidden">再生</span></button>
                   <button class="player-skip player-next" type="button" aria-label="次の曲"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M16 6h2v12h-2zM6 18l8.5-6L6 6z"/></svg></button>
+                  <button class="player-mode player-repeat" type="button" aria-pressed="false" aria-label="くり返し：なし" data-mode="off" hidden><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 7h10v3l4-4-4-4v3H5v6h2zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2z"/></svg><span class="player-repeat-one" aria-hidden="true">1</span></button>
                 </div>
                 <div class="player-line">
                   <div class="player-wave-wrap">
