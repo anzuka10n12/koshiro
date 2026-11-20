@@ -191,7 +191,11 @@
     refresh();
     window.requestAnimationFrame(draw);
     if (typeof syncVideo === "function") syncVideo(true);
-    if (sheetClose && sheetClose.focus) sheetClose.focus({ preventScroll: true });
+    /* 読み上げ・キーボードの人のために、画面の中身へフォーカスを移す（枠は出さない） */
+    if (stageBody && stageBody.focus) {
+      if (!stageBody.hasAttribute("tabindex")) stageBody.setAttribute("tabindex", "-1");
+      stageBody.focus({ preventScroll: true });
+    }
   }
 
   function hideSheet() {
@@ -306,6 +310,7 @@
       navigator.mediaSession.metadata = new window.MediaMetadata({
         title: titleText.textContent,
         artist: "航士朗",
+        album: "何時かの僕ら",
         artwork: art ? [{ src: art, sizes: "800x800", type: "image/jpeg" }] : []
       });
     }
