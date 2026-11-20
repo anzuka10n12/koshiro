@@ -744,14 +744,27 @@
   var albumHead = document.querySelector(".album-head");
   var albumPlay = document.querySelector(".album-play");
   var albumList = document.getElementById("album-tracks");
-  function albumOpen(open) {
+  var albumWrap = albumList ? albumList.parentNode : null;
+  function albumOpen(open, instant) {
     if (!albumHead || !albumList) return;
     albumHead.setAttribute("aria-expanded", open ? "true" : "false");
-    albumList.hidden = !open;
+    if (albumWrap && albumWrap.classList.contains("album-tracks")) {
+      /* 高さを 0 ⇄ 中身の高さ でなめらかに変える。閉じている間は Tab や読み上げで選ばれないようにする */
+      if (instant) albumWrap.classList.add("no-anim");
+      albumWrap.classList.toggle("is-closed", !open);
+      albumList.inert = !open;
+      if (instant) {
+        void albumWrap.offsetWidth;
+        albumWrap.classList.remove("no-anim");
+      }
+    } else {
+      albumList.hidden = !open;
+    }
     if (albumPlay) albumPlay.hidden = !open;
   }
+
   if (albumHead && albumList) {
-    albumOpen(false);
+    albumOpen(false, true);
     albumHead.addEventListener("click", function () {
       albumOpen(albumHead.getAttribute("aria-expanded") !== "true");
     });

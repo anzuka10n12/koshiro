@@ -19,11 +19,11 @@
     <meta name="twitter:card" content="summary_large_image" />
     <link rel="icon" href="images/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="images/apple-touch-icon.png" />
-    <link rel="stylesheet" href="style.css?v=20261120s" />
+    <link rel="stylesheet" href="style.css?v=20261120t" />
     <!-- style.css・main.js・player.js を直したら、下の ?v= の値をすべて新しくする（古いファイルがブラウザに残って、新旧が混ざらないようにするため） -->
-    <script src="main.js?v=20261120s" defer></script>
-    <script src="player.js?v=20261120s" defer></script>
-    <script src="video.js?v=20261120s" defer></script>
+    <script src="main.js?v=20261120t" defer></script>
+    <script src="player.js?v=20261120t" defer></script>
+    <script src="video.js?v=20261120t" defer></script>
   </head>
   <body>
     <header class="site-header">
@@ -87,6 +87,8 @@
             <button class="album-play" type="button" hidden><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 5v14l11-7z"/></svg>アルバムを再生</button>
           </div>
 
+          <!-- 曲の一覧を包む箱：アルバムの開け閉めで、高さがなめらかに伸び縮みする -->
+          <div class="album-tracks">
           <ol class="tracklist" id="album-tracks" aria-label="何時かの僕ら の曲">
             <li>
               <button class="tracklist-row" type="button" data-src="audio/yuuhi-no-kaerimichi.m4a" data-seconds="217" data-art="images/jacket-yuuhi.jpg?v=3" data-art-alt="ジャケット：90年代のセル画アニメ風。夕日の沈む海辺で、防波堤に座って海を眺める青年の後ろ姿。上に曲名と KOSHIRO の文字" data-peaks="9,41,46,51,55,71,34,31,27,45,79,48,59,71,43,67,67,70,69,68,58,76,72,57,62,64,58,63,75,67,73,76,57,72,59,71,92,87,86,92,60,82,80,80,76,78,86,80,76,87,83,79,82,66,47,78,69,74,69,78,78,77,72,80,88,61,77,78,81,77,52,69,73,92,61,76,70,80,70,64,72,75,76,67,71,89,90,87,87,84,72,84,88,84,86,80,97,84,86,85,86,79,86,90,91,88,72,68,68,76,79,81,88,99,100,81,76,87,88,75,74,87,93,100,93,92,94,91,93,97,100,99,63,55,78,41,47,69,70,70,98,79,83,73,76,84,86,89,96,94,99,97,100,97,91,96,82,93,93,96,99,98,97,100,99,85,91,86,84,79,92,88,90,87,76,72,20,20,8,8">
@@ -229,6 +231,7 @@
               </button>
             </li>
           </ol>
+          </div>
 
           <!-- いま流れている曲の画面（大きなジャケット・プレーヤー・歌詞）。
                曲を選ぶと、音楽アプリのように画面いっぱいに下から出る（player.js が .is-idle と .is-sheet を付け外しする）。

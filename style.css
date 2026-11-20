@@ -2212,14 +2212,29 @@ body.has-mini {
   box-shadow: 0 8px 20px -12px rgba(0, 0, 0, 0.6);
 }
 
-/* アルバムの曲一覧が開くとき：上からすっと現れる */
-.tracklist:not([hidden]) {
-  animation: list-in 0.42s var(--ios);
+/* アルバムの曲一覧：開け閉めで高さがなめらかに伸び縮みする（iPhone の画面と同じ曲線） */
+.album-tracks {
+  display: grid;
+  grid-template-rows: 1fr;
+  margin-bottom: 2.5rem;
+  opacity: 1;
+  transition: grid-template-rows 0.55s var(--ios), opacity 0.4s var(--ios), margin-bottom 0.55s var(--ios);
 }
 
-@keyframes list-in {
-  from { opacity: 0; translate: 0 -8px; }
-  to { opacity: 1; translate: 0 0; }
+.album-tracks > .tracklist {
+  min-height: 0;
+  margin: 0;
+  overflow: hidden;
+}
+
+.album-tracks.is-closed {
+  grid-template-rows: 0fr;
+  margin-bottom: 0;
+  opacity: 0;
+}
+
+.album-tracks.no-anim {
+  transition: none;
 }
 
 .album-chevron {
@@ -2233,8 +2248,8 @@ body.has-mini {
     transition: none;
   }
 
-  .tracklist:not([hidden]) {
-    animation: none;
+  .album-tracks {
+    transition: none;
   }
 }
 
@@ -2306,6 +2321,22 @@ body.has-mini {
   }
 
   .stage.is-sheet .jacket img {
+    animation: none;
+  }
+}
+
+/* 「アルバムを再生」も、開くときにふわっと出る */
+.album-play:not([hidden]) {
+  animation: album-play-in 0.45s var(--ios);
+}
+
+@keyframes album-play-in {
+  from { opacity: 0; translate: 0 -6px; }
+  to { opacity: 1; translate: 0 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .album-play:not([hidden]) {
     animation: none;
   }
 }
