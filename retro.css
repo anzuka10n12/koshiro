@@ -117,6 +117,16 @@ h1 {
 .item .title { margin: 0; font-size: 16px; font-weight: bold; }
 .new { color: #e82626; }
 
+/* 過去のお知らせ（押すと開く） */
+.old-news { border-top: 1px solid #000000; }
+.old-news summary {
+  padding: 10px 0;
+  color: #0000ee;
+  text-decoration: underline;
+  cursor: pointer;
+}
+.old-news .item:first-of-type { border-top: 1px dashed #808080; }
+
 .copyright {
   margin: 40px 0 0;
   text-align: right;
