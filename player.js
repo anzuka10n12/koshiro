@@ -214,11 +214,14 @@
   document.addEventListener("keydown", function (e) {
     if (e.key === "Escape") hideSheet();
   });
-  /* 画面の一番上で下へなぞると閉じる（指で触る端末だけ） */
+  /* 画面の一番上のつまみを下へなぞると閉じる（指で触る端末だけ） */
   if (stage) {
     var sy = -1;
     stage.addEventListener("touchstart", function (e) {
-      sy = stage.classList.contains("is-sheet") && stageBody.scrollTop <= 0 && e.touches.length === 1 ? e.touches[0].clientY : -1;
+      /* 下へなぞって閉じられるのは、画面のいちばん上のつまみの所（高さ 56px）から始めたときだけ。
+         ジャケット・動画・波形・歌詞の所では閉じない（誤って閉じないように） */
+      var top = stage.getBoundingClientRect().top;
+      sy = stage.classList.contains("is-sheet") && e.touches.length === 1 && e.touches[0].clientY - top <= 56 ? e.touches[0].clientY : -1;
     }, { passive: true });
     /* 下へなぞっている間は、ブラウザの「引っぱって更新」が動かないように止める */
     stage.addEventListener("touchmove", function (e) {
