@@ -2399,3 +2399,77 @@ html {
     top: calc(80px + 0.9rem + env(safe-area-inset-top, 0px));
   }
 }
+
+/* ---- アルバムの開け閉めの演出（動かすのは位置と透明度だけなので、端末に負担をかけない） ----
+   開く：ジャケットが少し浮き上がり、曲が上から1行ずつ順に、すっと現れる
+   閉じる：曲がいっせいに素早く消え、ジャケットが元の高さに戻る */
+.album-tracks .tracklist li {
+  opacity: 1;
+  translate: 0 0;
+  transition: opacity 0.4s var(--ios), translate 0.55s var(--ios);
+  transition-delay: calc(var(--i, 0) * 30ms + 80ms);
+}
+
+.album-tracks.is-closed .tracklist li {
+  opacity: 0;
+  translate: 0 14px;
+  transition-duration: 0.18s, 0.18s;
+  transition-delay: 0s;
+}
+
+.album-tracks .tracklist li:nth-child(1) { --i: 0; }
+.album-tracks .tracklist li:nth-child(2) { --i: 1; }
+.album-tracks .tracklist li:nth-child(3) { --i: 2; }
+.album-tracks .tracklist li:nth-child(4) { --i: 3; }
+.album-tracks .tracklist li:nth-child(5) { --i: 4; }
+.album-tracks .tracklist li:nth-child(6) { --i: 5; }
+.album-tracks .tracklist li:nth-child(7) { --i: 6; }
+.album-tracks .tracklist li:nth-child(8) { --i: 7; }
+.album-tracks .tracklist li:nth-child(9) { --i: 8; }
+.album-tracks .tracklist li:nth-child(10) { --i: 9; }
+.album-tracks .tracklist li:nth-child(11) { --i: 10; }
+.album-tracks .tracklist li:nth-child(12) { --i: 11; }
+.album-tracks .tracklist li:nth-child(13) { --i: 12; }
+.album-tracks .tracklist li:nth-child(14) { --i: 13; }
+.album-tracks .tracklist li:nth-child(15) { --i: 14; }
+.album-tracks .tracklist li:nth-child(16) { --i: 15; }
+.album-tracks .tracklist li:nth-child(17) { --i: 16; }
+.album-tracks .tracklist li:nth-child(18) { --i: 17; }
+.album-tracks .tracklist li:nth-child(19) { --i: 18; }
+.album-tracks .tracklist li:nth-child(20) { --i: 19; }
+.album-tracks .tracklist li:nth-child(21) { --i: 20; }
+.album-tracks .tracklist li:nth-child(22) { --i: 21; }
+.album-tracks .tracklist li:nth-child(23) { --i: 22; }
+.album-tracks .tracklist li:nth-child(24) { --i: 23; }
+.album-tracks .tracklist li:nth-child(25) { --i: 24; }
+.album-tracks .tracklist li:nth-child(26) { --i: 25; }
+.album-tracks .tracklist li:nth-child(27) { --i: 26; }
+.album-tracks .tracklist li:nth-child(28) { --i: 27; }
+.album-tracks .tracklist li:nth-child(29) { --i: 28; }
+.album-tracks .tracklist li:nth-child(30) { --i: 29; }
+
+.album-art {
+  transition: scale 0.6s var(--spring), box-shadow 0.6s var(--ios), rotate 0.6s var(--spring);
+}
+
+.album-head[aria-expanded="true"] .album-art {
+  scale: 1.04;
+  rotate: -1.5deg;
+  box-shadow: 0 26px 44px -18px rgba(0, 0, 0, 0.95), 0 0 0 1px rgba(252, 139, 47, 0.25);
+}
+
+.album-title,
+.album-info {
+  transition: color 0.4s var(--ios);
+}
+
+.album-head[aria-expanded="true"] .album-info {
+  color: var(--glow);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .album-tracks .tracklist li,
+  .album-art {
+    transition: none;
+  }
+}
