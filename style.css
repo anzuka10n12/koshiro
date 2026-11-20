@@ -690,7 +690,7 @@ a {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: clamp(1.5rem, 6vw, 2.75rem);
+  gap: clamp(0.75rem, 4vw, 2rem);
 }
 
 .player-skip {
@@ -2078,4 +2078,70 @@ body.has-mini {
 
 .stage-body:focus {
   outline: none;
+}
+
+/* シャッフル・くり返し：前・再生・次の両端に小さく。オンのときは夕日の色と下の点 */
+.player-mode {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  color: var(--haze);
+  cursor: pointer;
+}
+
+.player-mode[hidden] {
+  display: none;
+}
+
+.player-mode svg {
+  width: 22px;
+  height: 22px;
+  fill: currentColor;
+}
+
+.player-mode[aria-pressed="true"] {
+  color: var(--glow);
+}
+
+.player-mode[aria-pressed="true"]::after {
+  content: "";
+  position: absolute;
+  bottom: 4px;
+  left: 50%;
+  width: 4px;
+  height: 4px;
+  margin-left: -2px;
+  border-radius: 50%;
+  background-color: currentColor;
+}
+
+.player-repeat-one {
+  display: none;
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  min-width: 13px;
+  height: 13px;
+  border-radius: 7px;
+  background-color: var(--glow);
+  color: var(--deep);
+  font-size: 9px;
+  font-weight: 700;
+  line-height: 13px;
+  text-align: center;
+}
+
+.player-repeat[data-mode="one"] .player-repeat-one {
+  display: block;
+}
+
+.player-mode:focus-visible {
+  outline: 2px solid var(--glow);
+  outline-offset: 2px;
 }

@@ -47,6 +47,10 @@
   var PLAYED = "#fc8b2f"; /* 夕日の色（style.css の --sun） */
   var REST = "rgba(244, 236, 221, 0.3)";
   var current = 0;
+  /* くり返し（"off"：最後の曲で止まる／"all"：アルバムをくり返す／"one"：1曲をくり返す）とシャッフル */
+  var repeatMode = "off";
+  var shuffleOn = false;
+  var order = []; /* シャッフル中の曲順（曲の番号の並び） */
   var peaks = [];
   var seconds = 0; /* 曲の長さ（読み込み前は HTML の data-seconds を使う） */
   var pendingSeek = -1;
@@ -413,11 +417,11 @@
      止まる手前で切り替えれば「鳴り続けている」扱いのまま次の曲へ進める */
   var handing = false;
   audio.addEventListener("timeupdate", function () {
-    if (handing || audio.paused || current + 1 >= rows.length) return;
+    if (handing || audio.paused || repeatMode === "one" || nextIndex(1, false) < 0) return;
     var d = audio.duration;
     if (isFinite(d) && d > 1 && d - audio.currentTime < 0.4) {
       handing = true;
-      load(current + 1, true);
+      load(nextIndex(1, false), true);
     }
   });
   audio.addEventListener("playing", function () {
@@ -437,8 +441,8 @@
   audio.addEventListener("ended", function () {
     /* 手前で切り替えられなかったときの予備：次の曲があれば続けて再生、無ければ先頭に戻して止まる */
     if (handing) return;
-    if (current + 1 < rows.length) {
-      load(current + 1, true);
+    if (nextIndex(1, false) >= 0) {
+      load(nextIndex(1, false), true);
     } else {
       audio.currentTime = 0;
       state();
@@ -676,12 +680,12 @@
       return;
     }
     var playing = !audio.paused && !audio.ended;
-    if (dir < 0 && (position() > 3 || current === 0)) {
+    if (dir < 0 && position() > 3) {
       if (audio.readyState >= 1) audio.currentTime = 0;
       refresh();
       return;
     }
-    load((current + dir + rows.length) % rows.length, playing);
+    load(nextIndex(dir, true), playing);
   }
 
   if ("mediaSession" in navigator) {
@@ -748,10 +752,8 @@
         if (jacketAxis !== "x") return;
       }
       if (e.cancelable) e.preventDefault();
-      /* 最初・最後の曲で、その先へなぞったときは重く（ほとんど動かない） */
-      var edge = (dx > 0 && current === 0) || (dx < 0 && current === rows.length - 1);
       jdx = dx;
-      jacketMove(edge ? dx * 0.2 : dx * 0.9, false);
+      jacketMove(dx * 0.9, false);
     }, { passive: false });
     function jacketEnd() {
       if (jacketAxis !== "x") { jacketAxis = ""; return; }
@@ -759,8 +761,8 @@
       var w = jacketBox.getBoundingClientRect().width || 300;
       var far = Math.abs(jdx) >= Math.min(80, w * 0.3) || (Math.abs(jdx) >= 50 && Date.now() - jt < 250);
       var dir = jdx < 0 ? 1 : -1;
-      var to = current + dir;
-      if (!far || to < 0 || to >= rows.length) {
+      var to = nextIndex(dir, true); /* 最初の曲の前は最後の曲、最後の曲の次は最初の曲 */
+      if (!far || to < 0) {
         jacketMove(0, true);
         return;
       }
@@ -780,6 +782,65 @@
       jacketMove(0, true);
     });
   }
+
+  /* 次（dir=1）・前（dir=-1）の曲の番号。シャッフル中はシャッフルの曲順で数える。
+     wrap が true なら端で反対側へ回る（手で送るとき）。false なら、くり返しが「アルバム」のときだけ回り、
+     それ以外で端に来たら -1（自動で次へ進むとき：最後の曲で止まる） */
+  function nextIndex(dir, wrap) {
+    var n = rows.length;
+    var seq = shuffleOn && order.length === n ? order : null;
+    var pos = seq ? seq.indexOf(current) : current;
+    var to = pos + dir;
+    if (to < 0 || to >= n) {
+      if (!wrap && repeatMode !== "all") return -1;
+      to = (to + n) % n;
+    }
+    return seq ? seq[to] : to;
+  }
+
+  /* シャッフル：いまの曲を先頭に、残りを混ぜた曲順を作る */
+  function makeOrder() {
+    var rest = [];
+    for (var i = 0; i < rows.length; i++) if (i !== current) rest.push(i);
+    for (var k = rest.length - 1; k > 0; k--) {
+      var j = Math.floor(Math.random() * (k + 1));
+      var t = rest[k]; rest[k] = rest[j]; rest[j] = t;
+    }
+    order = [current].concat(rest);
+  }
+
+  var shuffleBtn = document.querySelector(".player-shuffle");
+  var repeatBtn = document.querySelector(".player-repeat");
+  var REPEAT_LABEL = { off: "くり返し：なし", all: "くり返し：アルバム", one: "くり返し：1曲" };
+  function showModes() {
+    if (shuffleBtn) {
+      shuffleBtn.setAttribute("aria-pressed", shuffleOn ? "true" : "false");
+      shuffleBtn.setAttribute("aria-label", shuffleOn ? "シャッフル：オン" : "シャッフル：オフ");
+    }
+    if (repeatBtn) {
+      repeatBtn.setAttribute("data-mode", repeatMode);
+      repeatBtn.setAttribute("aria-pressed", repeatMode === "off" ? "false" : "true");
+      repeatBtn.setAttribute("aria-label", REPEAT_LABEL[repeatMode]);
+    }
+    /* 1曲くり返しは、曲の終わりで止まらず頭に戻る（音が途切れない） */
+    audio.loop = repeatMode === "one";
+  }
+  if (shuffleBtn) {
+    shuffleBtn.hidden = false;
+    shuffleBtn.addEventListener("click", function () {
+      shuffleOn = !shuffleOn;
+      if (shuffleOn) makeOrder();
+      showModes();
+    });
+  }
+  if (repeatBtn) {
+    repeatBtn.hidden = false;
+    repeatBtn.addEventListener("click", function () {
+      repeatMode = repeatMode === "off" ? "all" : repeatMode === "all" ? "one" : "off";
+      showModes();
+    });
+  }
+  showModes();
 
   /* 「停止して閉じる」：再生をやめて、曲を選ぶ前の一覧だけの状態に戻す */
   /* 曲の再生をやめ、ジャケットとプレーヤーをしまう（keepView なら、いま見ている位置が動かないようにする） */
