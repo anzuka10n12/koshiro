@@ -889,10 +889,76 @@
     }, true);
   }
 
+  /* 曲ごとのリンク（modern.html#song=曲の音源名）と「この曲を共有」。
+     リンクを開くと、その曲の再生中の画面が開いた状態で始まる（自動では鳴らさない）。
+     画面を開いている間は、アドレス欄もその曲のリンクにしておく */
+  function slugOf(i) {
+    return ((rows[i] && rows[i].getAttribute("data-src")) || "").replace(/^audio\//, "").replace(/\.[a-z0-9]+(\?.*)?$/i, "");
+  }
+  function songUrl(i) {
+    return location.origin + location.pathname + "#song=" + slugOf(i);
+  }
+  function hashToIndex() {
+    var m = /^#song=([a-z0-9-]+)$/.exec(location.hash || "");
+    if (!m) return -1;
+    for (var i = 0; i < rows.length; i++) if (slugOf(i) === m[1]) return i;
+    return -1;
+  }
+  function syncHash() {
+    if (!history.replaceState || !stage) return;
+    try {
+      if (stage.classList.contains("is-sheet")) history.replaceState(null, "", "#song=" + slugOf(current));
+      else if (hashToIndex() >= 0) history.replaceState(null, "", location.pathname + location.search);
+    } catch (err) { /* 使えない環境では何もしない */ }
+  }
+  audio.addEventListener("loadstart", syncHash);
+  if (stage) {
+    new MutationObserver(syncHash).observe(stage, { attributes: true, attributeFilter: ["class"] });
+  }
+
+  var share = document.querySelector(".player-share");
+  var shareLabel = share && share.querySelector(".player-share-label");
+  var shareTimer = null;
+  function shareSay(text) {
+    if (!shareLabel) return;
+    shareLabel.textContent = text;
+    clearTimeout(shareTimer);
+    shareTimer = setTimeout(function () { shareLabel.textContent = "この曲を共有"; }, 2500);
+  }
+  if (share) {
+    share.hidden = false;
+    share.addEventListener("click", function () {
+      var url = songUrl(current);
+      var name = (titleText ? titleText.textContent : "") + " / 航士朗";
+      if (navigator.share) {
+        navigator.share({ title: name, url: url }).catch(function () {});
+      } else if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(url).then(function () {
+          shareSay("リンクをコピーしました");
+        }, function () {
+          shareSay("コピーできませんでした");
+        });
+      } else {
+        shareSay("コピーできませんでした");
+      }
+    });
+  }
+
+  function openFromHash() {
+    var i = hashToIndex();
+    if (i < 0) return;
+    picked = true;
+    load(i, false);
+    if (typeof albumOpen === "function") albumOpen(true);
+    reveal();
+  }
+  window.addEventListener("hashchange", openFromHash);
+
   /* 準備ができたら、標準の再生バーを専用の画面に置き換える */
   audio.controls = false;
   ui.hidden = false;
   box.classList.add("is-ready");
   if (stage) stage.classList.add("is-idle");
   load(0, false);
+  openFromHash();
 })();
