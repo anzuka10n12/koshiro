@@ -224,11 +224,17 @@
       }).observe(hero);
     }
 
+    /* スマホでスクロールするとアドレス欄が出入りして「高さだけ」変わる。
+       そのたびに描き直すと、きらめきが一瞬消えてちらつくので、幅が変わったときだけ描き直す */
+    var lastW = 0;
     window.addEventListener("resize", function () {
+      if (hero.clientWidth === lastW && Math.abs(hero.clientHeight - H) < 120) return;
+      lastW = hero.clientWidth;
       resize();
       schedule();
     });
     resize();
+    lastW = hero.clientWidth;
     schedule();
   })();
 
