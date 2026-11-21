@@ -378,13 +378,21 @@
   });
 
   Array.prototype.forEach.call(rows, function (row, index) {
-    row.addEventListener("click", function () {
+    row.addEventListener("click", function (e) {
+      /* 左の小さなジャケット：その場で再生・一時停止（再生画面は開かない） */
+      var onCover = e.target && e.target.closest && e.target.closest(".tracklist-cover");
       if (index === current) {
+        if (onCover) {
+          if (audio.paused) start();
+          else audio.pause();
+          return;
+        }
+        /* 流れている曲の名前を押しても止めない。止まっていたら流し、再生画面を開く */
         if (audio.paused) start();
-        else audio.pause();
       } else {
         picked = true;
         load(index, true);
+        if (onCover) return;
       }
       reveal();
     });
