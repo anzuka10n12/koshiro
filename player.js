@@ -352,6 +352,10 @@
     }
     if (changed) {
       pendingSeek = -1;
+      /* 高音質の FLAC を再生できないブラウザでは、同じ名前の m4a を使う */
+      if (/\.flac(\?|$)/.test(src) && !audio.canPlayType("audio/flac")) {
+        src = src.replace(/\.flac(\?|$)/, ".m4a$1");
+      }
       audio.setAttribute("src", src);
     }
     /* スマホのロック画面などに曲名とジャケットを出す */
@@ -494,7 +498,24 @@
       refresh();
     }
   });
+  /* 再生しようとした時刻（FLAC が失敗して m4a に切り替えるとき、続けて流すかの判断に使う） */
+  var playTried = 0;
+  audio.addEventListener("play", function () {
+    playTried = Date.now();
+  });
   audio.addEventListener("error", function () {
+    /* FLAC が読めなかったら、一度だけ同じ曲の m4a に切り替える */
+    var cur = audio.getAttribute("src") || "";
+    if (/\.flac(\?|$)/.test(cur)) {
+      var at = audio.currentTime || 0;
+      audio.setAttribute("src", cur.replace(/\.flac(\?|$)/, ".m4a$1"));
+      if (at) pendingSeek = at;
+      if (Date.now() - playTried < 15000) {
+        var again = audio.play();
+        if (again && again.catch) again.catch(function () { state(); });
+      }
+      return;
+    }
     if (errorText) errorText.hidden = false;
     state();
   });
