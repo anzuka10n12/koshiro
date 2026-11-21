@@ -371,7 +371,18 @@
     seconds = Number(row.getAttribute("data-seconds")) || 0;
     peaks = (row.getAttribute("data-peaks") || "").split(",").map(Number);
     var name = row.querySelector(".tracklist-title");
-    titleText.textContent = name ? name.textContent : "";
+    /* 曲名と、客演（feat.・Vo.・×）を分けて出す。客演は曲名の下に小さく。
+       textContent は「曲名 feat. ○○」のままなので、ロック画面や共有には全部が入る */
+    var credit = name && name.querySelector(".tracklist-credit");
+    var full = name ? name.textContent : "";
+    var creditText = credit ? credit.textContent : "";
+    titleText.textContent = full.slice(0, full.length - creditText.length);
+    if (creditText) {
+      var cr = document.createElement("span");
+      cr.className = "player-credit";
+      cr.textContent = creditText;
+      titleText.appendChild(cr);
+    }
     /* ジャケットと歌詞の見出しも、選んだ曲のものに替える */
     var art = row.getAttribute("data-art");
     if (jacket && art) {
