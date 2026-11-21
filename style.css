@@ -1473,10 +1473,13 @@ body.has-mini {
 }
 
 .track-lyrics-label {
+  flex: none; /* 曲名が長くても「歌詞」は縦に折れないように */
   font-weight: 700;
+  white-space: nowrap;
 }
 
 .track-lyrics-name {
+  min-width: 0;
   color: var(--haze);
 }
 
