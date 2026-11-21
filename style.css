@@ -1174,6 +1174,7 @@ html.sheet-open body {
 
 .mini-art {
   display: block;
+  cursor: pointer; /* 押すと曲名と同じく大きな画面へ */
   flex-shrink: 0;
   width: 48px;
   height: 48px;

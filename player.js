@@ -659,6 +659,12 @@
     if (bigNext) bigNext.addEventListener("click", function () { step(1); });
     if (miniNext) miniNext.addEventListener("click", function () { step(1); });
     /* 曲名を押すと、流れているほうの大きな画面（曲のプレーヤーか歌詞動画）へ戻る */
+    /* 小さなジャケットを押しても、曲名を押したときと同じく大きな画面へ */
+    if (miniArt) {
+      miniArt.addEventListener("click", function () {
+        miniOpen.click();
+      });
+    }
     miniOpen.addEventListener("click", function () {
       /* 曲のときは、しまってある「いま流れている曲」の画面を出してから、そこへ動く */
       if (active !== "video" && stage) {
