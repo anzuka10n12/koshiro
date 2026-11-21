@@ -898,7 +898,8 @@ a {
 }
 
 .player-share,
-.player-video-toggle {
+.player-video-toggle,
+.player-hq {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
@@ -915,28 +916,33 @@ a {
 }
 
 .player-share[hidden],
-.player-video-toggle[hidden] {
+.player-video-toggle[hidden],
+.player-hq[hidden] {
   display: none;
 }
 
-.player-share {
+.player-share,
+.player-video-toggle {
   margin-right: 0.5rem;
 }
 
 .player-share svg,
-.player-video-toggle svg {
+.player-video-toggle svg,
+.player-hq svg {
   width: 20px;
   height: 20px;
   fill: var(--glow);
 }
 
-.player-video-toggle[aria-pressed="true"] {
+.player-video-toggle[aria-pressed="true"],
+.player-hq[aria-pressed="true"] {
   border-color: var(--glow);
   color: var(--glow);
 }
 
 .player-share:focus-visible,
-.player-video-toggle:focus-visible {
+.player-video-toggle:focus-visible,
+.player-hq:focus-visible {
   outline: 2px solid var(--glow);
   outline-offset: 2px;
 }
@@ -1068,7 +1074,8 @@ html.sheet-open body {
 
 /* 再生をやめて、ジャケットとプレーヤーをしまう */
 .stage-close {
-  display: inline-flex;
+  display: flex; /* ボタンの列とは分けて、いつも次の行に置く */
+  width: max-content;
   align-items: center;
   gap: 0.4rem;
   min-height: 44px;
@@ -1516,6 +1523,37 @@ body.has-mini {
 
 .lyrics-full p {
   margin: 0 0 1.5rem;
+}
+
+/* 曲に合わせて流す歌詞：再生中は、歌っている行だけ明るく */
+.lyrics-full {
+  position: relative; /* 行の位置を、この枠から測るため */
+}
+
+.ly {
+  cursor: pointer;
+  transition: opacity 0.35s var(--ios), color 0.35s var(--ios);
+}
+
+.lyrics-full.is-synced .ly {
+  opacity: 0.42;
+}
+
+.lyrics-full.is-synced .ly.is-now {
+  opacity: 1;
+  color: var(--sun);
+}
+
+@media (hover: hover) {
+  .lyrics-full.is-synced .ly:hover {
+    opacity: 0.8;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ly {
+    transition: none;
+  }
 }
 
 /* =========
@@ -2164,6 +2202,7 @@ body.has-mini {
 .player-mode,
 .player-share,
 .player-video-toggle,
+.player-hq,
 .album-play,
 .mini-play,
 .mini-skip,
@@ -2183,6 +2222,7 @@ body.has-mini {
 
 .player-share:active,
 .player-video-toggle:active,
+.player-hq:active,
 .album-play:active,
 .hero-listen:active,
 .sheet-close:active {
@@ -2249,7 +2289,7 @@ body.has-mini {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .player-play, .player-skip, .player-mode, .player-share, .player-video-toggle, .album-play,
+  .player-play, .player-skip, .player-mode, .player-share, .player-video-toggle, .player-hq, .album-play,
   .mini-play, .mini-skip, .sheet-close, .hero-listen, .tracklist-row, .album-head,
   .stage.is-sheet .jacket img, .stage.is-sheet .jacket-video, .album-chevron {
     transition: none;

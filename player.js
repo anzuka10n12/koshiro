@@ -318,6 +318,47 @@
     }
   }
 
+  /* 高音質：ふだんは軽い m4a、ボタンを押すと劣化のない FLAC で流す（ページを開き直すと元に戻る） */
+  var hq = false;
+  var canFlac = !!audio.canPlayType("audio/flac");
+  var hqButton = document.querySelector(".player-hq");
+  var hqLabel = hqButton && hqButton.querySelector(".player-hq-label");
+  function srcFor(src) {
+    /* 曲の行には FLAC の場所が書いてある。高音質でないとき・FLAC を流せないときは m4a に */
+    if (/\.flac(\?|$)/.test(src) && (!hq || !canFlac)) return src.replace(/\.flac(\?|$)/, ".m4a$1");
+    return src;
+  }
+  function showHq() {
+    if (!hqButton) return;
+    hqButton.setAttribute("aria-pressed", hq ? "true" : "false");
+    if (hqLabel) hqLabel.textContent = hq ? "高音質で再生中" : "高音質で聴く";
+  }
+  if (hqButton && canFlac) {
+    hqButton.hidden = false;
+    showHq();
+    hqButton.addEventListener("click", function () {
+      hq = !hq;
+      showHq();
+      var row = rows[current];
+      var raw = row && row.getAttribute("data-src");
+      if (!raw || !audio.getAttribute("src")) return;
+      var next = srcFor(raw);
+      if (next === audio.getAttribute("src")) return;
+      /* 同じ位置から、鳴っていたらそのまま続けて流す */
+      var at = position();
+      var wasPlaying = !audio.paused;
+      audio.setAttribute("src", next);
+      if (at > 0) {
+        pendingSeek = at;
+        audio.preload = "metadata";
+      }
+      if (wasPlaying) {
+        var again = audio.play();
+        if (again && again.catch) again.catch(function () { state(); });
+      }
+    });
+  }
+
   /* 曲を選ぶ（リストの行に、音源の場所・長さ・波形・曲名が書いてある） */
   var picked = false; /* 一度でも曲を選んだ・再生したか */
 
@@ -350,13 +391,10 @@
       lyrics[k].hidden = lyrics[k].getAttribute("data-track") !== String(index);
       lyrics[k].scrollTop = 0;
     }
+    lyKick(); /* 歌詞の同期を、選んだ曲の歌詞に切り替える */
     if (changed) {
       pendingSeek = -1;
-      /* 高音質の FLAC を再生できないブラウザでは、同じ名前の m4a を使う */
-      if (/\.flac(\?|$)/.test(src) && !audio.canPlayType("audio/flac")) {
-        src = src.replace(/\.flac(\?|$)/, ".m4a$1");
-      }
-      audio.setAttribute("src", src);
+      audio.setAttribute("src", srcFor(src));
     }
     /* スマホのロック画面などに曲名とジャケットを出す */
     if ("mediaSession" in navigator && window.MediaMetadata) {
@@ -515,6 +553,8 @@
     /* FLAC が読めなかったら、一度だけ同じ曲の m4a に切り替える */
     var cur = audio.getAttribute("src") || "";
     if (/\.flac(\?|$)/.test(cur)) {
+      hq = false;
+      showHq();
       var at = audio.currentTime || 0;
       audio.setAttribute("src", cur.replace(/\.flac(\?|$)/, ".m4a$1"));
       if (at) pendingSeek = at;
@@ -1142,7 +1182,9 @@
     return ((rows[i] && rows[i].getAttribute("data-src")) || "").replace(/^audio\//, "").replace(/\.[a-z0-9]+(\?.*)?$/i, "");
   }
   function songUrl(i) {
-    return location.origin + location.pathname + "#song=" + slugOf(i);
+    /* 共有には曲ごとのページ（song/○○.html）を使う。SNS のプレビューにその曲のジャケットと曲名が出て、
+       開くとすぐこのページのその曲へ移る */
+    return location.origin + location.pathname.replace(/[^/]*$/, "") + "song/" + slugOf(i) + ".html";
   }
   function hashToIndex() {
     var m = /^#song=([a-z0-9-]+)$/.exec(location.hash || "");
@@ -1203,8 +1245,106 @@
   /* 準備ができたら、標準の再生バーを専用の画面に置き換える */
   audio.controls = false;
   ui.hidden = false;
+  /* ===== 歌詞を曲に合わせて流す =====
+     各行（.ly）に歌い出し（data-t）と歌い終わり（data-e）の秒が書いてある。
+     歌っている行を明るくして、歌詞の枠の中で自動で送る。行を押すと、その位置から流す */
+  var lyBox = null;
+  var lyLines = [];
+  var lyT = [];
+  var lyE = [];
+  var lyNow = -2;
+  var lyHold = 0; /* 自分で歌詞をスクロールしている間は、自動で送らない */
+  var lyRaf = 0;
+  var lyCalm = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function lyPick() {
+    var b = null;
+    for (var k = 0; k < lyrics.length; k++) {
+      if (!lyrics[k].hidden) b = lyrics[k];
+    }
+    if (b === lyBox) return;
+    if (lyBox) lyBox.classList.remove("is-synced");
+    lyBox = b;
+    lyLines = b ? Array.prototype.slice.call(b.querySelectorAll(".ly")) : [];
+    lyT = lyLines.map(function (x) { return Number(x.getAttribute("data-t")); });
+    lyE = lyLines.map(function (x) { return Number(x.getAttribute("data-e")); });
+    lyNow = -2;
+  }
+  function lyIndex(t) {
+    /* t より前に歌い出した最後の行（二分探索） */
+    var lo = 0;
+    var hi = lyT.length - 1;
+    var ans = -1;
+    while (lo <= hi) {
+      var mid = (lo + hi) >> 1;
+      if (lyT[mid] <= t) {
+        ans = mid;
+        lo = mid + 1;
+      } else {
+        hi = mid - 1;
+      }
+    }
+    /* 歌い終わってしばらく（間奏など）は、どの行も光らせない */
+    if (ans >= 0 && t > lyE[ans] + 1.5) ans = -1;
+    return ans;
+  }
+  function lyTick() {
+    lyRaf = 0;
+    lyPick();
+    if (!lyBox || !lyLines.length) return;
+    var t = position() + 0.15; /* 文字が出る少し前に光らせる */
+    var synced = !audio.paused || t > 0.3;
+    lyBox.classList.toggle("is-synced", synced);
+    var i = synced ? lyIndex(t) : -1;
+    if (i !== lyNow) {
+      /* 前に光らせた行を消す（曲を替えたり、行を押して飛んだりした後でも残らないように） */
+      var lit = lyBox.querySelectorAll(".ly.is-now");
+      for (var q = 0; q < lit.length; q++) lit[q].classList.remove("is-now");
+      if (i >= 0) lyLines[i].classList.add("is-now");
+      lyNow = i;
+      var open = lyBox.parentNode && lyBox.parentNode.open !== false;
+      if (i >= 0 && open && Date.now() > lyHold && lyBox.clientHeight > 0) {
+        var top = Math.max(0, lyLines[i].offsetTop - lyBox.clientHeight * 0.35);
+        if (lyBox.scrollTo) lyBox.scrollTo({ top: top, behavior: lyCalm ? "auto" : "smooth" });
+        else lyBox.scrollTop = top;
+      }
+    }
+    if (!audio.paused) lyRaf = window.requestAnimationFrame(lyTick);
+  }
+  function lyKick() {
+    if (!lyRaf) lyRaf = window.requestAnimationFrame(lyTick);
+  }
+  ["play", "playing", "pause", "seeked", "timeupdate", "loadedmetadata"].forEach(function (ev) {
+    audio.addEventListener(ev, lyKick);
+  });
+  Array.prototype.forEach.call(lyrics, function (b) {
+    /* 指やホイールで歌詞を動かしたら、4秒は自動送りを止める */
+    ["wheel", "touchstart", "pointerdown"].forEach(function (ev) {
+      b.addEventListener(ev, function () { lyHold = Date.now() + 4000; }, { passive: true });
+    });
+    b.addEventListener("click", function (e) {
+      var line = e.target && e.target.closest && e.target.closest(".ly");
+      if (!line) return;
+      /* 文字を選んでいるときは飛ばない */
+      var sel = window.getSelection && window.getSelection();
+      if (sel && String(sel).length > 0) return;
+      lyHold = 0;
+      lyNow = -2;
+      seekTo(Math.max(0, Number(line.getAttribute("data-t")) - 0.3));
+      if (audio.paused) start();
+      lyKick();
+    });
+    /* 歌詞を開いたときに、いまの行の位置へ合わせる */
+    if (b.parentNode && b.parentNode.addEventListener) {
+      b.parentNode.addEventListener("toggle", function () {
+        lyNow = -2;
+        lyKick();
+      });
+    }
+  });
+
   box.classList.add("is-ready");
   if (stage) stage.classList.add("is-idle");
   load(0, false);
   openFromHash();
+  lyKick();
 })();
