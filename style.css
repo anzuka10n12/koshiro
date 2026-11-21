@@ -1723,6 +1723,23 @@ body.has-mini {
   letter-spacing: 0.04em;
 }
 
+/* 客演（feat.・Vo.・×）：曲名の下に小さく、薄い色で */
+.tracklist-credit,
+.vcard-credit,
+.player-credit {
+  display: block;
+  color: var(--haze);
+  font-size: 0.8em;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.player-credit {
+  margin-top: 0.35em;
+  font-size: 0.42em;
+  line-height: 1.4;
+}
+
 /* いま画面に出ている動画 */
 .vcard[aria-current="true"] {
   background-color: rgba(252, 139, 47, 0.12);
